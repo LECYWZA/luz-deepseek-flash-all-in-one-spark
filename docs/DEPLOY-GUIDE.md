@@ -47,7 +47,7 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 | 本仓 | 服务器落位 | 说明 |
 |---|---|---|
 | `deploy/bin/` | `~/migrate-assets/bin/` | r3-boot-arm.sh 部署链（md5 c051bb41）+gate 四件+stop/watchdog |
-| `deploy/adapter/` | `~/migrate-assets/dsv41/adapter/` | 现役件快照（sitecustomize 55b1e412 等 11 件；逐件锚=`deploy/adapter/README.md`） |
+| `deploy/adapter/` | `~/migrate-assets/dsv41/adapter/` | 供给面整面快照 **83 件/约 3.0M**（B1 收录 2026-10-13：顶层 68+fi_r1/ 6+lib/ 1+overlay/ 3+tests/ 5；sitecustomize 55b1e412 装载缝+闭包 48 件+留役休眠件+`.so`/json/构建源；排除 `*.bak*` 39+变体 1+EP1 陈旧清单 2——收录口径与排除名单逐件=`deploy/adapter/README.md`，逐件 md5=`deploy/adapter/MANIFEST.md5`） |
 | `deploy/env/` | `~/migrate-assets/dsv41/env/` | 50 键现役形+51 键 FL6 形 |
 | `deploy/overlay/o12c1-prod/` | `~/migrate-assets/v4vl/sglang-overlay.o12c1-prod/`（=`SGLANG_OVERLAY_DIR`） | 29 件=28 活件影子挂载+1 映射表（scheduler 5b6fe2a3 等；boot 链挂载计数断言==28——r3-boot-arm.sh `ov_n` 门；目录 29 件含 overlay-map.tsv 自身） |
 | `deploy/nccl/nccl-ringonly/`+`ncclpin.so` | `~/migrate-assets/nccl-ringonly/`+`~/migrate-assets/ncclpin.so` | ring-only NCCL 2.30.7+pin 件（只读挂载 /opt） |
