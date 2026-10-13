@@ -1,0 +1,5 @@
+# LuZ-deepseek-flash-all-in-one
+__pycache__/
+*.pyc
+state/
+*.log

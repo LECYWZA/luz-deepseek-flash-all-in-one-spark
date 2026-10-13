@@ -1,7 +1,8 @@
 # SCAN-REPORT — 密钥与敏感信息扫描报告（推送前硬门）
 
-> 扫描时点：2026-10-13（首 commit 前，全仓 175 件 / 2.4MB）。
-> 工具：`grep -rEn` 多模式（P1-P11）+ 逐命中人工复核。
+> 扫描时点：2026-10-13 两轮——首建（175 件）+ **规格升级扩面重扫（1102 件 /
+> 86MB：tools 全树+overlay+NCCL 栈+b12x+kit+models.d，N1-N7）**。
+> 工具：`grep -rEn` 多模式 + 二进制 `strings` 抽取 + 逐命中人工复核。
 > 判据：**任何红命中=该件不入仓或脱敏后入（零容忍）**。
 
 ## 扫描模式与结果总表
@@ -52,4 +53,28 @@
 ## 结论
 
 **硬门通过：红命中 0；全仓无任何真实凭据值。** 可推送（remote 待用户供）。
-重扫触发律：任何后续 commit 前重跑 P1-P7；新增 gateway/env 类件必过 P3。
+重扫触发律：任何后续 commit 前重跑 P1-P7/N1-N7；新增 gateway/env 类件必过 P3。
+
+---
+
+## 扩面重扫（规格升级后，N1-N7，1102 件含二进制）
+
+| # | 模式 | 命中数 | 判定 |
+|---|---|---|---|
+| N1 | key 字面量全仓（含 -I 文本抽取） | 0（唯一命中=本报告自引模式行） | 绿 |
+| N2 | 二进制 strings：ncclpin.so+libnccl.so.2.30.7（ELF×2） | 0 hits/件 | 绿 |
+| N3 | 赋值型凭据（扩面重跑 P2） | 0 | 绿 |
+| N4 | Authorization/Token 头+token 赋值（tools/overlay/kit 扩面） | 全为 KV/tokenizer 域名词，零凭据赋值 | 绿 |
+| N5 | `~/.sudopw`/sshpass 机制引用 | 6 处=机制路径（r3-boot 链/kit 量具/pw-login-test——口令恒从宿主文件读入，绝不打印/不入仓）；**零口令值** | 绿 |
+| N6 | URL 内嵌凭据+高熵串（新面） | 0 | 绿 |
+| N7 | 宿主密钥件混入防线（`.env*` 全清点） | 7 件全为键面规格：deploy/env 两形+cfgmgmt 回退链库四形（md5 对表 FORM-REGISTRY 全中：15767aa6/8c8c166d/99e7ec92/34977bf0）+gateway 模板（GW_API_KEY 值位空）——零密钥值类 | 绿 |
+
+**API_KEY 机制专项**（kit 量具 v41_kfix_ab/v41_dose_ladder/guard gen_probe）：
+API_KEY 一律 `grep` 自宿主在役 env 文件（`.env.tp4-600k` 等，umask 077 面）——
+机制引用零值；该类宿主件不在仓（N7 清点直证）。
+
+**ssh-password-login-20261013/ 工具件专项**：四脚本+README=sshd 配置运维件
+（就地改 99-hardening.conf 两值+备份回退+pty 判死验证）；口令仅经 `~/.sudopw`
+机制通道，输出一律 `***` 替换；零凭据值、零配置内容泄点（备份件在宿主
+/var/backups）。保留处置。
+

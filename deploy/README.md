@@ -9,7 +9,7 @@
 | 件 | 键数 | md5 | 状态 |
 |---|---|---|---|
 | `PROD-R51W5-spec1.env` | 50 | **15767aa6** | **当前产线复原目标/在役形**（=48 键 8c8c166d 逐字+FP8/TG 两键） |
-| `PROD-R51W5-FL6FIX-spec1.env` | 51 | 2ac74586 | **FL6 转正在飞**（50 键逐字+第 51 键 DSV41_FL6_RECALL_FIX=1）——转正即用形，呈裁后经 boot 生效；呈裁档=`docs/research/FL6-FIX-RESULT-20261013.md` §五/§九 |
+| `PROD-R51W5-FL6FIX-spec1.env` | 51 | 2ac74586 | **FL6 转正在飞**（50 键逐字+第 51 键 DSV41_FL6_RECALL_FIX=1）——转正即用形，呈裁后经 boot 生效；机理档=`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`；呈裁全档=战役仓 docs/research/FL6-FIX-RESULT-20261013.md（归档位） |
 
 回退链两级（自 50 键在役形）：48 键 PROD-R1INK48L2PF6O12C1（8c8c166d）→
 47 键 PROD-R1STDLL128L2PF6O12C1（99e7ec92）——两件在 migrate-assets env 库
@@ -26,6 +26,9 @@
 逐件 md5 与 FL6 接线时点注记见 [adapter/README.md](adapter/README.md)。
 
 ## bin/ — r3-boot-arm.sh 部署链
+
+> 服务面其余模块（overlay/nccl/b12x/kit/models.d/sentinel）落位映射与部署序
+> 见 `docs/DEPLOY-GUIDE.md` §5。
 
 | 件 | md5 | 用途 |
 |---|---|---|

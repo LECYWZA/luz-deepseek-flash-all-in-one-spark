@@ -31,11 +31,16 @@
   原版行为——与 2c4baad3 配 50 键 env 行为等价，回退零成本；设键=激活
   （值域 1/retire/retract 三态，DEPLOY-NOTES 门控表）。
 - 变更谱系：2c4baad3（产线原形）→〔`sitecustomize-wire-v2.diff` 重放〕→
-  55b1e412（本仓件）；diff 件随仓收录供审计重放。转正 runbook=
-  `docs/research/FL6-FIX-RESULT-20261013.md` §九。
+  55b1e412（本仓件）；diff 件随仓收录供审计重放。
+- **转正动作序**（呈裁落定后）：fl6_recall.py 入 adapter 位→sitecustomize 按
+  wire-v2.diff 接线（elif 两支+白名单两行，重算 md5 应=55b1e412）→adapter-sync
+  `--expect sitecustomize.py=55b1e412 fl6_recall.py=b87cbb5e` 四机全等→boot 带
+  ENV51→容器日志核 `[fl6_recall]` 两行横幅（缺行=fail-closed 拒起）。机理档=
+  `docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`；验证窗全档=战役仓归档位。
 
 ## 与 overlay 面的关系
 
-overlay o12c1-prod（29 活件，scheduler 5b6fe2a3 等）不在本目录——派生面上游
-文件按上游许可（NOTICE §2），产线经 `SGLANG_OVERLAY_DIR` 由 boot 链挂载
-（r3-boot-arm :317-341）；指纹与构成=FORM-REGISTRY §二。
+overlay o12c1-prod（29 活件，scheduler 5b6fe2a3 等）收录在本仓
+`deploy/overlay/o12c1-prod/`——派生面上游文件按上游许可（NOTICE §2），产线经
+`SGLANG_OVERLAY_DIR` 由 boot 链挂载（挂载计数断言==29）；指纹与构成=
+FORM-REGISTRY §二。
