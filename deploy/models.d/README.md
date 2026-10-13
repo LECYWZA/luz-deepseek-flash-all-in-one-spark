@@ -1,5 +1,10 @@
 # models.d · 多模型注册表（一页）— 2026-10-06
 
+> **【0.3.1 交付仓注记 2026-10-13】下表「状态」列与各卡 §c/§d 形态行为 2026-10-06
+> 快照：v41-prod 生产现役形已演进为 0.3.1 定型形（50 键 15767aa6+SPEC6，见
+> `docs/registry/FORM-REGISTRY-031.md`）；本目录权威面=权重身份指纹（§a）与四机
+> 路径（§b），env/boot 形态以 FORM-REGISTRY 与 deploy/env/ 现役件为准。**
+
 ## 法源
 
 1. **字段制**：`opt1-dev/model_compat_20261004/MULTIMODEL-GOV-CARD-20261004.md` §2.4（模型注册表
