@@ -1,9 +1,10 @@
 # OPS-MANUAL-031 — LuZ-0.3.1 定型形运维手册（七章）· 2026-10-12
 
-> **法源**：FINAL31-PLAN-20261012 §T3-4 + CODE31-REVIEW-PLAN-20261012 §4.2。
-> 落位=docs/runbooks/（PROD-RS-GATE-RUNBOOK 先例同位）。
+> **法源**：FINAL31-PLAN-20261012 §T3-4 + CODE31-REVIEW-PLAN-20261012 §4.2
+> （两档=战役仓归档，不在本交付仓）。
+> 落位=docs/runbook/（本仓；战役仓原位 docs/runbooks/）。
 > **适用形**：0.3.1 定型形（50 键 15767aa6+SPEC6+W5 件 32cf9abf+R1 八件面
-> 4b40a123+overlay o12c1-prod；三元组详见 `docs/inventories/FORM-REGISTRY-031.md`）。
+> 4b40a123+overlay o12c1-prod；三元组详见 `docs/registry/FORM-REGISTRY-031.md`）。
 > 红线：**02 机两守护（pid 3535/3536）绝对不动**；8898=测试靴面/8899=产线服务面
 > 分面律（测试窗 boot 走 8898 槽，产线恢复恒 8899）；一切停机窗 OUTAGE 制+
 > 先存后删+容器删除前必存 docker logs。
@@ -96,12 +97,12 @@
 
 | 事件族 | 档 | 处置要点 |
 |---|---|---|
-| dump 擦除（NFS dump 盘被清） | `docs/research/INCIDENT-DUMPWIPE-20261011.md` | 先取证（atime/挂载面）再恢复；处置后核对 dump 盘独立面 |
-| E3A-T384 qmg 拆线 | `docs/research/E3A-DOSE-RECALL-RESULT-20261011.md`（§一/§四.1） | qmg 6000 硬门触发=按序拆线（非引擎崩/非楔死/memcg 四机 0 行核）；384 档除名先例 |
-| 2218 翻转家族 | `docs/incidents/INCIDENT-20261007-ENVDEG-PREFILL-2X.md` 等（grep「2218」族）+`docs/incidents/` 全目录 | 翻转事件先档后处置；macgw /30 迁专口后 MPI wireup 绿=遗留①闭 |
-| GID 环回法 | `tools/fabric-gid-heal.sh`（FABRIC-SELFHEAL-DESIGN-20261008 配套：四前置+Tier1/2）+`tools/fabric-restore-gate.sh`（Phase1 只告警）+`topology.json` 期望态 | GID 断言块（r3-boot-arm 16 口 idx3）红→环回修复→guard F-G1 判值四机 GREEN 复核 |
-| 楔死处置 | oom-gate/watchdog 配套（FINAL31 §T4-1 修复自愈工具包；DEAUDIT/INCIDENT 族） | **D8 三查**（dmesg/memcg/engine 日志三面）+**不重试律**（楔死禁盲目 reboot 重试，先三查定面） |
-| KV-LIFE 客户端哨兵 | `logs/KV-LIFE-20261009/READINGS.md` §0 | 7168/6300 低水位灌批正确拦截=设计动作非事故 |
+| dump 擦除（NFS dump 盘被清） | `docs/research/INCIDENT-DUMPWIPE-20261011.md`（战役仓归档，不在本仓） | 先取证（atime/挂载面）再恢复；处置后核对 dump 盘独立面 |
+| E3A-T384 qmg 拆线 | `docs/research/E3A-DOSE-RECALL-RESULT-20261011.md` §一/§四.1（战役仓归档，不在本仓） | qmg 6000 硬门触发=按序拆线（非引擎崩/非楔死/memcg 四机 0 行核）；384 档除名先例 |
+| 2218 翻转家族 | `docs/incidents/INCIDENT-20261007-ENVDEG-PREFILL-2X.md` 等（战役仓归档，不在本仓；grep「2218」族） | 翻转事件先档后处置；macgw /30 迁专口后 MPI wireup 绿=遗留①闭 |
+| GID 环回法 | `tools/packages/fabric-net/payload/guards/fabric-gid-heal.sh`（FABRIC-SELFHEAL-DESIGN-20261008 配套：四前置+Tier1/2）+同目录 `fabric-restore-gate.sh`（Phase1 只告警）+期望态 `tools/packages/fabric-net/payload/weave/topology.json`（三件均在本仓 fabric-net 包） | GID 断言块（r3-boot-arm 16 口 idx3）红→环回修复→guard F-G1 判值四机 GREEN 复核 |
+| 楔死处置 | oom-gate/watchdog 配套（oom-gate=`tools/packages/selfheal/payload/oom-gate/`；watchdog=`deploy/bin/r3-watchdog.sh`；FINAL31 §T4-1 修复自愈工具包） | **D8 三查**（dmesg/memcg/engine 日志三面）+**不重试律**（楔死禁盲目 reboot 重试，先三查定面） |
+| KV-LIFE 客户端哨兵 | `logs/KV-LIFE-20261009/READINGS.md` §0（战役仓日志归档，不在本仓） | 7168/6300 低水位灌批正确拦截=设计动作非事故 |
 
 ## 第六章 禁键清单+两守护+分面律
 
@@ -117,13 +118,15 @@
 
 ## 第七章 量具锚点引用
 
-- 一切工具以 `docs/TOOL-ANCHORS.md` 表内锚（md5+用法+在役线）为准——本手册
-  不复制工具 md5（防二次漂移；TOOL-ANCHORS 陈旧行随 QA31 md5 重钉同日同步，
-  见 CODE31-COMMENT-AUDIT CA-3）。
+- 一切工具以战役仓 `docs/TOOL-ANCHORS.md` 表内锚（md5+用法+在役线）为准（该档
+  =战役仓归档，不在本交付仓）；**本仓对应权威面**=`docs/registry/FORM-REGISTRY-031.md`
+  §二（boot 链/adapter/overlay 指纹）+`tools/packages/` 五包各自 `MANIFEST.md5`
+  （md5sum -c 自验）。本手册不复制工具 md5（防二次漂移）。
 - 本手册配套三件：白盒矩阵
-  `docs/release/CODE31-WHITEBOX-MATRIX-20261012.md`（14 件自检红绿基线+判别力
-  反例抽查法）、审查报告 `docs/release/CODE31-REVIEW-REPORT-20261012.md`
-  （发现分级+回退键注记 P2-9）、形档案 `docs/inventories/FORM-REGISTRY-031.md`
+  `tests/whitebox/CODE31-WHITEBOX-MATRIX-20261012.md`（14 件自检红绿基线+判别力
+  反例抽查法，本仓实位）、审查报告 `docs/release/CODE31-REVIEW-REPORT-20261012.md`
+  （发现分级+回退键注记 P2-9；战役仓归档，不在本仓）、形档案
+  `docs/registry/FORM-REGISTRY-031.md`
   （三元组权威面）。
 - boot 哨兵（boot_sentinel.sh+anchors.tsv）：定型三形锚待 QA31 健康靴回填
   （W-1；遇未知形=ANCHOR-UNKNOWN 横幅不判快慢=设计安全态）。
