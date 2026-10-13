@@ -8,8 +8,8 @@
 
 | 件 | 键数 | md5 | 状态 |
 |---|---|---|---|
-| `PROD-R51W5-spec1.env` | 50 | **15767aa6** | **当前产线复原目标/在役形**（=48 键 8c8c166d 逐字+FP8/TG 两键） |
-| `PROD-R51W5-FL6FIX-spec1.env` | 51 | 2ac74586 | **FL6 转正在飞**（50 键逐字+第 51 键 DSV41_FL6_RECALL_FIX=1）——转正即用形，呈裁后经 boot 生效；机理档=`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`；呈裁全档=战役仓 docs/research/FL6-FIX-RESULT-20261013.md（归档位） |
+| `PROD-R51W5-spec1.env` | 50 | **15767aa6** | **一级回退形**（FL6 转正后自「现役」降级；=48 键 8c8c166d 逐字+FP8/TG 两键；摘第 51 键即自 51 键形回退至此） |
+| `PROD-R51W5-FL6FIX-spec1.env` | 51 | 2ac74586 | **FL6 现役定版**（50 键逐字+第 51 键 DSV41_FL6_RECALL_FIX=1）——**当前产线在役**（服务器在役位名=`PROD-R51W5FL6-spec1.env` 同 md5 异名；FL6-PROMO 窗闭 GREEN：cp30 锚位 99.95%+DE 82.17 实役直证）；机理档=`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md` |
 
 回退链两级（自 50 键在役形）：48 键 PROD-R1INK48L2PF6O12C1（8c8c166d）→
 47 键 PROD-R1STDLL128L2PF6O12C1（99e7ec92）+深回退 45 键 PROD-R1STDLL128L2PF6
