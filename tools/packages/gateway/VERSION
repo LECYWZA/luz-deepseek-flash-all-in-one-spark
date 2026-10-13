@@ -1,7 +1,7 @@
 PKG=gateway
 PKG_VERSION=0.3.1-t4.1
-FINGERPRINT=282b9ad2
-GIT_ANCHOR=3d8c8a6（P4 整备提交）
+FINGERPRINT=731f39e4（脱敏仓实算=VL 车道两件+README 车道行入清单后本仓集合指纹；战役仓同批=34f30c27）
+GIT_ANCHOR=3d8c8a6（P4 整备提交；TOOLS31-BAKE-R2-20261013 S0 三联动重钉——VL-NATIVE S6 车道两件入清单）
 TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
-PAYLOAD_N=9
+PAYLOAD_N=11
 RED_LINES=GW_API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面

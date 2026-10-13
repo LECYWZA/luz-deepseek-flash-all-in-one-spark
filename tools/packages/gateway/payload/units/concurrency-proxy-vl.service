@@ -1,0 +1,21 @@
+[Unit]
+Description=Concurrency proxy v2 - VL lane (dsv41 图像车道, 01 :8002 -> UPSTREAM 8898[认证期]/8899[转正后])
+Documentation=file:///opt/aicad-prod/scripts/concurrency_proxy_v2.py
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=liux***ya
+# VL-NATIVE-WINCARD-20261013 §4.3：第二实例=车道制分流（客户端按端口），零代码改动
+# （同 rc3.8.2 本尊副本）；仅 Description/EnvironmentFile 指针两处差异。
+# 配置面（UPSTREAM/PORT/MAX_CONCURRENCY/DEDUP_ENABLE/GW_API_KEY）一律走 EnvironmentFile——
+# 密钥值绝不入 unit/bundle/镜像（SMOK_KEY 前科律）。
+# gateway-vl.env 属宿主 0600 部署面，模板见本包 env/gateway-vl.env.template。
+EnvironmentFile=/opt/aicad-prod/secrets/gateway-vl.env
+ExecStart=/usr/bin/python3 /opt/aicad-prod/scripts/concurrency_proxy_v2.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

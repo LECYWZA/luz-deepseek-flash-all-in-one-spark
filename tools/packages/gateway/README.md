@@ -24,6 +24,8 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 | units/concurrency-proxy-v2.service（**P0 死件闭合**；EnvironmentFile 承载键面） | 本包新件（部署面分发：01 原位+迁移窗网关机） |
 | units/10-gateway-hardening.conf（drop-in：journal/MemoryMax 2G/非特权/ProtectSystem） | 本包新件（落位 /etc/systemd/system/concurrency-proxy-v2.service.d/） |
 | env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/GW_API_KEY 值位空） | 本包新件（宿主 0600 落位 /opt/aicad-prod/secrets/gateway.env） |
+| units/concurrency-proxy-vl.service（**VL 车道第二实例**；同 v2 模板仅 Description/EnvironmentFile 两处差=车道制零代码改动） | VL-NATIVE S6 新件（落位 /etc/systemd/system/；01 :8002→UPSTREAM 8898〔认证期〕/8899〔转正后〕） |
+| env/gateway-vl.env.template（UPSTREAM 8898/PORT=8002/MAX_CONCURRENCY=8/DEDUP_ENABLE=0 图像大 body 前缀哈希伪碰撞规避/GW_API_KEY 值位空） | VL-NATIVE S6 新件（宿主 0600 落位 /opt/aicad-prod/secrets/gateway-vl.env） |
 | gw-verify.sh（五探针+离线 lint） | TOOLS31 §二 P4-3 新件 |
 
 ## 部署面分发注记（P0 闭合的执行面）
@@ -32,6 +34,7 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 2. env 填值→`/opt/aicad-prod/secrets/gateway.env`（0600；GW_API_KEY 值**只**在此）。
 3. `systemctl daemon-reload && systemctl enable --now concurrency-proxy-v2`（执行窗动作）。
 4. 四机/网关机分发位随 Mac mini M6 迁移窗重排（本包只收编 01 面——任务卡 §七.3 悬裁位）。
+5. VL 车道：vl unit 同位落位+`gateway-vl.env` 填值 0600→`daemon-reload`+`enable --now concurrency-proxy-vl`（8002 车道=客户端按端口分流；启用窗=VL 形转正呈裁后，详=docs/research/VL-NATIVE-RESULT-20261013.md §八）。
 
 ## 排除了什么
 
