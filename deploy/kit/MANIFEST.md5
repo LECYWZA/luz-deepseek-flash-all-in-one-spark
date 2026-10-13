@@ -1,5 +1,11 @@
+# MANIFEST.md5 — 0.2.8 冻结谱系清单（46 项；md5sum -c 可验，# 注释行容忍）
+# 2026-10-13 联动重生成 README.md 锚行（规模行勘正为仓内快照实际 44 件/848K，M3）。
+# 注：oom-gate/ 四行为 0.2.8 冻结谱系残留——0.3.1 起 oom-gate 面让位 selfheal 包
+#   （tools/packages/selfheal/payload/oom-gate/），本仓 kit 快照盘上无此四件（md5sum -c
+#   对其四行报缺=预期态，非缺损）。
+
 54efb921a002d992d246d438c6d6fd47  GLOSSARY.md
-d1c3ad0dfad4b8be74d53bb9c986b7b2  README.md
+66ed9cf3e03844bd0eb39c94cc7b65a4  README.md
 2daa5811315242d80890536d108e01be  REFERENCE.md
 9c6322493489f7e76b72b2c32722979b  WINDOW-RUNBOOK.md
 30a226ef137888f734a02e531b5be355  adr/ADR-004-three-gib-floor-guard.md
