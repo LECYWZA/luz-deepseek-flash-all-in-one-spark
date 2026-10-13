@@ -4,21 +4,21 @@
 #   （tools/packages/selfheal/payload/oom-gate/），本仓 kit 快照盘上无此四件（md5sum -c
 #   对其四行报缺=预期态，非缺损）。
 
-54efb921a002d992d246d438c6d6fd47  GLOSSARY.md
+0fa632cea9324c72e528ad08eee0fbb3  GLOSSARY.md
 66ed9cf3e03844bd0eb39c94cc7b65a4  README.md
-2daa5811315242d80890536d108e01be  REFERENCE.md
+86aef579920944572745b9d233d13d16  REFERENCE.md
 9c6322493489f7e76b72b2c32722979b  WINDOW-RUNBOOK.md
-30a226ef137888f734a02e531b5be355  adr/ADR-004-three-gib-floor-guard.md
-01e992a7fcad6a497dc0a0bcd3b1575c  guard/BASELINE.md
+d0585577977561c67cec5218b094d59c  adr/ADR-004-three-gib-floor-guard.md
+8a4c399023bee8e71713982cbcb6cff0  guard/BASELINE.md
 2dfb32e0f453b26722f3c725793010a5  guard/MD5SUMS
-866e519703289e5e4b112dc31069f64b  guard/README.md
+4ad1b1d27c8d61279d845434e1a0722d  guard/README.md
 eccee99a46fda8ce9f4f0d4a95aef4c6  guard/clock-sm-guard.sh
 3e6f1957ced214507881b48142ad851d  guard/flashinfer-arch-guard.sh
 80fe2bf8c0d49f7b8d47877264992a04  guard/gate_archive.sh
 d29ffa1446a3680bb0e963a28e2a8773  guard/gen_probe.sh
-9a3b8045f2fac6afd1a012e61ecdbc93  guard/guard-onstart.sh
-4c3aaf6bd9984abac9e0da7d035cc226  guard/guardctl.sh
-677054454a3344904a215e6758bca5e0  guard/guards.conf
+05070df8f9d1a53beb304458f689bbef  guard/guard-onstart.sh
+558b4eb4818256d77731891899c54638  guard/guardctl.sh
+b2b2583d96ddd72adfcfebef703fcfb9  guard/guards.conf
 3fec0c89f24ef2aba8d69c34d00958a0  guard/jit-header-refresh.sh
 8490a4169e3468c0cef36ca3bc5e106d  guard/jit_refresh_exec.py
 3ad6c3ef03fb29b231309aa8a52e7ec7  guard/journal_watch.sh
@@ -36,14 +36,14 @@ f36b2f25bbf35738d2ef908245f7ae50  instruments/v41_dose_ladder.sh
 0775edb2894a346ef59d6686e4d24f07  instruments/v41_hostattr.sh
 08879f35598a870a11cc77eb15547ba9  instruments/v41_hostattr.v2.sh
 1a01903a6a98164fca322479aae811f1  instruments/v41_kfix_ab.sh
-be609e8725b24f80a491639f270ed9ae  instruments/v41_launch.sh
+c2fdb7fe3d56ea9d5aae0594744482d7  instruments/v41_launch.sh
 0f3311837fe3eedaf770a503e24a40b1  instruments/v41_memwatch.sh
 2d602bc0194cc50d9b39cd585dff286e  instruments/v41_memwatch_report.py
 6d87afcb537880938ee3646ba80c0227  instruments/v41_post_boot_check.sh
 e2e7f6a7f56942b4654737fc10a4922c  instruments/v41_warm_cache.sh
 6a1dc0fe527ce8ca80ce2a7092942c0c  instruments/v41_win_mmprobe.sh
-3e40e5164b1413d12dec3d8352a03457  instruments/v41_window_hold.sh
-e8db105232313cedf19e468e35806b8e  instruments/v41_window_rollback.sh
+3671366ad3f1149a1069b2758689c78b  instruments/v41_window_hold.sh
+0c1df0ba98597058873d5186f8a938e8  instruments/v41_window_rollback.sh
 9b65b07a489508fdf73dba68958f45d1  oom-gate/README.md
 1c8598ec6d815af7bfd646e95b2dbe0a  oom-gate/oom-gate-monitor.service
 7d82a37246c83ce4a3b9b1bc3a6941e9  oom-gate/oom_gate.sh

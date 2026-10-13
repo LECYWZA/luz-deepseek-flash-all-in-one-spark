@@ -3,17 +3,17 @@
 #     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
 ea1620b3574f518334526f303d1a243d  ./README.md
 76de32a91fd0c0d50ca4e45ba674f23c  ./bin/cfgmgmt
-03e138ab409049dad01e49c3e746353f  ./payload/adapter-manifest-regen.sh
-254ced98a29fca85e3eb5c5e0b832ce6  ./payload/boot/boot-chain.md5
+092e239f5c9a8cb4acb833be980f02a0  ./payload/adapter-manifest-regen.sh
+5964780d5d6713665d92b3c51e29cd9e  ./payload/boot/boot-chain.md5
 fcaed824fe651e11af66edba8739dfc3  ./payload/boot/boot-with-slotlock.sh
 5115cd7b1f5923c7318276c08753ed98  ./payload/env-keydiff.sh
 8c8c166dbf9b7c6b19337fdad8359041  ./payload/env/PROD-R1INK48L2PF6O12C1-spec1.env
 34977bf00a890e5b5dd63d69fa85ffe6  ./payload/env/PROD-R1STDLL128L2PF6-spec1.env
 99e7ec9260db75922d8f302eff778d46  ./payload/env/PROD-R1STDLL128L2PF6O12C1-spec1.env
 15767aa67a0f0e2aaf7c55471dc4061f  ./payload/env/PROD-R51W5-spec1.env
-93eb93a1f188cae895ffefd3b8002ddc  ./payload/gen-manifests.sh
+ffb58587039d44349bd9dd835a8d2d15  ./payload/gen-manifests.sh
 61a2c30f7f437860e028adb385ff4c7c  ./payload/golden/flashinfer-golden/MANIFEST.json
-102c872d053c8444155c31cae461e952  ./payload/golden/flashinfer-golden/UNREADABLE-NOTE.txt
+22e4093994728618a95c60cb469c31c7  ./payload/golden/flashinfer-golden/UNREADABLE-NOTE.txt
 0104081d3a3265a4071d83ec48fb2828  ./payload/golden/flashinfer-golden/table.md5
 c9e1ff5b0c50b15aaeb461ec54b77e79  ./payload/golden/flashinfer-golden/table/0.6.18/sm121/472a7346d01ee0ea/rank_tp0_pp0_dp0.json
 c9e1ff5b0c50b15aaeb461ec54b77e79  ./payload/golden/flashinfer-golden/table/0.6.18/sm121/472a7346d01ee0ea/rank_tp1_pp0_dp0.json
@@ -46,10 +46,10 @@ ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18
 ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18/sm121/f72f37b0801895b7/rank_tp2_pp0_dp0.json
 ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18/sm121/f72f37b0801895b7/rank_tp3_pp0_dp0.json
 bb5c38ed55fd4a2451a89e48857e548b  ./payload/golden/r3-boot-arm.autotune-golden.diff
-996bf04bc19b2974c49f1d2dd5282b2a  ./payload/out/ADAPTER-MANIFEST.regenerated
-6e08fb34a269d9653751893b0e5fd346  ./payload/out/env-MANIFEST.md5
-45be18c6a1e637eb5b97c0e6179a645d  ./payload/out/overlay-MANIFEST.md5
+034ec817df5b3e15feb74af525f99bb2  ./payload/out/ADAPTER-MANIFEST.regenerated
+121b28fed575c8e908100d9d264efaf2  ./payload/out/env-MANIFEST.md5
+201469b125a8a0813ee07b19dbf812a0  ./payload/out/overlay-MANIFEST.md5
 13f283e4cbdb159b6b1ec1672f494bd6  ./payload/printenv-keycheck.sh
 50e23b379b9f7ffbc95dabae66c70edf  ./payload/restore-sequence.sh
-71ba4d2affb7be05d351aad8ab00870e  ./selfcheck/run.sh
-3f2849719e8145fbea61dd91eb4e835a  ./selfcheck/sources.tsv
+b6bde0f882cbf5f4b459156944715511  ./selfcheck/run.sh
+c8e0206560e094f43d3ec35f927962d1  ./selfcheck/sources.tsv

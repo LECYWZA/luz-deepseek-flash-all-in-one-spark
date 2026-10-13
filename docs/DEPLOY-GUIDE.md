@@ -44,6 +44,13 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 
 ## 5. 服务面部署（本仓 → 服务器落位映射）
 
+> **脱敏注记（2026-10-13）**：本仓为分发脱敏版——用户名统一掩码为 `liux***ya`
+> （路径/systemd `User=` 位）。部署落位时将 `liux***ya` 替换为实际运行用户；
+> 产线路径清单（`payload/out/*-MANIFEST.md5`、`boot-chain.md5`、selfcheck
+> `sources.tsv`）为产线清单的脱敏快照，到靶机以 gen-manifests.sh /
+> adapter-manifest-regen.sh 按实际用户重生成。详见
+> `docs/registry/SANITIZATION-20261013.md`。
+
 | 本仓 | 服务器落位 | 说明 |
 |---|---|---|
 | `deploy/bin/` | `~/migrate-assets/bin/` | r3-boot-arm.sh 部署链（md5 c051bb41）+gate 四件+stop/watchdog |

@@ -3,7 +3,7 @@
 #     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
 90f1b94854c054af8f806817997aca91  ./README.md
 498436b47e19cdca1e9c2b30c2793434  ./bin/selfdiag
-6e073acd73b506e8e256be6f5924bca0  ./payload/census/census_capture_w3.sh
+f2f10cb67d913a101944897fee0eb53e  ./payload/census/census_capture_w3.sh
 eeb498b72b82817e34ee93825aa63491  ./payload/census/census_stream.py
 774b2abfb133d5130291c42fc801c726  ./payload/gates/r3-gate-assert-lint.sh
 b39787b0c533e9313ab1feb617a72727  ./payload/gates/r3-gate-banner-contract.sh
@@ -17,5 +17,5 @@ bb6e48ec0848c32892c369fb398ac3b0  ./payload/gates/verify-governance.sh
 a9250e4a35bcb0d29cc8e9f054906e40  ./payload/sentinel/boot_sentinel.sh
 028f7b67c2e22b2bb6c667d3a01d57ee  ./payload/sentinel/boot_sentinel_anchors.tsv
 7aa8cca48497258ed03e60d6b2c5c058  ./payload/sentinel/target_verify_reg.sh
-e187e26959729328efb292f2592f0cff  ./selfcheck/run.sh
-6a3dc8d90eed644b2756f3b631dc9e80  ./selfcheck/sources.tsv
+f6466699b4567c432f022566a9995e7b  ./selfcheck/run.sh
+47bb7a1ffc261f46422c7a8b005f9d2e  ./selfcheck/sources.tsv

@@ -10,7 +10,7 @@ ffdd73ec12640fd888a5dbf342aacad5  ./a23_parity_core.py
 ecabf17bf87448a0c17a4b3c3cbfa4e3  ./admission_gate.py
 7769a33ecf348d017cf7d0b1b0ce3fc6  ./admission_r1.py
 58a6776149cba5c99e68c31d4b9a8b1c  ./admission_segment.py
-cd6c7707d252b50b1ec5b00ba2d944c6  ./build_repack_cuda.sh
+4746845c65240f6c4796f3321eb41812  ./build_repack_cuda.sh
 0d0dcb8b02f0b2fefb96401d068ab4da  ./deep_gemm_sm121.py
 81cff577c4d78a304bcfca44880296b7  ./draft_head_fp8.py
 7a5d599218f2d5b1b923b36c71337bba  ./draft_head_fp8_tp4.py
