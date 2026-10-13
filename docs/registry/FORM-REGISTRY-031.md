@@ -4,7 +4,11 @@
 > **权威面声明**：本档=0.3.1 定型后键面/指纹的**新权威表**（TOOL-ANCHORS 产线
 > 复原目标行将随 QA31 md5 重钉同日同步指向本档，CODE31-COMMENT-AUDIT CA-3）。
 > **现役形 md5 注记**：50 键 env=15767aa6（=48 键 8c8c166d 逐字+FP8/TG 两键，
-> `arms/COMBO-C0-spec1.env`）；**W5-PROMO 转正窗 2026-10-13 00:02:23Z 已将
+> `arms/COMBO-C0-spec1.env`）；**FL6-PROMO 转正窗 2026-10-13 闭 GREEN：现役定版
+> =51 键 ENV51 `~/migrate-assets/dsv41/env/PROD-R51W5FL6-spec1.env`（2ac74586=
+> 仓内 `deploy/env/PROD-R51W5-FL6FIX-spec1.env` 同 md5 异名；+sitecustomize
+> 55b1e412+fl6_recall.py b87cbb5e 四机+cp30 锚位 99.95%/DE 82.17 实役直证），
+> 50 键形降为一级回退，回退级次顺延**；**W5-PROMO 转正窗 2026-10-13 00:02:23Z 已将
 > prefill_sp.py 32cf9abf 换入产线 adapter 面（本窗亲历时点）**——部署面集合
 > md5（W5 面 20753511 族）转正窗收口后由 QA31 复核回填。
 
@@ -12,10 +16,10 @@
 
 | 形 | env 件（md5） | 键数 | SPEC 参谱 | 池门 | adapter 面 | overlay | 状态 |
 |---|---|---|---|---|---|---|---|
-| **50 键定型形（L0）** | `~/luz030-opt-campaign/arms/COMBO-C0-spec1.env`（**15767aa6**） | 50 | **SPEC6 六参**=五参基座+`--swa-prefix-tails 256`（五参=`--prefill-decode-interval 16 --max-queued-requests 32 --min-free-slots-delay 1 --enable-decoder-swa-bounded-replay --reasoning-parser deepseek-v41`；KV-LIFE desk/lib.sh:11+E3A §六） | 9,600,000 | 4b40a123+**W5 件 32cf9abf** | o12c1-prod（29 活件） | **0.3.1 定型交付形**（裁定 fd5c7e5；QA31 案 A' 性能读数承接） |
-| 48 键现役形（L1） | `~/migrate-assets/dsv41/env/PROD-R1INK48L2PF6O12C1-spec1.env`（**8c8c166d**） | 48 | SPEC6 同上 | 9,600,000 | 4b40a123+0497e566 | o12c1-prod | 一级回退形（=50 键两键 unset；W5 件键关=0497e566 语义等价〔FP8_MOE 口径注记见 §四〕） |
-| 47 键回退形（L2） | `~/migrate-assets/dsv41/env/PROD-R1STDLL128L2PF6O12C1-spec1.env`（**99e7ec92**） | 47 | SPEC6 同上（swa 256 在役） | 9,600,000 | 4b40a123+0497e566 | o12c1-prod | 二级回退形（R1 in-kernel 键 unset=构造性回退；FULLGATE G5 先例） |
-| （45 键深回退 L3） | PROD-R1STDLL128L2PF6（34977bf0） | 45 | 五参（无 swa256） | 9,600,000 | 零 overlay | 零 | 三级深回退（零 overlay bump boot 一次；TOOL-ANCHORS 先例） |
+| **50 键定型形（L0）** | `~/luz030-opt-campaign/arms/COMBO-C0-spec1.env`（**15767aa6**；仓内异名同值=`deploy/env/PROD-R51W5-spec1.env`） | 50 | **SPEC6 六参**=五参基座+`--swa-prefix-tails 256`（五参=`--prefill-decode-interval 16 --max-queued-requests 32 --min-free-slots-delay 1 --enable-decoder-swa-bounded-replay --reasoning-parser deepseek-v41`；KV-LIFE desk/lib.sh:11+E3A §六） | 9,600,000 | 4b40a123+**W5 件 32cf9abf** | o12c1-prod（29 活件） | **0.3.1 定型交付形**（裁定 fd5c7e5；QA31 案 A' 性能读数承接）；FL6 转正后=一级回退形 |
+| 48 键形（L1） | `~/migrate-assets/dsv41/env/PROD-R1INK48L2PF6O12C1-spec1.env`（**8c8c166d**；仓内同值=`tools/packages/cfgmgmt/payload/env/` 同名件） | 48 | SPEC6 同上 | 9,600,000 | 4b40a123+0497e566 | o12c1-prod | 二级回退形（=50 键两键 unset；W5 件键关=0497e566 语义等价〔FP8_MOE 口径注记见 §四〕） |
+| 47 键形（L2） | `~/migrate-assets/dsv41/env/PROD-R1STDLL128L2PF6O12C1-spec1.env`（**99e7ec92**；仓内同值=`tools/packages/cfgmgmt/payload/env/` 同名件） | 47 | SPEC6 同上（swa 256 在役） | 9,600,000 | 4b40a123+0497e566 | o12c1-prod | 三级回退形（R1 in-kernel 键 unset=构造性回退；FULLGATE G5 先例） |
+| （45 键深回退 L3） | PROD-R1STDLL128L2PF6（34977bf0；仓内同值=`tools/packages/cfgmgmt/payload/env/` 同名件） | 45 | 五参（无 swa256） | 9,600,000 | 零 overlay | 零 | 四级深回退（零 overlay bump boot 一次；TOOL-ANCHORS 先例） |
 
 ## 二、部署面指纹
 
