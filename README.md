@@ -92,7 +92,8 @@ docker inspect --format '{{index .RepoDigests 0}}' \
 
 ```
 docs/        定版成果：report(终版性能报告 v2)/runbook(OPS-MANUAL)/registry(FORM-REGISTRY)/
-             quality(RELEASE-QUALITY)/research(FL6+红带两大 bug 定谳档)/DEPLOY-GUIDE/ACKNOWLEDGEMENTS(占位)
+             quality(RELEASE-QUALITY)/research(FL6+红带两大 bug 定谳档)/DEPLOY-GUIDE/
+             ACKNOWLEDGEMENTS(定版 110 条：上游谱系/社区同行/官方资产/外部对照/工具田野)
 deploy/      服务面全集：env(两形)/bin(r3 链)/adapter(现役件)/overlay(o12c1-prod 29 件)/
              nccl(ring-only 库+ncclpin)/b12x(计算树)/kit(guard/instruments)/models.d(权重注册卡)/sentinel
 tools/       全树工具：packages(五包+_lib+_bake)/boot-with-slotlock/census 面板族/judge/
