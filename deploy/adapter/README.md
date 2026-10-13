@@ -29,7 +29,7 @@
   （FL6 未转正；fl6_recall.py 四机已摘除）。
 - **休眠语义**：接线后版本在**未设第 51 键**（DSV41_FL6_RECALL_FIX）时逐字
   原版行为——与 2c4baad3 配 50 键 env 行为等价，回退零成本；设键=激活
-  （值域 1/retire/retract 三态，DEPLOY-NOTES 门控表）。
+  （值域 1/retire/retract 三态，门控表=`tests/fl6-recall/DEPLOY-NOTES.md`）。
 - 变更谱系：2c4baad3（产线原形）→〔`sitecustomize-wire-v2.diff` 重放〕→
   55b1e412（本仓件）；diff 件随仓收录供审计重放。
 - **转正动作序**（呈裁落定后）：fl6_recall.py 入 adapter 位→sitecustomize 按
@@ -40,7 +40,7 @@
 
 ## 与 overlay 面的关系
 
-overlay o12c1-prod（29 活件，scheduler 5b6fe2a3 等）收录在本仓
+overlay o12c1-prod（29 件=28 活件+1 映射表，scheduler 5b6fe2a3 等）收录在本仓
 `deploy/overlay/o12c1-prod/`——派生面上游文件按上游许可（NOTICE §2），产线经
-`SGLANG_OVERLAY_DIR` 由 boot 链挂载（挂载计数断言==29）；指纹与构成=
-FORM-REGISTRY §二。
+`SGLANG_OVERLAY_DIR` 由 boot 链挂载（挂载计数断言==28，目录 29 件含 overlay-map.tsv
+自身）；指纹与构成=FORM-REGISTRY §二。
