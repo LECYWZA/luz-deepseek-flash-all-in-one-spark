@@ -46,8 +46,8 @@ ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18
 ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18/sm121/f72f37b0801895b7/rank_tp2_pp0_dp0.json
 ebef4e069f3f1bdf5787b35efdee6079  ./payload/golden/flashinfer-golden/work/0.6.18/sm121/f72f37b0801895b7/rank_tp3_pp0_dp0.json
 bb5c38ed55fd4a2451a89e48857e548b  ./payload/golden/r3-boot-arm.autotune-golden.diff
-034ec817df5b3e15feb74af525f99bb2  ./payload/out/ADAPTER-MANIFEST.regenerated
-121b28fed575c8e908100d9d264efaf2  ./payload/out/env-MANIFEST.md5
+34fe9769e2bfe7fe5a6fdb10589352a8  ./payload/out/ADAPTER-MANIFEST.regenerated
+0c65173c0e45c0c2d2c4dc7b3495dd6b  ./payload/out/env-MANIFEST.md5
 201469b125a8a0813ee07b19dbf812a0  ./payload/out/overlay-MANIFEST.md5
 13f283e4cbdb159b6b1ec1672f494bd6  ./payload/printenv-keycheck.sh
 50e23b379b9f7ffbc95dabae66c70edf  ./payload/restore-sequence.sh

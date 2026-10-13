@@ -1,7 +1,7 @@
 PKG=cfgmgmt
 PKG_VERSION=0.3.1-t4.1
-FINGERPRINT=cec6920a
-GIT_ANCHOR=5a0ea04（P5 整备提交）
+FINGERPRINT=044ad495（脱敏仓实算=ADAPTER/env 双清单终态同步后本仓集合指纹；战役仓同批=c4fb0c3e）
+GIT_ANCHOR=5a0ea04（P5 整备提交；TOOLS31-BAKE-20261013 S7b 三联动重钉——ADAPTER/env 双清单终态回填：sitecustomize 55b1e412+R51W5FL6 2ac74586 入清单）
 TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
 PAYLOAD_N=51
 RED_LINES=在役件与回退件绝不归档/adapter·overlay 真源=宿主 bind mount 面不烘焙/SITECUSTOMIZE_MD5 变量位/集合指纹正典算式

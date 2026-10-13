@@ -1,7 +1,7 @@
-# ADAPTER-MANIFEST（重生成 2026-10-13T10:20:24Z；源=/home/liux***ya/migrate-assets/dsv41/adapter）
+# ADAPTER-MANIFEST（重生成 2026-10-13T16:55:38Z；源=/home/liux***ya/migrate-assets/dsv41/adapter）
 # 口径钉（CODE31 D.3 主会话裁定承载）：29 活性 hook 面/40 挂装件（24 env 键武装+
 #   3 COMMON_ENV 键武装+1 缺省开+1 常开对）。骨架「26」数=旧计弃用。
-# SITECUSTOMIZE_MD5=d5dc42a4（**变量位**：FL6 接线后随窗重钉——工具锚引用本变量，
+# SITECUSTOMIZE_MD5=55b1e412（**变量位**：FL6 接线后随窗重钉——工具锚引用本变量，
 #   不引用硬值；当前值=生成时点实测，FL6 窗验证绿后以终值重跑本件）。
 # PENDING-FL6-FINAL：fl6_recall.py（b87cbb5e）+sitecustomize 两行 elif 钩子已入位
 #   （2026-10-13 09:36Z FL6 窗在飞）；FL6 验证窗终态后重跑本件=终态清单（回填位）。
@@ -74,16 +74,12 @@ b87cbb5ef00abf8e50510ffddffa7c40  ./fl6_recall.py
 fd03078d8b43a2936562d7256f2d1e2d  ./indexer_budget.py
 # CLASS:indexer_hoist.py|active（29 活性面物理件族）
 78a84587fba7409e914980bb3297e10e  ./indexer_hoist.py
-# CLASS:indexer_hoist.py.bak-pre-t4-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-78a84587fba7409e914980bb3297e10e  ./indexer_hoist.py.bak-pre-t4-20261007
 # CLASS:kv_fp4.py|active（29 活性面物理件族）
 feaaadd453b967f8473a381753c20e62  ./kv_fp4.py
 # CLASS:kv_fp4_repack.py|active（29 活性面物理件族）
 060be9938108cfe75741cc6f8a347011  ./kv_fp4_repack.py
 # CLASS:l2_prefetch.py|active（29 活性面物理件族）
 e8e8675d7087e71254cc9e51373cf2e3  ./l2_prefetch.py
-# CLASS:l2_prefetch.py.bak-pre-f6prime|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-e8e8675d7087e71254cc9e51373cf2e3  ./l2_prefetch.py.bak-pre-f6prime
 # CLASS:l2pf.cu|support（支撑/构建/资料件）
 cdd050019431adb0425ab4d3cccd075b  ./l2pf.cu
 # CLASS:l2pf_attn.py|inert（挂装惰性：门键不在任何键面）
@@ -96,22 +92,14 @@ cdd050019431adb0425ab4d3cccd075b  ./l2pf.cu
 9eec98f8f164d00a180f0d03de715e4d  ./librow_store.so
 # CLASS:lm_cert.py|active（29 活性面物理件族）
 995be63c0eedea9c4f4538f42aa24614  ./lm_cert.py
-# CLASS:lm_cert.py.bak-pre-t4diag|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-9349611967728d5108490cd979bc8d20  ./lm_cert.py.bak-pre-t4diag
 # CLASS:loop_abort.py|inert（挂装惰性：门键不在任何键面）
 030a8f3fbe3262d4aff87b2fbaaf61fd  ./loop_abort.py
 # CLASS:mm_alloc_hygiene.py|UNCLASSIFIED（白名单外——逐件呈报位：历史族/测量件候选，下次审查归类）
 f213dbea64504a5b13b0cd6267d8e226  ./mm_alloc_hygiene.py
-# CLASS:mm_alloc_hygiene.py.bak-pre-l0retry-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-c4eb93001bbe0dc7f57b1e26d501f696  ./mm_alloc_hygiene.py.bak-pre-l0retry-20261006
-# CLASS:mm_alloc_hygiene.py.bak-pre-t4-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-f213dbea64504a5b13b0cd6267d8e226  ./mm_alloc_hygiene.py.bak-pre-t4-20261007
 # CLASS:mm_feature_lifecycle.py|UNCLASSIFIED（白名单外——逐件呈报位：历史族/测量件候选，下次审查归类）
 0aac0402c6e306e5c6d062b35d019046  ./mm_feature_lifecycle.py
 # CLASS:mm_lifecycle_glue.py|UNCLASSIFIED（白名单外——逐件呈报位：历史族/测量件候选，下次审查归类）
 12c8705f28f4753080f3f4060393234f  ./mm_lifecycle_glue.py
-# CLASS:mm_lifecycle_glue.py.bak-pre-t4-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-12c8705f28f4753080f3f4060393234f  ./mm_lifecycle_glue.py.bak-pre-t4-20261007
 # CLASS:moe_b12x.py|inert（挂装惰性：门键不在任何键面）
 610b710cfff9189ad7ff90a0561a6f22  ./moe_b12x.py
 # CLASS:moe_b12x_next.py|active（29 活性面物理件族）
@@ -130,36 +118,8 @@ fe7d8053934e15fc9202e70d6c836a80  ./p12_assertion_graph_gather.py
 a45d82265366da9ad8c48fe5c088160f  ./prefill_empty_cache.py
 # CLASS:prefill_sp.py|active（29 活性面物理件族）
 32cf9abf0b6944fb0db6927d12d76c53  ./prefill_sp.py
-# CLASS:prefill_sp.py.bak-deepcarry-t61|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61
-# CLASS:prefill_sp.py.bak-deepcarry-t61b|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61b
-# CLASS:prefill_sp.py.bak-deepcarry-t61c|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61c
-# CLASS:prefill_sp.py.bak-deepcarry-t61d|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61d
-# CLASS:prefill_sp.py.bak-deepcarry-t61e|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61e
-# CLASS:prefill_sp.py.bak-deepcarry-t61f|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61f
-# CLASS:prefill_sp.py.bak-deepcarry-t61g|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61g
-# CLASS:prefill_sp.py.bak-deepcarry-t61h|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61h
-# CLASS:prefill_sp.py.bak-deepcarry-t61i|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t61i
-# CLASS:prefill_sp.py.bak-deepcarry-t62|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t62
-# CLASS:prefill_sp.py.bak-deepcarry-t62b|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t62b
-# CLASS:prefill_sp.py.bak-deepcarry-t62c|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-065d158b2f3c6b7e4bae809d40d38f58  ./prefill_sp.py.bak-deepcarry-t62c
-# CLASS:prefill_sp.py.bak-pre-t4-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-0497e566247cbe306e307b4e8b2006a9  ./prefill_sp.py.bak-pre-t4-20261007
 # CLASS:prefill_sp.py.bak-r1recert|bak（历史备份——RECIPE 排除清单恒拒入镜像）
 0497e566247cbe306e307b4e8b2006a9  ./prefill_sp.py.bak-r1recert
-# CLASS:prefill_sp.py.bak-v1rs-prod|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-6dae6ba654ddbdaa1d2583bae0cacf6f  ./prefill_sp.py.bak-v1rs-prod
 # CLASS:probe_a23_ar_parity.py|UNCLASSIFIED（白名单外——逐件呈报位：历史族/测量件候选，下次审查归类）
 052ceb37c0040067f8dad73c2fd8a7de  ./probe_a23_ar_parity.py
 # CLASS:reference_impl.py|UNCLASSIFIED（白名单外——逐件呈报位：历史族/测量件候选，下次审查归类）
@@ -170,8 +130,6 @@ a45d82265366da9ad8c48fe5c088160f  ./prefill_empty_cache.py
 70f3bf8d7262e7f9b182309a48ccd291  ./replay_guard.py
 # CLASS:replicated_split.py|active（29 活性面物理件族）
 49b9bd2aaafb7ee731db0433a8c7af6e  ./replicated_split.py
-# CLASS:replicated_split.py.bak-pre-f6prime|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-49b9bd2aaafb7ee731db0433a8c7af6e  ./replicated_split.py.bak-pre-f6prime
 # CLASS:roce_ar.py|active（29 活性面物理件族）
 932fe12b5736959afa0a257e15c16acd  ./roce_ar.py
 # CLASS:roce_gather.py|active（29 活性面物理件族）
@@ -189,47 +147,13 @@ f012b36343939c277144c75a1eb10324  ./row_store.cpp
 # CLASS:shared_pad_k.py|active（29 活性面物理件族）
 ff392acfe559fe823a9d6e0180f5da88  ./shared_pad_k.py
 # CLASS:sitecustomize.py|loader（装载缝+横幅面；指纹=SITECUSTOMIZE_MD5 变量位）
-d5dc42a4a7098b9d3d80e6682bca7c8d  ./sitecustomize.py
-# CLASS:sitecustomize.py.bak-ih-indexer-hoist|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-f148259120002ba5fdd8ed374dfc5e6a  ./sitecustomize.py.bak-ih-indexer-hoist
-# CLASS:sitecustomize.py.bak-p0-prefill-sp|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-92aaa2fff55d688bac6d8b9446a87316  ./sitecustomize.py.bak-p0-prefill-sp
-# CLASS:sitecustomize.py.bak-pre-a23e0-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-a23e0-20261007
-# CLASS:sitecustomize.py.bak-pre-c24-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-c24-20261006
-# CLASS:sitecustomize.py.bak-pre-f5prime-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-f5prime-20261007
-# CLASS:sitecustomize.py.bak-pre-gaugeab|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-gaugeab
-# CLASS:sitecustomize.py.bak-pre-k1|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-8c2c8b143c3d670f5784c6aaa55dd53f  ./sitecustomize.py.bak-pre-k1
-# CLASS:sitecustomize.py.bak-pre-l0-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-l0-20261006
-# CLASS:sitecustomize.py.bak-pre-l1f5-20261007|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-l1f5-20261007
-# CLASS:sitecustomize.py.bak-pre-o13-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-o13-20261006
-# CLASS:sitecustomize.py.bak-pre-o13b-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-o13b-20261006
-# CLASS:sitecustomize.py.bak-pre-r1|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-8c2c8b143c3d670f5784c6aaa55dd53f  ./sitecustomize.py.bak-pre-r1
-# CLASS:sitecustomize.py.bak-pre-t17-20261006|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-91adc83d541a0f7b1975aef161b6f84f  ./sitecustomize.py.bak-pre-t17-20261006
-# CLASS:sitecustomize.py.bak-preroce-c1|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-523730bdbb53134eff4bbf6a15ac9fdd  ./sitecustomize.py.bak-preroce-c1
+55b1e412e867d4b20891ec6ba8ee0194  ./sitecustomize.py
 # CLASS:sitecustomize.py.f6-lmcert|support（杂项）
 6e1dc3ac007b302271b614abef8ccf9c  ./sitecustomize.py.f6-lmcert
 # CLASS:skip_nonfinal_decoder.py|active（29 活性面物理件族）
 e7dc1c44f30569876ef5f73db7499539  ./skip_nonfinal_decoder.py
 # CLASS:spark_prefill_split.py|inert（挂装惰性：门键不在任何键面）
 eb53ea124e09da51224d7c066a69fa46  ./spark_prefill_split.py
-# CLASS:spark_prefill_split.py.bak-eb53ea12|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-eb53ea124e09da51224d7c066a69fa46  ./spark_prefill_split.py.bak-eb53ea12
-# CLASS:spark_prefill_split.py.bak-s2b-eb53ea12|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-eb53ea124e09da51224d7c066a69fa46  ./spark_prefill_split.py.bak-s2b-eb53ea12
-# CLASS:spark_prefill_split.py.bak-s3-eb53ea12|bak（历史备份——RECIPE 排除清单恒拒入镜像）
-eb53ea124e09da51224d7c066a69fa46  ./spark_prefill_split.py.bak-s3-eb53ea12
 # CLASS:sparse_wire.py|active（29 活性面物理件族）
 d57656d29906b3c2d5b9b8e06da4183d  ./sparse_wire.py
 # CLASS:spec_sync_free.py|active（29 活性面物理件族）
