@@ -48,7 +48,7 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 |---|---|---|
 | `deploy/bin/` | `~/migrate-assets/bin/` | r3-boot-arm.sh 部署链（md5 c051bb41）+gate 四件+stop/watchdog |
 | `deploy/adapter/` | `~/migrate-assets/dsv41/adapter/` | 供给面整面快照 **83 件/约 3.0M**（B1 收录 2026-10-13：顶层 68+fi_r1/ 6+lib/ 1+overlay/ 3+tests/ 5；sitecustomize 55b1e412 装载缝+闭包 48 件+留役休眠件+`.so`/json/构建源；排除 `*.bak*` 39+变体 1+EP1 陈旧清单 2——收录口径与排除名单逐件=`deploy/adapter/README.md`，逐件 md5=`deploy/adapter/MANIFEST.md5`） |
-| `deploy/env/` | `~/migrate-assets/dsv41/env/` | 50 键现役形+51 键 FL6 形 |
+| `deploy/env/` | `~/migrate-assets/dsv41/env/` | 51 键 FL6 现役定版形+50 键一级回退形 |
 | `deploy/overlay/o12c1-prod/` | `~/migrate-assets/v4vl/sglang-overlay.o12c1-prod/`（=`SGLANG_OVERLAY_DIR`） | 29 件=28 活件影子挂载+1 映射表（scheduler 5b6fe2a3 等；boot 链挂载计数断言==28——r3-boot-arm.sh `ov_n` 门；目录 29 件含 overlay-map.tsv 自身） |
 | `deploy/nccl/nccl-ringonly/`+`ncclpin.so` | `~/migrate-assets/nccl-ringonly/`+`~/migrate-assets/ncclpin.so` | ring-only NCCL 2.30.7+pin 件（只读挂载 /opt） |
 | `deploy/b12x/` | `~/migrate-assets/b12x/` | b12x/b12x_next MoE 计算树（boot 硬前置） |
@@ -60,16 +60,18 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 （adapter/NCCL/b12x_next/分片/权重五项在场，:165）→env/serve/adapter 三元组
 对表 FORM-REGISTRY。
 
-## 6. env 形选择（51 键 FL6 转正在飞）
+## 6. env 形选择（51 键 FL6 现役定版）
 
 | 形 | 件/md5 | 适用 |
 |---|---|---|
-| **50 键现役形**（缺省） | `PROD-R51W5-spec1.env` / 15767aa6 | 0.3.1 定型交付形（当前产线在役） |
-| **51 键 FL6 形**（转正在飞） | `PROD-R51W5-FL6FIX-spec1.env` / 2ac74586 | FL6 召回修复呈裁通过后启用；**状态=部分绿呈裁位（2026-10-13 验证窗），终值回填位=呈裁落定后本表+`deploy/adapter/README.md` 时点注记更新** |
+| **51 键 FL6 形（现役定版）** | `PROD-R51W5-FL6FIX-spec1.env` / 2ac74586（服务器在役位名=`PROD-R51W5FL6-spec1.env`，同 md5 异名） | FL6 召回修复**转正在役形**（FL6-PROMO 窗 2026-10-13 闭 GREEN：cp30 召回锚位 99.95%+DE 82.17 实役直证，8899=200 在役健康）——**当前产线在役** |
+| **50 键形（一级回退）** | `PROD-R51W5-spec1.env` / 15767aa6 | 0.3.1 定型交付形；FL6 转正后**降为一级回退**（摘第 51 键即得，sitecustomize 休眠=逐字原版行为） |
 
-serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。回退链 50→48→47 键三级
-（OPS-MANUAL 第三章逐级动作序）。adapter 的 sitecustomize 本仓件=FL6 接线后
-稳定版（未设 51 键=休眠逐字原版，两形通用）。
+serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→50→48→47 键
+四级（48/47/45 键件在 `tools/packages/cfgmgmt/payload/env/`；OPS-MANUAL 第三章
+逐级动作序）；FL6 面另有两级回退（一级摘键休眠/二级摘接线回 2c4baad3，动作序=
+`deploy/adapter/README.md`）。adapter sitecustomize 本仓件=55b1e412 现役定版
+（未设 51 键=休眠逐字原版，两形通用）。
 
 ## 7. boot 与四查
 
