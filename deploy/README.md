@@ -22,10 +22,12 @@ dsv41/env/）。
 50 键定型形 serve 参谱=**SPEC6**（五参基座+swa256），全文与用法见
 [SPEC6-SERVE-REF.md](SPEC6-SERVE-REF.md)。
 
-## adapter/ — 现役件快照
+## adapter/ — 供给面整面快照（B1 收录 2026-10-13）
 
-五件+fi_r1/ 六件（R1 八件面 4b40a123 构成+W5 件+FL6 件+库版 split 件）。
-逐件 md5 与 FL6 接线时点注记见 [adapter/README.md](adapter/README.md)。
+**83 件/约 3.0M**（顶层 68+fi_r1/ 6+lib/ 1+overlay/ 3+tests/ 5；sitecustomize 55b1e412
+装载缝+boot 装载闭包 48 件+留役休眠件 10+`.so` 运行库+dspark_sps 表+构建源）。
+收录口径（剔 `*.bak*` 39+变体 1+EP1 陈旧清单 2）与排除名单逐件、FL6 终值注记见
+[adapter/README.md](adapter/README.md)；逐件 md5=[adapter/MANIFEST.md5](adapter/MANIFEST.md5)。
 
 ## bin/ — r3-boot-arm.sh 部署链
 
