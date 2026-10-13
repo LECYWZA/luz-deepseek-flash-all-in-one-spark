@@ -73,8 +73,9 @@
 API_KEY 一律 `grep` 自宿主在役 env 文件（`.env.tp4-600k` 等，umask 077 面）——
 机制引用零值；该类宿主件不在仓（N7 清点直证）。
 
-**ssh-password-login-20261013/ 工具件专项**：四脚本+README=sshd 配置运维件
-（就地改 99-hardening.conf 两值+备份回退+pty 判死验证）；口令仅经 `~/.sudopw`
+**ssh-password-login-20261013/ 工具件专项**：三脚本+README=sshd 配置运维件
+（就地改 99-hardening.conf 两值+备份回退+pty 判死验证；初版撤除用一次性修正
+脚本已随 M4 去过程史删除——2026-10-13）；口令仅经 `~/.sudopw`
 机制通道，输出一律 `***` 替换；零凭据值、零配置内容泄点（备份件在宿主
 /var/backups）。保留处置。
 
