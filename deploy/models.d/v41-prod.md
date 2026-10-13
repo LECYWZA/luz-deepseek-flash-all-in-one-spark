@@ -1,5 +1,12 @@
 # v41-prod · DeepSeek-V4.1-Flash（生产在役）注册卡 — 2026-10-06
 
+> **【0.3.1 交付仓注记 2026-10-13】本卡 §c/§d 的「现役产 env/boot 形」为 0.3.0-R1
+> 时代快照（36 键 b7e318e0+五参+sitecustomize 91adc83d），已被 0.3.1 定型形取代：
+> 现役=50 键 PROD-R51W5-spec1.env（15767aa6）+SPEC6 六参+sitecustomize 见
+> `deploy/adapter/README.md` 时点注记；权威三元组表=`docs/registry/FORM-REGISTRY-031.md`
+> §一，boot 链实参=`deploy/bin/r3-boot-arm.sh`。§a 权重身份指纹/§b 四机路径/§e 锚带
+> 不受影响（权重未变更）。历史行原样保留（快照不回改律）。**
+
 > models.d 注册表卡。字段制=MULTIMODEL-GOV-CARD-20261004 §2.4（案头草案定稿形）；
 > 闭案法源=CD3-LINED-CARDS-20261006 卡二。誊录源=CHECKPOINT-LUZ030-R1-20261005
 > §一/§二/§三（v41 指纹与锚带）+GOV-CARD §1.1/§1.3（四机拓扑/身份指纹）。数字零手誊。
