@@ -49,7 +49,7 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 | `deploy/bin/` | `~/migrate-assets/bin/` | r3-boot-arm.sh 部署链（md5 c051bb41）+gate 四件+stop/watchdog |
 | `deploy/adapter/` | `~/migrate-assets/dsv41/adapter/` | 现役件快照（sitecustomize 55b1e412 等 11 件；逐件锚=`deploy/adapter/README.md`） |
 | `deploy/env/` | `~/migrate-assets/dsv41/env/` | 50 键现役形+51 键 FL6 形 |
-| `deploy/overlay/o12c1-prod/` | `~/migrate-assets/v4vl/sglang-overlay.o12c1-prod/`（=`SGLANG_OVERLAY_DIR`） | 29 活件影子挂载（scheduler 5b6fe2a3 等；挂载计数断言==29） |
+| `deploy/overlay/o12c1-prod/` | `~/migrate-assets/v4vl/sglang-overlay.o12c1-prod/`（=`SGLANG_OVERLAY_DIR`） | 29 件=28 活件影子挂载+1 映射表（scheduler 5b6fe2a3 等；boot 链挂载计数断言==28——r3-boot-arm.sh `ov_n` 门；目录 29 件含 overlay-map.tsv 自身） |
 | `deploy/nccl/nccl-ringonly/`+`ncclpin.so` | `~/migrate-assets/nccl-ringonly/`+`~/migrate-assets/ncclpin.so` | ring-only NCCL 2.30.7+pin 件（只读挂载 /opt） |
 | `deploy/b12x/` | `~/migrate-assets/b12x/` | b12x/b12x_next MoE 计算树（boot 硬前置） |
 | `deploy/kit/` | `~/w6-kit/`（或烘入 /opt/dsv41/kit/） | guard 守卫族+instruments 量具+adr（oom-gate 面单元让位 selfheal 包） |
@@ -73,7 +73,7 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。回退链 50→48→47
 
 ## 7. boot 与四查
 
-1. 点火：`ARM_TAG=<tag> ARM_ENV_FILE=<env 件> bash tools/boot-with-slotlock.sh bash ~/migrate-assets/bin/r3-boot-arm.sh`（靴槽锁+四机容器净核）。
+1. 点火：`ARM_TAG=<tag> ARM_ENV_FILE=<env 件> bash tools/boot-with-slotlock.sh bash ~/migrate-assets/bin/r3-boot-arm.sh`（靴槽锁+四机容器净核）。注：wrapper 缺省锁位=`~/luz030-opt-campaign/.slot-lock`（`CAMPAIGN=<目录>` 环境变量可覆写；全新机器无该目录时先 `mkdir -p` 或设 CAMPAIGN 指向任一可写目录，否则锁文件打开失败即拒起）。
 2. 沉降 600s 律（前栈拆靴→点火 ≥600s）。
 3. **四查**：①health GET 200；②printenv 四机真键核（与 env 件逐字）；③横幅直读（banner29+W5/R1/O12 armed 态）；④面指纹四机全等（adapter 面 md5 表对表）。
 4. warm 请求步 64k×2 第一动作→warm 门（64k×3 中位 ≥4500 绿/≥5000 入役绿线）。
