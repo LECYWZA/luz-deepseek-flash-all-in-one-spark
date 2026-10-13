@@ -1,0 +1,9 @@
+# ARGV-PAIR-REGISTRY.template.tsv — 拍扁 argv 双登记表（TOOLS31 §5.3 成对律；TSV）
+# 律：凡拍扁烘入镜像的 argv/环境键面必须**双登记成对**——RECIPE 载荷表一行+镜像内
+#     IMAGE-IDENTITY 一行（键→值→来源注入面）；且外部注入面保持优先（SPEC_EXTRA_ARGS
+#     :396-398 注入+ARM_ENV_FILE 尾部覆盖律不因烘焙失效）。
+# 对表核（四机冒烟）：printenv+横幅双核；镜像内置 vs 实际生效差集=外部注入面留痕行逐差注记来源；
+# 双源漂移（镜像内置≠定谳 env 件且无注入覆盖）=红（DEPLOY-SPLIT 前科族）。
+# 列：键	镜像内置缺省值	定谳 env 件值（50 键形）	外部注入面	成对位（RECIPE 节+IMAGE-IDENTITY 节）	冒烟核对法
+#SAMPLE_SERVER_ARGS	<填>	<填>	SPEC_EXTRA_ARGS 注入（r3-boot-arm :396-398）	§二+§拍扁表	printenv+横幅双核
+#SAMPLE_COMMON_ENV_KEY	<填>	<填>	ARM_ENV_FILE 尾部覆盖	§二+§拍扁表	printenv 真键核（cfgmgmt keycheck）

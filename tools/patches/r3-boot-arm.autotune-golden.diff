@@ -1,0 +1,181 @@
+--- a/migrate-assets/bin/r3-boot-arm.sh
++++ b/migrate-assets/bin/r3-boot-arm.sh
+@@ -44,6 +44,35 @@
+ WORKER_CTN="${CTN_PREFIX}-worker"
+ MOUNT_TGT="/models/DeepSeek-V4.1-Flash"
+ 
++# ── FlashInfer autotune golden 表（AUTOTUNE-GOLDEN-20260930；缺省全惰性）────
++# fin2 0.2.8 遗留病在新基座的形态：autotune 表只活在容器层（/root/.cache/sglang/
++# flashinfer/autotune/ 无宿主挂载 ⇒ docker rm 即失），每靴全量重调优 ⇒ 靴间
++# tactic 彩票（A1-D3 c8-16 +3% / U31 wall +2.1% 反复判 boot 噪声的候选方差源）。
++# stock main 已自带表机制（sglang/srt/model_executor/runner/flashinfer_autotune.py:
++# 137-175 路径=$SGLANG_CACHE_DIR/flashinfer/autotune/<fi_ver>/<arch>/<key16>/
++# rank_tp<r>_pp<p>_dp<d>.json；SGLANG_FLASHINFER_AUTOTUNE_CACHE 缺省 True=
++# environ.py:1095；上下文退出无条件 save_configs=flashinfer_autotune.py:297-298），
++# 缺的只是宿主持久位+四秩自审。本段不改引擎行为，只补资产面：
++#   捕获 AUTOTUNE_CAPTURE=1：空 work 挂载让引擎产新表，靴后四机采收冻结 MANIFEST；
++#   生产 AUTOTUNE_GOLDEN=1 ：golden→work 种子 + 四秩（含 rank0）在位/加载自审。
++# 两门都关时零行为差（无新挂载/无新 env/无新检查）。门变量是启动器 env，
++# 不走 ARM_ENV_FILE（那只进容器 env，启动器侧不生效）。
++AUTOTUNE_GOLDEN="${AUTOTUNE_GOLDEN:-0}"
++AUTOTUNE_CAPTURE="${AUTOTUNE_CAPTURE:-0}"
++AT_GOLDEN_DIR="${AUTOTUNE_GOLDEN_DIR:-$HOME/migrate-assets/flashinfer-golden}"
++AT_TABLE="$AT_GOLDEN_DIR/table"        # 金文库（冻结；四机同步，同 adapter 纪律）
++AT_MANIFEST="$AT_GOLDEN_DIR/MANIFEST.json"
++AT_MD5="$AT_GOLDEN_DIR/table.md5"      # md5sum -c 格式，覆盖 table/**
++AT_WORK="$AT_GOLDEN_DIR/work"          # 每靴 rw 副本（挂进容器；golden 本体永不挂载）
++AT_REL=""                              # <fi_ver>/<arch>/<key16>（从 MANIFEST 读）
++if [[ "$AUTOTUNE_GOLDEN" == "1" && "$AUTOTUNE_CAPTURE" == "1" ]]; then
++  die "AUTOTUNE_GOLDEN 与 AUTOTUNE_CAPTURE 互斥（先捕获靴产表，再生产靴用表）"
++fi
++AT_ON=0; [[ "$AUTOTUNE_GOLDEN" == "1" || "$AUTOTUNE_CAPTURE" == "1" ]] && AT_ON=1
++at_remote() {  # at_remote <ssh目标|-> <cmd>——cmd 内 $AT_* 由本侧展开（四机同用户同路径）
++  if [[ "$1" == "-" ]]; then bash -c "$2"; else ssh "${SSH_OPTS[@]}" "$1" "$2"; fi
++}
++
+ info() { printf '[+] %s\n' "$*"; }
+ warn() { printf '[!] %s\n' "$*" >&2; }
+ die()  { printf '[x] %s\n' "$*" >&2; exit 1; }
+@@ -138,6 +167,40 @@
+   info "  $_h 资产面 OK"
+ done
+ 
++# ── 3.5 autotune golden 四秩预检 + work 种子（含 rank0——fin2 病根=只查 worker）──
++if (( AT_ON )); then
++  info "== autotune golden 预检（四秩含 rank0）=="
++  if [[ "$AUTOTUNE_GOLDEN" == "1" ]]; then
++    [[ -f "$AT_MANIFEST" && -f "$AT_MD5" ]] \
++      || die "golden 缺 MANIFEST/table.md5（$AT_GOLDEN_DIR）——先 AUTOTUNE_CAPTURE=1 捕获并四机同步"
++    # 代际门：跨镜像/flashinfer 版本的旧表会被 load_configs 整表硬拒
++    # （autotuner.py:2657+ _metadata 六字段硬失配=静默跳过→靴内重调优）。
++    [[ "$(python3 -c "import json;print(json.load(open('$AT_MANIFEST'))['image'])")" == "$IMAGE" ]] \
++      || die "golden 表属别的镜像（MANIFEST.image≠$IMAGE）——冻结纪律：重新捕获，禁复用"
++    AT_REL="$(python3 -c "import json;m=json.load(open('$AT_MANIFEST'));print('%s/%s/%s'%(m['fi_version'],m['arch'],m['cache_key']))")"
++    [[ -n "$AT_REL" ]] || die "MANIFEST 解析失败（fi_version/arch/cache_key）"
++    # 四机在位+内容一致（head=rank0 本地查；worker 逐台 ssh 查——启动器级四秩自审）
++    at_check() { at_remote "$1" "cd '$AT_GOLDEN_DIR' && md5sum -c table.md5 --quiet" >/dev/null 2>&1; }
++    at_check - || die "head(rank0) golden 表在位/md5 核验失败（fin2 假阳性病位：rank0 缺表毒化整组）"
++    info "  rank0 @ head golden OK（$AT_REL）"
++    for w in "${WORKERS[@]}"; do
++      IFS='|' read -r rk _h _ip _ _ _ph <<<"$w"
++      at_check "$_h" || die "rank$rk@$_h golden 表在位/md5 核验失败——四机同步后再起（拒起=防缺表秩进 TP 锁步）"
++      info "  rank$rk @ $_h golden OK"
++    done
++    # 种子 work（rw）：save_configs 每上下文退出无条件重写 + 分化 unlink
++    # （flashinfer_autotune.py:247）都落在 work 副本内，golden 本体零接触。
++    at_seed() { at_remote "$1" "rm -rf '$AT_WORK' && mkdir -p '$AT_WORK' && cp -a '$AT_TABLE/.' '$AT_WORK/'"; }
++  else
++    at_seed() { at_remote "$1" "rm -rf '$AT_WORK' && mkdir -p '$AT_WORK'"; }  # 捕获：空表冷调
++  fi
++  at_seed - || die "head work 种子失败"
++  for w in "${WORKERS[@]}"; do IFS='|' read -r _rk _h _ip _ _ _ph <<<"$w"
++    at_seed "$_h" || die "$_h work 种子失败"; done
++  info "  work 副本就绪（rw 挂载 → /root/.cache/sglang/flashinfer/autotune）"
++fi
++
++
+ # ── 4. 公共面 ────────────────────────────────────────────────────────────────
+ DOCKER_HW=(
+   --network host --ipc host --privileged --cap-add IPC_LOCK --gpus all
+@@ -280,6 +343,16 @@
+   info "[overlay] $SGLANG_OVERLAY_DIR → 28 件影子挂载至 $SGLANG_PKG_ROOT/sglang（四秩同挂）"
+ fi
+ 
++# ── autotune golden 挂载面（AT_ON 才注入；缺省零行为差）──
++# 注：必须 rw。save_configs 在每个 autotune 上下文退出时无条件重写表
++# （flashinfer_autotune.py:297-298），ro 挂载会在 tempfile.mkstemp 即崩。
++if (( AT_ON )); then
++  DOCKER_HW+=(-v "$AT_WORK":/root/.cache/sglang/flashinfer/autotune:rw)
++  # 显式钉住表复用（缺省本就是 True=environ.py:1095；显式=防未来缺省翻转后静默退化为 runs/ 一次性表）
++  COMMON_ENV+=(-e SGLANG_FLASHINFER_AUTOTUNE_CACHE=1)
++  info "[autotune-golden] mode=${AUTOTUNE_CAPTURE:+capture}${AUTOTUNE_GOLDEN:+prod} work=$AT_WORK"
++fi
++
+ SERVER_ARGS=(
+   --model-path "$MOUNT_TGT"
+   --served-model-name deepseek-v4.1-flash
+@@ -373,6 +446,84 @@
+   if curl -fsS --max-time 3 "http://127.0.0.1:${API_PORT}/health" >/dev/null 2>&1; then
+     info "== R3 栈 UP：http://$HEAD_IP:$API_PORT（main+pread engram，spec=$SPEC）=="
+     docker logs "$HEAD_CTN" 2>&1 | grep -E 'full_token|max_total|KV cache|token.*pool' | tail -5 || true
++    # ── 7.5 autotune 四秩加载自审（AT_ON；证据行=每秩自身 boot log）──
++    # 证据链：per-rank "Running FlashInfer autotune with cache: …rank_tp<r>_pp…" 必现
++    # （flashinfer_autotune.py:263，plain logger.info 每进程各打一条）；
++    # "per-rank caches disagree"=表分化 unlink 已发生（flashinfer_autotune.py:242-247）；
++    # 生产靴出现 "[AutoTuner]: Tuning "进度条=golden 未全覆盖该桶、靴内补调优（WARN）。
++    if (( AT_ON )); then
++      info "== autotune 四秩自审（含 rank0）=="
++      at_rank_audit() {  # <rank> <target|->  → 0 绿 / 1 红
++        local rk="$1" tgt="$2" log=""
++        if [[ "$tgt" == "-" ]]; then log="$(docker logs "$HEAD_CTN" 2>&1)"; else log="$(ssh "${SSH_OPTS[@]}" "$tgt" "docker logs $WORKER_CTN" 2>&1)"; fi
++        if ! grep -q "Running FlashInfer autotune with cache: .*rank_tp${rk}_pp" <<<"$log"; then
++          warn "rank$rk boot log 无 autotune cache 证据行（表未按秩加载）"; return 1; fi
++        if grep -q "per-rank caches disagree" <<<"$log"; then
++          warn "rank$rk 报告四秩表分化（divergence unlink+重调优已发生）"; return 1; fi
++        if [[ "$AUTOTUNE_GOLDEN" == "1" ]] && grep -q "\[AutoTuner\]: Tuning " <<<"$log"; then
++          warn "rank$rk 靴内补调优（golden 未全覆盖，已写入 work 副本——采收补冻或接受 WARN）"; fi
++        return 0
++      }
++      at_red=0
++      at_rank_audit 0 - || at_red=1
++      for w in "${WORKERS[@]}"; do IFS='|' read -r rk _h _ip _ _ _ph <<<"$w"
++        at_rank_audit "$rk" "$_h" || at_red=1; done
++      if (( at_red )); then dump_all; die "autotune 四秩自审红——缺表秩毒化 TP 锁步（fin2 病形态），拒交付"; fi
++      info "四秩 autotune 证据行齐全（rank0-3 全绿）"
++      # 表漂移回查：work 内本秩文件 md5 对 golden（重写=补调优/代际翻转）
++      if [[ "$AUTOTUNE_GOLDEN" == "1" ]]; then
++        at_ver_now="$(at_remote - "ls '$AT_WORK'" | head -1)"
++        [[ "$at_ver_now" == "${AT_REL%%/*}" ]] \
++          || warn "work 出现新版本目录 $at_ver_now≠${AT_REL%%/*}——flashinfer 代际已变，表被整表拒载+重调优：按冻结纪律重新捕获"
++        g0="$(grep "rank_tp0_" "$AT_MD5" 2>/dev/null | awk '{print $1}')"
++        w0="$(at_remote - "md5sum '$AT_WORK/$AT_REL/rank_tp0_pp0_dp0.json' 2>/dev/null" | awk '{print $1}')"
++        [[ -n "$g0" && "$g0" == "$w0" ]] || warn "rank0 work 表 md5 漂移（$w0 vs $g0）——本靴有重写，评估是否补冻"
++      fi
++    fi
++    # ── 7.6 捕获采收（AUTOTUNE_CAPTURE=1）：四机 work 表 → golden+MANIFEST ──
++    if [[ "$AUTOTUNE_CAPTURE" == "1" ]]; then
++      info "== autotune golden 捕获采收（四机 rank_tp0-3）=="
++      mkdir -p "$AT_TABLE"
++      at_got=0
++      at_pull() {  # <rank> <target|->：把该秩 work 表收进 golden（保 relpath）
++        local rk="$1" tgt="$2" rel
++        rel="$(at_remote "$tgt" "find '$AT_WORK' -name 'rank_tp${rk}_pp*_dp0.json' | head -1")"
++        [[ -n "$rel" ]] || { warn "rank$rk work 表未找到（该秩未落表？）"; return 1; }
++        rel="${rel#"$AT_WORK"/}"
++        mkdir -p "$AT_TABLE/$(dirname "$rel")"
++        at_remote "$tgt" "cat '$AT_WORK/$rel'" > "$AT_TABLE/$rel" || return 1
++        info "  rank$rk ← ${rel}"
++      }
++      at_pull 0 - && at_got=$((at_got+1))
++      for w in "${WORKERS[@]}"; do IFS='|' read -r rk _h _ip _ _ _ph <<<"$w"
++        at_pull "$rk" "$_h" && at_got=$((at_got+1)); done
++      (( at_got == 4 )) || { warn "只收到 $at_got/4 秩表——golden 未冻结（查上告警）"; }
++      if (( at_got == 4 )); then
++        ( cd "$AT_GOLDEN_DIR" && find table -name '*.json' | sort | xargs md5sum > table.md5 )
++        AT_FIRST="$(find "$AT_TABLE" -name 'rank_tp0_pp0_dp0.json' | head -1)"
++        python3 - "$AT_MANIFEST" "$AT_FIRST" "$IMAGE" <<'PYEOF'
++import json, sys, os, glob, datetime
++mani_p, first, image = sys.argv[1], sys.argv[2], sys.argv[3]
++rel = os.path.relpath(first, os.path.dirname(mani_p))          # table/<ver>/<arch>/<key>/rank_tp0…json
++fi_ver, arch, key = rel.split(os.sep)[1:4]
++meta = json.load(open(first)).get("_metadata", {})
++entries = {}
++for f in sorted(glob.glob(os.path.join(os.path.dirname(mani_p), "table", fi_ver, arch, key, "rank_tp*.json"))):
++    d = json.load(open(f))
++    entries[os.path.basename(f)] = len([k for k in d if not k.startswith("_")])
++json.dump({"created": datetime.datetime.now().isoformat(timespec="seconds"),
++           "image": image, "fi_version": fi_ver, "arch": arch, "cache_key": key,
++           "entries": entries, "metadata": meta,
++           "note": "冻结纪律：image/fi_version 任一变化=重新捕获（load_configs _metadata 硬门）"},
++          open(mani_p, "w"), indent=2, ensure_ascii=False)
++print("  MANIFEST: fi=%s arch=%s key=%s entries=%s gpu=%s" % (fi_ver, arch, key, entries, meta.get("gpu")))
++PYEOF
++        info "golden 冻结完成：$AT_GOLDEN_DIR（MANIFEST.json+table.md5）"
++        info "四机同步（手动执行，同 adapter 六件纪律）："
++        for w in "${WORKERS[@]}"; do IFS='|' read -r _rk _h _ip _ _ _ph <<<"$w"
++          info "  rsync -a $AT_GOLDEN_DIR/ $_h:$AT_GOLDEN_DIR/"; done
++      fi
++    fi
+     exit 0
+   fi
+   st="$(docker inspect -f '{{.State.Status}}' "$HEAD_CTN" 2>/dev/null)"

@@ -1,0 +1,17 @@
+01e992a7fcad6a497dc0a0bcd3b1575c  BASELINE.md
+866e519703289e5e4b112dc31069f64b  README.md
+eccee99a46fda8ce9f4f0d4a95aef4c6  clock-sm-guard.sh
+3e6f1957ced214507881b48142ad851d  flashinfer-arch-guard.sh
+80fe2bf8c0d49f7b8d47877264992a04  gate_archive.sh
+d29ffa1446a3680bb0e963a28e2a8773  gen_probe.sh
+9a3b8045f2fac6afd1a012e61ecdbc93  guard-onstart.sh
+4c3aaf6bd9984abac9e0da7d035cc226  guardctl.sh
+677054454a3344904a215e6758bca5e0  guards.conf
+3fec0c89f24ef2aba8d69c34d00958a0  jit-header-refresh.sh
+8490a4169e3468c0cef36ca3bc5e106d  jit_refresh_exec.py
+3ad6c3ef03fb29b231309aa8a52e7ec7  journal_watch.sh
+64414cd61885a1199ec97c834ce54c57  overlay-drift-check.sh
+48012d56d77083a622edbc2b1c29078f  probe_deps_closure.py
+8fcbe7cbf29972ea0d9f4e5980b735bb  refresh-md5sums.sh
+bb6e48ec0848c32892c369fb398ac3b0  verify-governance.sh
+6db774bbcb8be4682798cee74c7fc17b  wedge-watch.sh
