@@ -12,8 +12,10 @@
 | `PROD-R51W5-FL6FIX-spec1.env` | 51 | 2ac74586 | **FL6 转正在飞**（50 键逐字+第 51 键 DSV41_FL6_RECALL_FIX=1）——转正即用形，呈裁后经 boot 生效；机理档=`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`；呈裁全档=战役仓 docs/research/FL6-FIX-RESULT-20261013.md（归档位） |
 
 回退链两级（自 50 键在役形）：48 键 PROD-R1INK48L2PF6O12C1（8c8c166d）→
-47 键 PROD-R1STDLL128L2PF6O12C1（99e7ec92）——两件在 migrate-assets env 库
-（战役仓 TOOL-ANCHORS 产线复原目标行），本仓不重复收录。
+47 键 PROD-R1STDLL128L2PF6O12C1（99e7ec92）+深回退 45 键 PROD-R1STDLL128L2PF6
+（34977bf0）——三件随仓收录=`tools/packages/cfgmgmt/payload/env/`（cfgmgmt 包
+回退链库，md5 对表 FORM-REGISTRY-031 §一全中；服务器在役位=~/migrate-assets/
+dsv41/env/）。
 
 ## SPEC6-SERVE-REF.md — serve 六参
 
