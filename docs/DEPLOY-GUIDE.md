@@ -29,7 +29,7 @@
 见 [README §二](../README.md#二镜像下载内网-registry-直链)：现役基座
 `192.168.5.187:5000/lmsysorg/sglang:main-79cafec0`（48.6GB，
 sha256 `0f075735…cf3ae`）。四机 `docker pull` 后以 RepoDigest 对表指纹。
-VL/0731 兼容模型镜像同节（vllm-openai 两形+dsv41-sglang-optimized 谱系）。
+VL 线已切 SGLang 单基座（vLLM 两形移历史/备份注记，见 README §二尾注）。
 
 ## 4. 权重目录布局
 
@@ -54,9 +54,11 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 | 本仓 | 服务器落位 | 说明 |
 |---|---|---|
 | `deploy/bin/` | `~/migrate-assets/bin/` | r3-boot-arm.sh 部署链（md5 c051bb41）+gate 四件+stop/watchdog |
+| `deploy/bin/boot_mvl41_native.sh`+`boot_mvl40exp_r2.sh`+`vl_smoke_gv1.py` | `~/luz030-opt-campaign/dev/vl-native/`（战役位；或任意可写位+`CAMP=` 覆写） | VL-NATIVE 窗执行件（2026-10-13 全绿收录）：V4.1 原生视觉臂 boot+V4.0exp overlay 复原臂 boot+G-V1/G-V5 冒烟量具（knapcio 双形状 1024/1024 SAT 断言）；用法=§9 |
 | `deploy/adapter/` | `~/migrate-assets/dsv41/adapter/` | 供给面整面快照 **83 件/约 3.0M**（B1 收录 2026-10-13：顶层 68+fi_r1/ 6+lib/ 1+overlay/ 3+tests/ 5；sitecustomize 55b1e412 装载缝+闭包 48 件+留役休眠件+`.so`/json/构建源；排除 `*.bak*` 39+变体 1+EP1 陈旧清单 2——收录口径与排除名单逐件=`deploy/adapter/README.md`，逐件 md5=`deploy/adapter/MANIFEST.md5`） |
-| `deploy/env/` | `~/migrate-assets/dsv41/env/` | 51 键 FL6 现役定版形+50 键一级回退形 |
+| `deploy/env/` | `~/migrate-assets/dsv41/env/` | 51 键 FL6 现役定版形+50 键一级回退形+**VL 四臂形**（VL41N-SPEC0/K6/K6CG 三级阶梯+VL40EXP-R2-C24T；详=§9） |
 | `deploy/overlay/o12c1-prod/` | `~/migrate-assets/v4vl/sglang-overlay.o12c1-prod/`（=`SGLANG_OVERLAY_DIR`） | 29 件=28 活件影子挂载+1 映射表（scheduler 5b6fe2a3 等；boot 链挂载计数断言==28——r3-boot-arm.sh `ov_n` 门；目录 29 件含 overlay-map.tsv 自身） |
+| `deploy/overlay/v4vl-79cafec0/` | `~/migrate-assets/vl-native/sglang-overlay.v4vl-79cafec0/` | **VL 专用 overlay 复原树 28 件**（V4.0exp 臂供给面；内容指纹 cbf986df×4 机全等——VL-NATIVE S5 整树复原律；boot_mvl40exp_r2.sh 内嵌 OV_MAP 平铺键→容器路径映射+28 件 fail-closed 计数断言；与 o12c1-prod 零交叠） |
 | `deploy/nccl/nccl-ringonly/`+`ncclpin.so` | `~/migrate-assets/nccl-ringonly/`+`~/migrate-assets/ncclpin.so` | ring-only NCCL 2.30.7+pin 件（只读挂载 /opt） |
 | `deploy/b12x/` | `~/migrate-assets/b12x/` | b12x/b12x_next MoE 计算树（boot 硬前置） |
 | `deploy/kit/` | `~/w6-kit/`（或烘入 /opt/dsv41/kit/） | guard 守卫族+instruments 量具+adr（oom-gate 面单元让位 selfheal 包） |
@@ -98,3 +100,41 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→5
 | 水位 | WATER-RED=0（qmg 在役+02 机两守护不动红线） |
 
 任一门红→按 OPS-MANUAL 第二章双复原义务（先撤件再产线 boot）+第三章回退链处置。
+
+## 9. VL 面部署（SGLang 基座原生视觉双臂——VL-NATIVE-20261013 窗全绿收录）
+
+> 判读线与证据=`docs/research/VL-NATIVE-RESULT-20261013.md`（窗卡+调查档同目录）。
+> VL 形**转正在役=呈裁位**（RESULT §八）——本节为已验证的部署面，非默认在役态。
+
+### 9.1 V4.1 原生视觉臂（零旗零文件=knapcio 同构）
+
+- 启用面=**空集**：enable_multimodal 缺省 True+auto-detect（model_type=deepseek_v41 且
+  vision_n_layers>0）+处理器按类自动注册——生产文本靴同代码形态，只是流量形态之差。
+- boot：`DRY_RUN=1 ARM_ENV_FILE=<VL41N 臂 env> ARM_TAG=<tag> bash tools/boot-with-slotlock.sh
+  bash deploy/bin/boot_mvl41_native.sh`（DRY-RUN 先行=零集群纪律；臂 env 三级阶梯=
+  `deploy/env/VL41N-SPEC0.env`（S1/S3 认证形）→`VL41N-K6.env`（L2 k6+GRAPHS0）→
+  `VL41N-K6CG.env`（L3 k6+CG bs16=生产全量形，参数面与产线逐字等价））。
+- 冒烟：`python3 deploy/bin/vl_smoke_gv1.py --port 8898 --out <目录> [--light]`（G-V1：
+  knapcio 双形状 **1024/1024 SAT 断言**+官方 2 图对+OCR+双图计数+canary×3）。
+- 51 键族零触碰律：臂 env 只含五驱动约定键，零 DSV41_* 性能键注入。
+
+### 9.2 V4.0exp overlay 复原臂（同基座承载，替代 vLLM 容器）
+
+- 前置：overlay 复原树落位 §5 行（`~/migrate-assets/vl-native/sglang-overlay.v4vl-79cafec0/`
+  28 件；源=`deploy/overlay/v4vl-79cafec0/` rsync 四机同路径，内容指纹 cbf986df 全等）。
+- boot：`DRY_RUN=1 ARM_ENV_FILE=deploy/env/VL40EXP-R2-C24T.env ARM_TAG=<tag>
+  bash tools/boot-with-slotlock.sh bash deploy/bin/boot_mvl40exp_r2.sh`（C24 拓扑+水位
+  20480+overlay 28 件影子挂载 fail-closed+mm 直证断言〔KV 0.10G+processors 逐机≥1，
+  头位分面=勘正 4〕；臂 env `SGLANG_OVERLAY_DIR` 指针即 §5 复原树位）。
+- 冒烟：同 9.1 量具（G-V5：384/图 政策=预算内动态计费判读，340<384 非帽满）。
+
+### 9.3 网关 VL 车道（第二实例，车道制分流）
+
+- 件=`tools/packages/gateway/`：`payload/units/concurrency-proxy-vl.service`（同 v2 模板
+  仅 Description/EnvironmentFile 两处差=零代码改动）+`payload/env/gateway-vl.env.template`
+  （8002→UPSTREAM 8898〔认证期〕/8899〔转正后〕；MAX_CONCURRENCY=8+DEDUP_ENABLE=0=图像
+  大 body 前缀哈希伪碰撞规避；GW_API_KEY 值位空红线——只入宿主 0600 secrets 面）。
+- 启用：env 填值落 `/opt/aicad-prod/secrets/gateway-vl.env`（0600）→unit 落
+  `/etc/systemd/system/`→`daemon-reload`+`enable --now concurrency-proxy-vl`→8002=200
+  核（详=包 README 部署面分发注记 5）。客户端按端口选车道（8001=文本现役不动；
+  8002=VL）。

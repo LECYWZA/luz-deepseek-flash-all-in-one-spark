@@ -33,3 +33,19 @@
 10. **运维工具五包 T4 就绪**：fabric-net / selfdiag / selfheal / gateway /
     cfgmgmt + _lib（每包五件套+MANIFEST 指纹+selfcheck 三态退出码；
     TOOLS31-PACKAGES-RESULT 档；GIT 锚=各自整备提交）。
+
+## 0.3.1 后继增量（VL-NATIVE-20261013 窗全绿收录，随仓不入 tag）
+
+- **VL 面双臂全绿**：SGLang 基座原生视觉 V4.1 臂（零旗零文件；G-V1 knapcio
+  1024/1024 SAT 断言全对）+V4.0exp overlay 复原臂（28 件 cbf986df×4 同基座
+  首飞，G-V5 预算内动态计费全绿）+网关 VL 车道（8002→8898）在档；VL 形
+  转正在役=呈裁位（`docs/research/VL-NATIVE-RESULT-20261013.md`）。
+- **镜像面收束**：vLLM 两形移历史/备份注记（单基座交付律=主表只留 SGLang
+  基座+烘焙镜像）。
+
+> **DEPRECATED 产物处置建议（注记不执行——清理窗承载）**：宿主
+> `~/luz-0.3.1-dist/`（约 26G：S9 打包产物 images/+repo/+CHECKSUMS.manifest，
+> 已标 `DEPRECATED-20261013.md`）=S9 整体暂缓裁定后的废弃产物。建议清理窗
+> 处置序：①确认烘焙镜像 0.3.1（cid 658a5fe…）四机在位+registry 副本可再拉
+> ②如需离线分发保底先 `docker save` 分卷重制 ③rm 整目录前 `du`/`ls` 快照
+> 留档。处置执行=主会话清理窗，本注记只入档不动作。

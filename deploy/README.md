@@ -43,10 +43,30 @@ dsv41/env/）。
 | `r3-window.sh` | — | 窗口冒烟（环网一句话探针） |
 | `r3-gate-env-lint.sh` | 5337c6cf | env 键面 lint 拒绝门（红=拒起） |
 | `r3-gate-assert-lint.sh` / `r3-gate-banner-contract.sh` / `r3-gate-endpoint-lint.sh` | — | 断言/横幅合同/端点 lint 三门 |
+| `boot_mvl41_native.sh` | — | **VL V4.1 原生视觉臂 boot**（零旗启用；S1-S4 三级阶梯全绿收录；用法=DEPLOY-GUIDE §9.1） |
+| `boot_mvl40exp_r2.sh` | — | **VL V4.0exp overlay 复原臂 boot**（C24+overlay 28 件 fail-closed+mm 直证；§9.2） |
+| `vl_smoke_gv1.py` | — | G-V1/G-V5 冒烟量具（knapcio 双形状 1024/1024 SAT 断言+官方对+canary×3） |
 
 boot 规程（点火前缀/沉降 600s 律/warm 64k×2 第一动作/warm 门 4500/5000/
 四查）——见 OPS-MANUAL 第一章。产线基座镜像=SGLang 上游 main-79cafec0
 （NOTICE §4）。
+
+## env/ — VL 四臂形（VL-NATIVE 窗收录 2026-10-13）
+
+| 件 | md5 | 状态 |
+|---|---|---|
+| `VL41N-SPEC0.env` | d7f07588 | V4.1 原生臂 S1/S3 认证形（五驱动约定键；零 DSV41_* 性能键=51 键族零触碰律） |
+| `VL41N-K6.env` | 6041757d | L2 级 k6+GRAPHS0 阶梯臂 |
+| `VL41N-K6CG.env` | bd5d62d8 | L3 级 k6+CG bs16=生产全量形（参数面与产线逐字等价动态预证） |
+| `VL40EXP-R2-C24T.env` | —（脱敏收录） | V4.0exp R2 认证形 19 键+`SGLANG_OVERLAY_DIR` 复原树指针（用户名掩码位=部署时替换，见 DEPLOY-GUIDE §5 脱敏注记） |
+
+## overlay/ — v4vl-79cafec0/（VL 专用复原树 28 件）
+
+V4.0exp 臂供给面（bind mount 面，非镜像内容）：源=宿主
+`~/migrate-assets/vl-native/sglang-overlay.v4vl-79cafec0/`（四机同路径纪律），
+内容指纹 cbf986df×4 机全等；平铺键→容器 sglang 路径映射=`boot_mvl40exp_r2.sh`
+内嵌 OV_MAP（28 件 fail-closed 计数断言）。与 `o12c1-prod/`（产线 29 件）零交叠。
+详=DEPLOY-GUIDE §5/§9.2+`docs/research/VL-NATIVE-RESULT-20261013.md` §三。
 
 ## 内网 IP 说明
 

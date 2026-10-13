@@ -31,14 +31,14 @@
 
 决定性杠杆=decode-CG 解锁（+79.0%/+73.0%，步墙 75→50ms；pin7103136+mf 0.89+`--cuda-graph-max-bs-decode 8`）。
 
-### VL 兼容模型（STDVL-K6CG-R1 形）
+### VL 兼容模型（SGLang 基座原生视觉——VL-NATIVE-20261013 窗双臂全绿）
 
-| 指标 | 读数 | 目标 | 达成 |
-|---|---|---|---|
-| prose（c1 ②尺） | **63.16**（复跑 63.16，+0.00% 同值） | 50 | **126%** |
-| code（c1 ②尺） | **112.93**（复跑 113.21，+0.25% 带内） | 90 | **125%** |
-
-杠杆=decode-CG +79.7%/+73.6%（k6 冻结线全过；两模型比率一致=机理同源）。
+| 面 | 读数/状态 |
+|---|---|
+| **V4.1-Flash 原生视觉臂** | 零旗零文件启用（knapcio 同构；51 键族零触碰）；S1-S4 三级阶梯全绿（mm×k6×CG 三共面闭合=L3 与生产参数面逐字等价）；**G-V1 冒烟 knapcio 双形状 1024/1024 SAT 断言全对**+官方 2 图对/OCR/双图计数/canary 3/3 全 200 语义对 |
+| **V4.0exp VL 同基座首飞** | 归档 overlay 28 件整树复原（cbf986df×4 机全等）→SGLang 单基座承载（替代 vLLM 容器）；S5R 靴绿+G-V5 首飞全绿（384/图 政策=预算内动态计费 340<384） |
+| 网关 VL 车道 | 8002→8898（认证期）车道制第二实例在档（tools/packages/gateway 两新件）；VL 形转正在役=呈裁位（`docs/research/VL-NATIVE-RESULT-20261013.md` §八） |
+| （历史）vLLM 基座读数 | STDVL-K6CG-R1 形 prose **63.16** / code **112.93**（decode-CG 杠杆 +79.7%/+73.6%；vLLM 基座已退役=单基座交付律，读数留档对照） |
 
 ### 0.3.1 特性构成
 
@@ -56,10 +56,14 @@ FL6 召回修复（**51 键转正在役定版**，见 §三；FL6 面回退两�
 
 | 镜像 | 用途 | 体量 | sha256 指纹 |
 |---|---|---|---|
-| `192.168.5.187:5000/lmsysorg/sglang:main-79cafec0` | **现役基座**（V4.1+0731 形；运行期注入 adapter/overlay/env） | 48.6GB | `sha256:0f075735a6bf913a7cc1cd7ece4f526ae8af70fc5b88fdc02d9efe92a61cf3ae` |
+| `192.168.5.187:5000/lmsysorg/sglang:main-79cafec0` | **现役基座**（V4.1 文本+VL 原生视觉+0731 形+V4.0exp overlay 复原臂；运行期注入 adapter/overlay/env） | 48.6GB | `sha256:0f075735a6bf913a7cc1cd7ece4f526ae8af70fc5b88fdc02d9efe92a61cf3ae` |
 | `dsv41-sglang-optimized:0.2.9-ep1q2-fin2` | 优化烘焙谱系（0.2.9 现值；ep1u-fin/ep1q2f 前代） | 47.3GB | `sha256:f51d0f2ac9b47adfe4e1052682624ecd7b9ef7dbe20ebf98c4c01b1380f43b8f` |
-| `192.168.5.187:5000/vllm/vllm-openai:LuZ0.4.5-DeepSeek-v4-Flash-DGXspark-TP4-Ring-VL-S1-20260910b` | VL 形（vLLM 基座 S1） | 35.9GB | `sha256:0098a90d4e529f82a419b6dbda3e606bb27408358e7daa16f8e25627342c2478` |
-| `192.168.5.187:5000/vllm/vllm-openai:LuZ0.4.5-DeepSeek-v4-Flash-VL-DGXspark-TP4-Ring` | VL 形（基线） | 35.9GB | `sha256:357e2f8e36ae4f5523601a2aa6c96933088877046ab14a422f4291dc456f2c12` |
+
+> **历史/备份（vLLM 两形，VL 线已切 SGLang 单基座——单基座交付律，不随网盘分发）**：
+> `vllm/vllm-openai:LuZ0.4.5-DeepSeek-v4-Flash-DGXspark-TP4-Ring-VL-S1-20260910b`
+> （sha256 `0098a90d…42c2478`，35.9GB）与 `…-VL-DGXspark-TP4-Ring`（sha256
+> `357e2f8e…526f2c12`，35.9GB）——V4.0exp VL 旧承载，保留作回退备份位（`docker save`
+> 分卷离线存档建议随清理窗处置，见 CHANGELOG 注记）。
 
 ```bash
 # 拉取现役基座（四机各一，或 head 拉+docker save 分发）
@@ -95,13 +99,15 @@ docker inspect --format '{{index .RepoDigests 0}}' \
 ## 四、仓库结构
 
 ```
-docs/        定版成果：report(终版性能报告 v2)/runbook(OPS-MANUAL)/registry(FORM-REGISTRY)/
-             quality(RELEASE-QUALITY)/research(FL6+红带两大 bug 定谳档)/DEPLOY-GUIDE/
+docs/        定版成果：report(终版性能报告+TOOLS31 烘焙结果)/runbook(OPS-MANUAL)/registry(FORM-REGISTRY)/
+             quality(RELEASE-QUALITY 含 T2-VL 注记行)/research(FL6+红带+VL-NATIVE 三档：RESULT/
+             WINCARD/SGVISION 调查)/DEPLOY-GUIDE(含 §9 VL 面部署)/
              ACKNOWLEDGEMENTS(定版 110 条：上游谱系/社区同行/官方资产/外部对照/工具田野)
-deploy/      服务面全集：env(两形)/bin(r3 链)/adapter(现役件)/overlay(o12c1-prod 29 件)/
+deploy/      服务面全集：env(两形+VL 四臂)/bin(r3 链+VL 双臂 boot+冒烟量具)/adapter(现役件)/
+             overlay(o12c1-prod 29 件+v4vl-79cafec0 复原树 28 件)/
              nccl(ring-only 库+ncclpin)/b12x(计算树)/kit(guard/instruments)/models.d(权重注册卡)/sentinel
-tools/       全树工具：packages(五包+_lib+_bake)/boot-with-slotlock/census 面板族/judge/
-             boot_sentinel/量具与门禁脚本/patches/ssh-password-login 运维件
+tools/       全树工具：packages(五包+_lib+_bake；gateway 含 VL 车道两件)/boot-with-slotlock/census 面板族/
+             judge/boot_sentinel/量具与门禁脚本/patches/ssh-password-login 运维件
 tests/       fl6-recall(双臂 6 测)/unit(b12x/row_store)/whitebox(14 件矩阵)
 ```
 
