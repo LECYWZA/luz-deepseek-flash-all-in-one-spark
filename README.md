@@ -11,7 +11,7 @@
 > 全量档=`docs/report/031-FINAL-PERF-REPORT-20261009.md`（v2 定稿）；定型形
 > 服务口径读数承接 QA31 定型窗（`docs/quality/0.3.1-RELEASE-QUALITY.md` T2）。
 
-### V4.1-Flash（主模型，0.3.1 定型形=50 键+SPEC6+W5 件）
+### V4.1-Flash（主模型，0.3.1 定型形=50 键+SPEC6+W5 件；FL6 转正后现役=51 键，DE 82.17 见 §三）
 
 | 指标 | 读数 | 对照 |
 |---|---|---|
@@ -44,7 +44,8 @@
 
 R1 FP4-KV in-kernel（八件面）+ W5 stage2 MXFP8/出口直聚（两键）+ E3-A SWA
 召回 N=256（SPEC6 第六参）+ O12 调度间隙（三键）+ LL128 NCCL 协议（三键）+
-FL6 召回修复（**51 键转正在飞**，见 §三）。回退链 50→48→47 键三级。
+FL6 召回修复（**51 键转正在役定版**，见 §三；FL6 面回退两级=摘键休眠/摘接线）。
+键面回退链 51→50→48→47 键四级。
 
 ---
 
@@ -81,12 +82,15 @@ docker inspect --format '{{index .RepoDigests 0}}' \
 **boot 四查**=health 200/printenv 四机逐字/横幅直读/面指纹四机全等。从零部署
 全流程见 **[docs/DEPLOY-GUIDE.md](docs/DEPLOY-GUIDE.md)**。
 
-**FL6 召回修复（51 键，转正在飞）**：验证窗收窗=部分绿呈裁位（cp30 红位未复现、
-严格冻结双门 2/3）；产线现役=50 键原形。本仓收录**转正即用全套**：
-`deploy/env/PROD-R51W5-FL6FIX-spec1.env`（51 键 2ac74586）+
-`deploy/adapter/sitecustomize.py`（**FL6 接线后稳定版 55b1e412**，未设 51 键=
-休眠逐字原版，与产线 2c4baad3 行为等价）+`deploy/adapter/fl6_recall.py`
-（b87cbb5e）+接线 diff 随仓。机理档=`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`。
+**FL6 召回修复（51 键，转正在役定版）**：FL6-PROMO 转正窗已闭 GREEN——产线现役
+=51 键修复形 **ENV51 `PROD-R51W5FL6-spec1.env`（2ac74586，服务器在役位名；仓内
+异名同值件=`deploy/env/PROD-R51W5-FL6FIX-spec1.env`）+sitecustomize 55b1e412
++fl6_recall.py b87cbb5e 四机全等**+SPEC6+overlay o12c1-prod；8899=200 在役健康。
+实役直证：**cp30 召回锚位 99.95%+DE 82.17**。回退链两级：一级=摘第 51 键（键关
+=sitecustomize 休眠逐字原版行为，不动 adapter 面）；二级=摘接线（按
+`sitecustomize-wire-v2.diff` 逆向回 2c4baad3 并摘 fl6_recall.py）。adapter 供给面
+=B1 整面快照 83 件（`deploy/adapter/`，见其 README 收录口径）。机理档=
+`docs/research/FL6-RECALL-BUG-ANALYSIS-20261013.md`。
 
 ## 四、仓库结构
 
