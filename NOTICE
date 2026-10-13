@@ -1,0 +1,31 @@
+LuZ-deepseek-flash-all-in-one — NOTICE
+======================================
+
+本项目（LuZ-0.3.1）是 **基于 SGLang（上游 main-79cafec0）的自有优化层交付**，
+面向 DeepSeek-V4.1-Flash @ 4×NVIDIA DGX Spark（GB10）TP4 RoCE 环网部署。
+
+版权与许可注记
+--------------
+
+1. **adapter 件（我方自有）**：`deploy/adapter/` 下的优化适配件
+   （kv_fp4.py / prefill_sp.py / spark_prefill_split.py / sitecustomize.py /
+   fl6_recall.py / fi_r1/ 等）为我方（LuZ 项目组）自有著作，通过
+   sitecustomize 导入钩等机制在运行期挂接上游引擎，非上游源码衍生。
+   Copyright (c) 2026 LuZ 项目组。保留所有权利。
+
+2. **overlay 派生面（按上游许可）**：生产 overlay（o12c1-prod）中派生自上游
+   SGLang 文件的镜像/改写件（如 scheduler 5b6fe2a3 = O12 调度间隙件；其中
+   23 件为上游 main-79cafec0 逐字节镜像，CODE31 交叉审查 cmp 直证）按上游
+   许可（Apache License 2.0）分发，并保留上游版权与许可声明。
+   上游：SGLang — https://github.com/sgl-project/sglang （main-79cafec0），
+   Copyright (c) SGLang 项目及其贡献者，Apache-2.0 许可。
+
+3. **文档与工具包**：`docs/`、`tools/packages/`（五包+_lib）、`tests/`、
+   `deploy/bin/`、`deploy/env/` 为我方自有著作。
+   Copyright (c) 2026 LuZ 项目组。
+
+4. 本仓不含上游完整源码树；运行期需要 SGLang 上游 main-79cafec0 基座镜像
+   （部署位与 boot 链见 `deploy/README.md` 与 `docs/runbook/OPS-MANUAL-031.md`）。
+
+密钥纪律：本仓全量密钥扫描已过（SCAN-REPORT.md）——GW_API_KEY 等值位恒空，
+集群口令零出现；任何凭据值绝不入仓。

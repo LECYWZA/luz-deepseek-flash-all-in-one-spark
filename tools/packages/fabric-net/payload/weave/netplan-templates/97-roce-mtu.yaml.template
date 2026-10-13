@@ -1,0 +1,17 @@
+# 97-roce-mtu.yaml.template — f0 对口 netplan 期望态模板（案头登记件；非部署件）
+#
+# 【为什么是模板非拷贝】四机 /etc/netplan/97-roce-mtu.yaml 属 root-0600 部署面——
+#   案头零 sudo 纪律下不以本模板冒充原件；部署窗以四机原件 diff 对本模板核期望态。
+# 【归属律（FABRIC-SELFHEAL-DESIGN-20261008 §〇.5）】本文件=f0 对口（enp1s0f0np0/
+#   enP2p1s0f0np0 两口）；渲染器归属**零改**：01/02=NetworkManager、03/04 的 99 文件=
+#   networkd——canonical 路由须入各接口既有文件，netplan try/apply 纪律按渲染器走。
+# 【期望态要点】MTU=9000（P5 断言项，lutune 只读核对域）+f0 对口 canonical /24 路由。
+# 【法源】TOOLS31-PACKAGE-PLAN §二 P1-1；FABRIC-SELFHEAL §5.2 统一方案（canonical 集
+#   =W0 四机 ip route 实读定全集，非本模板臆造）。
+
+#networkctl: 模板骨架（值=期望态示意；canonical 路由集以 topology.json routes 字段为权威）
+#networkd/NM 渲染器段保持四机现状零改——本模板只登记「该文件必须承载什么」：
+#  1. enp1s0f0np0 / enP2p1s0f0np0（f0 对口）mtu: 9000
+#  2. f0 对口 canonical /24 路由（来自 topology.json routes 全集的 f0 子集）
+#  3. 不承载 f1 对口路由（归 99-nvidia-sync-cluster.yaml）、不承载 /32 残留（净覆盖性
+#     铁律：删 /32 前必须存在同目标（含前缀覆盖）替代路由）

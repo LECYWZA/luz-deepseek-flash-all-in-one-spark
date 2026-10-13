@@ -1,0 +1,62 @@
+#!/bin/bash
+# selfdiag — 自诊断工具包统一入口（TOOLS31-PACKAGE-PLAN §四.2 help/selfcheck 规范）
+set -u
+PKG=selfdiag
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=../../_lib/pkg-common.sh
+. "$HERE/../_lib/pkg-common.sh"
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  help)
+    cat <<'EOF'
+selfdiag（P2 自诊断工具包）——census V3.1/四查门禁/boot 慢靴哨/水位探针/judge v3/target_verify V1
+
+用法：
+  selfdiag help                  本帮助
+  selfdiag selfcheck [--offline] 离线自检（0 绿/1 红/2 无法判）
+  selfdiag manifest / fingerprint 同 fabric-net 规范
+  selfdiag tv-reg …              转发 target_verify_reg.sh（--from-log/--validate/--selfcheck）
+  selfdiag run <件名> [args…]    转发包内件（census_w3/census_stream/r3-gate-{env,endpoint,
+                                  assert}-lint/r3-gate-banner-contract/boot_sentinel/
+                                  water_sampler/memsnap/judge_arm/replay_doc——判读语义零改律）
+
+件清单（详=MANIFEST.md5/README）：
+  census/   census_capture_w3.sh（V3.1 分窗唯一锚 6e073acd）+census_stream.py（解析器，
+            md5 留痕律注记）——一靴一 census 定律（TOOL-ANCHORS 规则 5/7）
+  gates/    r3-gate-{env,endpoint,assert}-lint.sh+r3-gate-banner-contract.sh（四查谱系）+
+            verify-governance.sh（QA31 §七-8 承接升格件；属地件=kit/guard 目录）
+  sentinel/ boot_sentinel.sh（F-9 慢靴哨；--selfcheck 零集群）+boot_sentinel_anchors.tsv+
+            target_verify_reg.sh（V1 登记器：QA31 state/target_verify.tsv 格式承接；
+            >75s 预测红带，纯登记非判读）
+  probes/   water_sampler.sh（四机 10s 水位；窗路径逐窗改写律）+memsnap.sh（内存取证）
+  judge/    judge_arm.py（judge v3 闭包归属法）+replay_doc.py（文档重放寻址）
+
+红线注记：
+  · census 必须为靴内首相位（一靴一 census 定律）；塌形引擎画像禁令+水位盯守（TOOL-ANCHORS）
+  · 一切入嵌/常驻项=fail-visible 优先（U1 律）——本包零自动动作面
+  · 水位哨兵/qmg 看护=测试窗件，绝不进生产 boot 链（qmg 头注律；常驻化=用户裁定面）
+EOF
+    ;;
+  selfcheck)   exec bash "$HERE/selfcheck/run.sh" "$@" ;;
+  manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
+  fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
+  tv-reg)      shift 0; exec bash "$HERE/payload/sentinel/target_verify_reg.sh" "$@" ;;
+  run)
+    f="${1:-}"; shift || true
+    case "$f" in
+      census_w3)             exec bash "$HERE/payload/census/census_capture_w3.sh" "$@" ;;
+      census_stream)         exec python3 "$HERE/payload/census/census_stream.py" "$@" ;;
+      r3-gate-env-lint)      exec bash "$HERE/payload/gates/r3-gate-env-lint.sh" "$@" ;;
+      r3-gate-endpoint-lint) exec bash "$HERE/payload/gates/r3-gate-endpoint-lint.sh" "$@" ;;
+      r3-gate-assert-lint)   exec bash "$HERE/payload/gates/r3-gate-assert-lint.sh" "$@" ;;
+      r3-gate-banner-contract) exec bash "$HERE/payload/gates/r3-gate-banner-contract.sh" "$@" ;;
+      boot_sentinel)         exec bash "$HERE/payload/sentinel/boot_sentinel.sh" "$@" ;;
+      water_sampler)         exec bash "$HERE/payload/probes/water_sampler.sh" "$@" ;;
+      memsnap)               exec bash "$HERE/payload/probes/memsnap.sh" "$@" ;;
+      judge_arm)             exec python3 "$HERE/payload/judge/judge_arm.py" "$@" ;;
+      replay_doc)            exec python3 "$HERE/payload/judge/replay_doc.py" "$@" ;;
+      *) echo "[$PKG] 未知件名：$f" >&2; exit 2 ;;
+    esac ;;
+  *) echo "[$PKG] 未知子命令：$cmd" >&2; exit 2 ;;
+esac

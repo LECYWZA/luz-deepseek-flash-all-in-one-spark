@@ -1,0 +1,14 @@
+[Unit]
+Description=OOM gate monitor (dsv41 stack, -w6 warn / -f1.5 stop / -e1 emergency)
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=liux***ya
+ExecStart=/bin/bash /home/liux***ya/w6-kit/oom-gate/oom_gate.sh monitor -w 6 -f 1.5 -n 3 --iv 10 -a -e 1
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

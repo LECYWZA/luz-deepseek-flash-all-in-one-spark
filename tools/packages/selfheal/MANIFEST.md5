@@ -1,0 +1,16 @@
+# MANIFEST.md5 — selfheal 包逐件清单（md5sum -c 自验；# 注释行 md5sum 容忍）
+# 律：内容变更→本件同日再生成（bash tools/packages/_lib/regen-manifest.sh selfheal）
+#     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
+43c919c4e23ccafd5740bb49d5b0007a  ./README.md
+c75aaaf0104937509fd6ac9bd23b1cc9  ./bin/selfheal
+3db9f8ee4117441c6aba0d139560d22d  ./payload/adapter-sync.sh
+9b65b07a489508fdf73dba68958f45d1  ./payload/oom-gate/README.md
+7d82a37246c83ce4a3b9b1bc3a6941e9  ./payload/oom-gate/oom_gate.sh
+5e5c0730fb45be0fa860d8c72d75f349  ./payload/oom-gate/selftest_snapshot.sh
+b027f1a344b4fbc497723741543f9f98  ./payload/qamemguard.sh
+9bd31e52bfff7a75117420e347297283  ./payload/r3-watchdog.sh
+eb4edb46e2a75f7658cc9433b67afa9c  ./payload/rollback/RUNBOOK-WEDGE.md
+74ed3aa0106f4c7f628562465655c7c2  ./payload/rollback/rollback-chain.sh
+1c8598ec6d815af7bfd646e95b2dbe0a  ./payload/units/oom-gate-monitor.service
+f8d8f5ef6251e5b93b73738438f2a6df  ./selfcheck/run.sh
+0bb884a2ec3540ae0d5be878021e184f  ./selfcheck/sources.tsv

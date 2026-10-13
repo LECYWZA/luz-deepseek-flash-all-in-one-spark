@@ -1,0 +1,11 @@
+{
+  "_metadata": {
+    "flashinfer_version": "0.6.18",
+    "cuda_version": "13.0",
+    "cublas_version": "13.1.1",
+    "cudnn_version": "92000",
+    "cudnn_frontend_version": "1.30.0",
+    "gpu": "NVIDIA GB10"
+  },
+  "_generation": "e610c26aa75c3028fd8b71c93099e4b9d2de50539cd927637c6359412056532e"
+}

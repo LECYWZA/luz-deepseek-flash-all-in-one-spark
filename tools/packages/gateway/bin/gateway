@@ -1,0 +1,45 @@
+#!/bin/bash
+# gateway — 网关工具包统一入口（TOOLS31-PACKAGE-PLAN §四.2 help/selfcheck 规范）
+set -u
+PKG=gateway
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=../../_lib/pkg-common.sh
+. "$HERE/../_lib/pkg-common.sh"
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  help)
+    cat <<'EOF'
+gateway（P4 网关工具包）——concurrency-proxy 配置面+unit/drop-in 补登（P0 死件闭合）+验证器
+
+用法：
+  gateway help / selfcheck / manifest / fingerprint（五包规范）
+  gateway verify …                转发 gw-verify.sh（--offline <env>/--live/--selfcheck）
+  gateway proxy                   打印 01 在役 proxy 件路径+md5 锚（不 exec——产线在役件）
+
+件清单：
+  concurrency_proxy_v2.py（01 现役 e1a01162=/opt/aicad-prod/scripts/ 同 md5 亲核；
+    v2.0-rc3.8.2 流式感知并发网关：信号量限流/GW_API_KEY Bearer/错误帧骨架/图像占位净化）
+  units/concurrency-proxy-v2.service（**P0 死件闭合**：GATEWAY-MIGRATION §1.4「01 单元
+    文件缺失，进程裸奔重启即失守」——unit 入包=部署面四机/网关机分发注记承载）
+  units/10-gateway-hardening.conf（drop-in：journal 观测+MemoryMax 2G+非特权只读面）
+  env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/GW_API_KEY 值位空——密钥绝不入包）
+  gw-verify.sh（五探针验证器：P1 401/P2 429/P3 直连对照/P4 健康穿透/P5 上游失效+
+    --offline 配置 lint）
+
+红线注记：
+  · GW_API_KEY 值绝不入包/入 unit/入镜像/入日志（SMOK_KEY 前科律）——值面=宿主 0600
+    EnvironmentFile
+  · --live 探针=执行窗面（产线在役时 P2 429/P5 上游失效先呈裁）
+  · Mac mini M6 迁移=后续迁移窗承接（本包只收编 01 现役面+验证器，任务卡 §二 P4 注记）
+EOF
+    ;;
+  selfcheck)   exec bash "$HERE/selfcheck/run.sh" "$@" ;;
+  manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
+  fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
+  verify)      exec bash "$HERE/payload/gw-verify.sh" "$@" ;;
+  proxy)       echo "01 在役位：/opt/aicad-prod/scripts/concurrency_proxy_v2.py"
+               echo "包内副本 md5：$(md5sum "$HERE/payload/concurrency_proxy_v2.py" | awk '{print substr($1,1,8)}')（应=e1a01162）" ;;
+  run)         echo "[$PKG] 产线在役件不 exec 转发（判读语义零改+产线零扰律）；包内件见 help" >&2; exit 2 ;;
+  *) echo "[$PKG] 未知子命令：$cmd" >&2; exit 2 ;;
+esac

@@ -1,0 +1,14 @@
+# MANIFEST.md5（env 树；生成 2026-10-13T10:20:38Z；源=/home/liux***ya/migrate-assets/dsv41/env）
+# 集合指纹（正典算式=LC_ALL=C find -type f|sort -z|xargs -0 md5sum|md5sum 前 8 位）：0b8dcc8a
+# 律：树内容任何变更→同日重生成+TOOL-ANCHORS 指纹行更新（三联动）
+d9ea4995804bdacb195602256ccd1caa  ./PROD-A22B-spec1.env.bak-prod-rs-20261003
+8c8c166dbf9b7c6b19337fdad8359041  ./PROD-R1INK48L2PF6O12C1-spec1.env
+2d7bec40b75cf08290199724bbb45244  ./PROD-R1STDCERT-spec1.env
+b7e318e0c9525507c9b03825ea31ecb9  ./PROD-R1STDFORM-spec1.env
+a478cba731f25ad4609a050091187128  ./PROD-R1STDLL128-ADOPT-spec1.env
+2de48070047d0b57ae31458ac25b4eef  ./PROD-R1STDLL128-spec1.env
+34977bf00a890e5b5dd63d69fa85ffe6  ./PROD-R1STDLL128L2PF6-spec1.env
+99e7ec9260db75922d8f302eff778d46  ./PROD-R1STDLL128L2PF6O12C1-spec1.env
+2ac74586352f59e0eaa1cdd383a0a75f  ./PROD-R51W5-FL6FIX-spec1.env
+15767aa67a0f0e2aaf7c55471dc4061f  ./PROD-R51W5-spec1.env
+acb43d8bdca3ff142e43dc3c909d8d75  ./PROD-RS-spec1.env

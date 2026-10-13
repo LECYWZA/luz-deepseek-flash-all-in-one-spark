@@ -1,0 +1,51 @@
+#!/bin/bash
+# selfheal — 修复自愈工具包统一入口（TOOLS31-PACKAGE-PLAN §四.2 help/selfcheck 规范）
+set -u
+PKG=selfheal
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=../../_lib/pkg-common.sh
+. "$HERE/../_lib/pkg-common.sh"
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  help)
+    cat <<'EOF'
+selfheal（P3 修复自愈工具包）——oom-gate/watchdog 联动/楔死处置 runbook/回退四级链
+
+用法：
+  selfheal help / selfcheck / manifest / fingerprint（同五包规范）
+  selfheal rollback …            转发 rollback-chain.sh（--plan 50 48/--check <env>/--selfcheck）
+  selfheal run <件名> [args…]    转发包内件（oom_gate/r3-watchdog/adapter-sync/qamemguard）
+
+件清单：
+  oom-gate/ oom_gate.sh（冷启动准入/基线/post 判假绿/boot 期 monitor；F6/F11 判据）+
+            selftest_snapshot.sh+README（~/migrate-assets/dsv41/kit/oom-gate 蓝本收编）
+  units/     oom-gate-monitor.service（宿主 unit=部署面分发件，不入镜像）
+  r3-watchdog.sh（运行期联动看门狗：01 head 哨+02 worker 哨双哨制；TRIP 拆栈律）
+  rollback/  rollback-chain.sh（50→48→47→45 四级链：相邻级强制+每级四查+沉降+slotlock）+
+            RUNBOOK-WEDGE.md（INCIDENT 家族索引：停手取证三件套→拆栈→呈裁；不重试律）
+  adapter-sync.sh（adapter 权威源四机同步/对表：--check/--apply/--prune/--expect/--selfcheck）
+  qamemguard.sh（qmg 测试窗看护件——窗驱动启停不常驻；--selftest 三件）
+
+红线注记：
+  · 02 机在役两守护（3535/3536）不收编不改动不触碰（绝对不动律；selfcheck F6 断言）
+  · qmg 绝不进生产 boot 链（头注律）；常驻化=用户裁定面
+  · --apply/boot 动作=执行窗面（OUTAGE 制）；本包案头件零自动动作（U1 律）
+  · 取证先存后删序（INCIDENT-DUMPWIPE/E3A-T384 先例律）
+EOF
+    ;;
+  selfcheck)   exec bash "$HERE/selfcheck/run.sh" "$@" ;;
+  manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
+  fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
+  rollback)    exec bash "$HERE/payload/rollback/rollback-chain.sh" "$@" ;;
+  run)
+    f="${1:-}"; shift || true
+    case "$f" in
+      oom_gate)      exec bash "$HERE/payload/oom-gate/oom_gate.sh" "$@" ;;
+      r3-watchdog)   exec bash "$HERE/payload/r3-watchdog.sh" "$@" ;;
+      adapter-sync)  exec bash "$HERE/payload/adapter-sync.sh" "$@" ;;
+      qamemguard)    exec bash "$HERE/payload/qamemguard.sh" "$@" ;;
+      *) echo "[$PKG] 未知件名：$f" >&2; exit 2 ;;
+    esac ;;
+  *) echo "[$PKG] 未知子命令：$cmd" >&2; exit 2 ;;
+esac

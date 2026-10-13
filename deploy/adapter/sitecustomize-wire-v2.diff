@@ -1,0 +1,13 @@
+56a57,65
+>         elif module.__name__ == 'sglang.srt.mem_cache.unified_cache.unified_tree_core':
+>             # FL6 recall fix (QA31 cp30 0/3): SWA interior retirement + match
+>             # retract. Dormant unless DSV41_FL6_RECALL_FIX is set; raises on
+>             # 79cafec0 symbol drift.
+>             from fl6_recall import install as install_fl6_recall
+>             install_fl6_recall(module)
+>         elif module.__name__ == 'sglang.srt.mem_cache.unified_cache.components.swa':
+>             from fl6_recall import install_swa as install_fl6_recall_swa
+>             install_fl6_recall_swa(module)
+518a528,529
+>                             'sglang.srt.mem_cache.unified_cache.unified_tree_core',
+>                             'sglang.srt.mem_cache.unified_cache.components.swa',

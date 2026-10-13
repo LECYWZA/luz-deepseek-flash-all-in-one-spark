@@ -1,0 +1,59 @@
+#!/bin/bash
+# fabric-net — 环网通讯方案工具包统一入口（TOOLS31-PACKAGE-PLAN §四.2 help/selfcheck 规范）
+# 子命令：help / selfcheck [--offline] / manifest / fingerprint / doctor [--json] / run <件名> <args…>
+# 红线：host 面只读允许；doctor 只读不修；guard/heal 族=部署面件，run 转发不改判读语义。
+set -u
+PKG=fabric-net
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=../../_lib/pkg-common.sh
+. "$HERE/../_lib/pkg-common.sh"
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  help)
+    cat <<'EOF'
+fabric-net（P1 环网通讯方案工具包）——RoCE mesh 织网/GID 修复/环网诊断/恢复 runbook
+
+用法：
+  fabric-net help                 本帮助
+  fabric-net selfcheck [--offline] 离线五件套自检（0 绿/1 红/2 无法判）
+  fabric-net manifest             md5sum -c MANIFEST.md5（包内自验）
+  fabric-net fingerprint          重算并打印包级汇总指纹（对表 VERSION）
+  fabric-net doctor [--json]      HCA 端口/接口在位/carrier 采样核查（只读；host 面或 mock）
+  fabric-net run <件名> [args…]   转发执行包内件（lutune/fabric-guard/fabric-sentinel/
+                                  fabric-gid-heal/fabric-restore-gate/s4_bench——部署面件，
+                                  判读语义零改律；动作面红线见各件头注）
+
+件清单（详指向见 MANIFEST.md5/README.md）：
+  weave/   lutune.sh（RX_TARGET=4096 裁定值）+topology.json 期望态+netplan 双模板
+  guards/  fabric-guard.sh（F-G1..G10+Q1-Q7+熔断）/fabric-sentinel.sh（15min 32MB AR 哨兵）/
+           fabric-gid-heal.sh（四前置 P1-P4+Tier1/2 复验+HEALED 三通道；唯一 auto_ok 项）/
+           fabric-restore-gate.sh（Phase1 只告警档）
+  diag/    s4_bench.sh（verify 四机 Connected all rings+OOB 0+GID 预检 exit 9 fail-closed）/
+           fabric-doctor.sh（本包新件；carrier 采样鉴别 ACTIVE 假活跃）
+  runbook/ FABRIC-GID-REPAIR-RUNBOOK.md（cc84ba86 蓝本收编）+COMMUNITY-FIELDNOTES.md（四症状摘译）
+
+红线注记：
+  · 判读线零改：NCCL_IB_GID_INDEX=3 不动（集群一致性律）
+  · 白名单硬界：只碰 DEVLIST 四口；enP7s7 管理口与 01 机 macgw /30 副地址永不在动作面
+  · 熔断+人工复位律：heal 1h≥2 次=熔断；restore-gate Phase1 只告警不自动 boot（U1 律）
+  · 宿主侧守护件不入烘焙镜像（00-BAKED「载荷非守卫」律）
+EOF
+    ;;
+  selfcheck)   exec bash "$HERE/selfcheck/run.sh" "$@" ;;
+  manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
+  fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
+  doctor)      exec bash "$HERE/payload/diag/fabric-doctor.sh" "$@" ;;
+  run)
+    f="${1:-}"; shift || true
+    case "$f" in
+      lutune)             exec bash "$HERE/payload/weave/lutune.sh" "$@" ;;
+      fabric-guard)       exec bash "$HERE/payload/guards/fabric-guard.sh" "$@" ;;
+      fabric-sentinel)    exec bash "$HERE/payload/guards/fabric-sentinel.sh" "$@" ;;
+      fabric-gid-heal)    exec bash "$HERE/payload/guards/fabric-gid-heal.sh" "$@" ;;
+      fabric-restore-gate) exec bash "$HERE/payload/guards/fabric-restore-gate.sh" "$@" ;;
+      s4_bench)           exec bash "$HERE/payload/diag/s4_bench.sh" "$@" ;;
+      *) echo "[$PKG] 未知件名：$f（可转发件见 help）" >&2; exit 2 ;;
+    esac ;;
+  *) echo "[$PKG] 未知子命令：$cmd（help/selfcheck/manifest/fingerprint/doctor/run）" >&2; exit 2 ;;
+esac

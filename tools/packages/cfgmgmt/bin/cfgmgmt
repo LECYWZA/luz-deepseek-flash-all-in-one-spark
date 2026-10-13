@@ -1,0 +1,59 @@
+#!/bin/bash
+# cfgmgmt — 配置管理包统一入口（TOOLS31-PACKAGE-PLAN §四.2 help/selfcheck 规范）
+set -u
+PKG=cfgmgmt
+HERE="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=../../_lib/pkg-common.sh
+. "$HERE/../_lib/pkg-common.sh"
+
+cmd="${1:-help}"; shift || true
+case "$cmd" in
+  help)
+    cat <<'EOF'
+cfgmgmt（P5 配置管理包）——env 键面管理/boot-with-slotlock/复原链/golden 树/adapter·overlay 清单
+
+用法：
+  cfgmgmt help / selfcheck / manifest / fingerprint（五包规范）
+  cfgmgmt keydiff <envA> <envB>         键面 diff（逐键差集+md5 表）
+  cfgmgmt keycheck --dump <f> --env <f> printenv 真键核（容器 dump 对 env 规格件逐键）
+  cfgmgmt restore --plan | --selfcheck  双复原义务序（十步检查单）
+  cfgmgmt admregen [--dir D] [--out F] [--check]  ADAPTER-MANIFEST 重生成（CODE31 P1-② 闭合）
+  cfgmgmt genmf env|overlay [--dir D] [--out F]   env/overlay 双清单（正典集合指纹算式）
+  cfgmgmt run <件名> [args…]            转发（boot-with-slotlock=boot 治理 wrapper 恒真源在 tools/）
+
+件清单：
+  env/    PROD-R51W5-spec1.env（50 键定型形 15767aa6）+48/47/45 键回退三级件（在役件与
+          回退件绝不入档律=T5 联动；包内=整备副本非档案）
+  boot/   boot-with-slotlock.sh（fcaed824）+boot-chain.md5（r3-boot-arm c051bb41/r3-stop
+          5ad87830/孪生 r3-boot.sh 29ccab6c）
+  golden/ flashinfer-golden（树内自述 fi_version=0.6.18+MANIFEST.json；卡文 0.6.16 差异
+          注记=呈裁位）+r3-boot-arm.autotune-golden.diff（再生模板）+UNREADABLE-NOTE（2 件
+          root-0600 引擎写面登记）
+  out/    ADAPTER-MANIFEST.regenerated（125 件+分类+口径钉+SITECUSTOMIZE_MD5 变量位+
+          PENDING-FL6-FINAL）+env/overlay MANIFEST.md5 双清单快照
+  新件=env-keydiff.sh / printenv-keycheck.sh / restore-sequence.sh / adapter-manifest-regen.sh /
+          gen-manifests.sh
+
+红线注记：
+  · 回退四级链动作序=selfheal 包 rollback-chain.sh（50→48→47→45 相邻级+每级四查）
+  · 在役件/回退件绝不归档（mv 归档=禁；只可同位更替留 .bak 谱系）
+  · 集合指纹正典算式=LC_ALL=C find|sort -z|xargs -0 md5sum|md5sum 前 8 位（CODE31 P2-8 闭合）
+  · sitecustomize 指纹=SITECUSTOMIZE_MD5 变量位（FL6 窗终值回填；工具锚不引硬值）
+EOF
+    ;;
+  selfcheck)   exec bash "$HERE/selfcheck/run.sh" "$@" ;;
+  manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
+  fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
+  keydiff)     exec bash "$HERE/payload/env-keydiff.sh" "$@" ;;
+  keycheck)    exec bash "$HERE/payload/printenv-keycheck.sh" "$@" ;;
+  restore)     exec bash "$HERE/payload/restore-sequence.sh" "$@" ;;
+  admregen)    exec bash "$HERE/payload/adapter-manifest-regen.sh" "$@" ;;
+  genmf)       exec bash "$HERE/payload/gen-manifests.sh" "$@" ;;
+  run)
+    f="${1:-}"; shift || true
+    case "$f" in
+      boot-with-slotlock) echo "[cfgmgmt] boot 治理 wrapper 恒用真源 tools/boot-with-slotlock.sh（包内=整备副本）" >&2; exit 2 ;;
+      *) echo "[$PKG] 未知件名：$f" >&2; exit 2 ;;
+    esac ;;
+  *) echo "[$PKG] 未知子命令：$cmd" >&2; exit 2 ;;
+esac

@@ -1,0 +1,29 @@
+{
+  "created": "2026-10-10T07:07:49",
+  "image": "192.168.5.187:5000/lmsysorg/sglang:main-79cafec0",
+  "fi_version": "0.6.18",
+  "arch": "sm121",
+  "cache_key": "472a7346d01ee0ea",
+  "entries": {
+    "rank_tp0_pp0_dp0.json": 0,
+    "rank_tp1_pp0_dp0.json": 0,
+    "rank_tp2_pp0_dp0.json": 0,
+    "rank_tp3_pp0_dp0.json": 0
+  },
+  "draft_cache_key": "7e31ba14c240a509",
+  "draft_entries": {
+    "rank_tp0_pp0_dp0.json": 0,
+    "rank_tp1_pp0_dp0.json": 0,
+    "rank_tp2_pp0_dp0.json": 0,
+    "rank_tp3_pp0_dp0.json": 0
+  },
+  "metadata": {
+    "flashinfer_version": "0.6.18",
+    "cuda_version": "13.0",
+    "cublas_version": "13.1.1",
+    "cudnn_version": "92000",
+    "cudnn_frontend_version": "1.30.0",
+    "gpu": "NVIDIA GB10"
+  },
+  "note": "冻结纪律：image/fi_version 任一变化=重新捕获（load_configs _metadata 硬门）。双 key=主模型+DSVARK draft（四秩八文件同 md5=c9e1ff5b，TP tactic 同步律实证；0.2.8 谱系同构）。谱系件=a4bba847/f72f37b0（0.2.8 惰性，非本基座键）"
+}

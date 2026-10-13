@@ -1,0 +1,7 @@
+PKG=selfheal
+PKG_VERSION=0.3.1-t4.1
+FINGERPRINT=627fef97
+GIT_ANCHOR=9cc528a（P3 整备提交）
+TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
+PAYLOAD_N=13
+RED_LINES=02 机两守护（3535/3536）绝对不动/qmg 窗驱动不常驻不进产线 boot 链/回退相邻级强制+每级四查/U1 禁自动动作

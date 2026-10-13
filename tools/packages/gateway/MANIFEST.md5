@@ -1,0 +1,12 @@
+# MANIFEST.md5 — gateway 包逐件清单（md5sum -c 自验；# 注释行 md5sum 容忍）
+# 律：内容变更→本件同日再生成（bash tools/packages/_lib/regen-manifest.sh gateway）
+#     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
+df95ac2172b0db73576c53485a5ef3f7  ./README.md
+fd85e61bbe1a83d43a1284ba859980ff  ./bin/gateway
+e1a011627b4a0aa485a32d9da1f633da  ./payload/concurrency_proxy_v2.py
+663210f775f0f94a9461b8b09ce26f4e  ./payload/env/gateway.env.template
+85eb21cfe89b11b9fab1134a4f12c626  ./payload/gw-verify.sh
+0539f79e8aef2e918f849d7d6461fd53  ./payload/units/10-gateway-hardening.conf
+8dc5ecc487b1692eb6a656eae9173de7  ./payload/units/concurrency-proxy-v2.service
+676ad288b16025fd587e36881e73215b  ./selfcheck/run.sh
+0f0b9a996c8bbbac1be5563b1bbfaf42  ./selfcheck/sources.tsv

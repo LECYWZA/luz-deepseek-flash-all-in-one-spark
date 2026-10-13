@@ -1,0 +1,7 @@
+PKG=fabric-net
+PKG_VERSION=0.3.1-t4.1
+FINGERPRINT=5e2a1fb9
+GIT_ANCHOR=5db45cf（P1 整备提交）
+TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
+PAYLOAD_N=17
+RED_LINES=判读线零改（GID_INDEX=3）/DEVLIST 白名单硬界/熔断人工复位/宿主守护件不入镜像

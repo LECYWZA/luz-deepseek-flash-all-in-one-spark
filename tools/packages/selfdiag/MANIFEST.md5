@@ -1,0 +1,21 @@
+# MANIFEST.md5 — selfdiag 包逐件清单（md5sum -c 自验；# 注释行 md5sum 容忍）
+# 律：内容变更→本件同日再生成（bash tools/packages/_lib/regen-manifest.sh selfdiag）
+#     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
+90f1b94854c054af8f806817997aca91  ./README.md
+498436b47e19cdca1e9c2b30c2793434  ./bin/selfdiag
+6e073acd73b506e8e256be6f5924bca0  ./payload/census/census_capture_w3.sh
+eeb498b72b82817e34ee93825aa63491  ./payload/census/census_stream.py
+774b2abfb133d5130291c42fc801c726  ./payload/gates/r3-gate-assert-lint.sh
+b39787b0c533e9313ab1feb617a72727  ./payload/gates/r3-gate-banner-contract.sh
+f6a2a5f96bf890562d5a38dad8836cbe  ./payload/gates/r3-gate-endpoint-lint.sh
+5337c6cf9cb8aa6c893ad1b97094660d  ./payload/gates/r3-gate-env-lint.sh
+bb6e48ec0848c32892c369fb398ac3b0  ./payload/gates/verify-governance.sh
+1bf45676214fd0b2bc1ff4fdcc39d498  ./payload/judge/judge_arm.py
+7934eaa3df183335e24252791bb06605  ./payload/judge/replay_doc.py
+44787432423682b1236bf0a340c6885e  ./payload/probes/memsnap.sh
+8d777c0bc77f6dd5647dbc261f0a83c4  ./payload/probes/water_sampler.sh
+a9250e4a35bcb0d29cc8e9f054906e40  ./payload/sentinel/boot_sentinel.sh
+028f7b67c2e22b2bb6c667d3a01d57ee  ./payload/sentinel/boot_sentinel_anchors.tsv
+7aa8cca48497258ed03e60d6b2c5c058  ./payload/sentinel/target_verify_reg.sh
+e187e26959729328efb292f2592f0cff  ./selfcheck/run.sh
+6a3dc8d90eed644b2756f3b631dc9e80  ./selfcheck/sources.tsv

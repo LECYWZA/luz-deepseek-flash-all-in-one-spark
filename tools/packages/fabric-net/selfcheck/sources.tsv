@@ -1,0 +1,10 @@
+# sources.tsv — fabric-net 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
+# 缺源机（非 01）=UNKNOWN；漂移=RED（同日更新律）
+payload/weave/lutune.sh	/home/liux***ya/luz030-opt-campaign/dev/lutune/lutune.sh	d003736d
+payload/guards/fabric-guard.sh	/home/liux***ya/luz030-opt-campaign/dev/lutune/fabric-guard.sh	fa5e536b
+payload/guards/fabric-sentinel.sh	/home/liux***ya/luz030-opt-campaign/dev/lutune/fabric-sentinel.sh	1af27c13
+payload/guards/fabric-gid-heal.sh	/home/liux***ya/luz030-opt-campaign/dev/lutune/fabric-gid-heal.sh	d1c5b63c
+payload/guards/fabric-restore-gate.sh	/home/liux***ya/luz030-opt-campaign/dev/lutune/fabric-restore-gate.sh	98020384
+payload/diag/s4_bench.sh	/home/liux***ya/w6-kit/s4_bench.sh	82256650
+payload/runbook/FABRIC-GID-REPAIR-RUNBOOK.md	/home/liux***ya/w6-kit/FABRIC-GID-REPAIR-RUNBOOK.md	cc84ba86
+payload/weave/topology.json	/home/liux***ya/dsv41-flash-dgxsparks/scripts/ring_mesh/topology.json	161118bf

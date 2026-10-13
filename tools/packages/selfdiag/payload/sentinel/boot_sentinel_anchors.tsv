@@ -1,0 +1,42 @@
+# boot_sentinel_anchors.tsv — F-9 boot 低速哨兵 per-form 锚表（初始表，2026-10-10 案头建档）
+#
+# 【法源】docs/research/BOOT-LOWSPEED-ROOTCAUSE-20261010.md §4.1（b433d01 修复层设计：
+#   「阈值（per-form 锚表，落 tools/ 侧配置件）」）+ docs/taskcards/PREFILL-FIX-CAMPAIGN-CARD-20261009.md
+#   §三 F-9/F-10 行（701d2d3 登记）。哨兵判档：≥0.7×锚=GREEN；0.5-0.7×=WARN；<0.5×锚=SLOWBOOT 横幅。
+#
+# 【建表纪律（不臆造律）】锚值只从历史健康靴同口径读数带取，带下沿（保守沿）为锚——
+#   少报 SLOWBOOT 优于误报（fail-visible 的误报代价=Fam-C 形参伪影教训，LSI-2/T4PW 终裁）。
+#   取不到同口径读数的形=status=UNKNOWN：哨兵遇之打告警横幅、verdict=ANCHOR-UNKNOWN，
+#   不判快慢（防 Fam-C 误报），须先补锚（健康靴上哨兵/prl6 同口径 3 发中位回填本表）再用。
+#
+# 【口径】哨兵量具=sd_bench --mode pr --pr-filler real --sizes <size>（与 W1 探针轮形一致=可比，
+#   tools/pr_degrade_probe_draft.py 同 CLI 面）；速率=链 A=prompt_tokens/TTFT（sd_bench tok_s 键）。
+#   ⚠跨量具引锚注记：下表 real 档锚值取自 KV-LIFE 真文本 solo 读数带（kvlife_driver 语料面），
+#   非 sd_bench real filler 首跑原值——调查员 §4.1 明示此引锚路径（「real 32k 锚=3900（V41B 带中值）」
+#   同源）；W2 试点首跑后应以 sd_bench 同量具读数回填/校准本表（届时逐行注记校准史）。
+#
+# 【列义】env_md5=ARM_ENV_FILE md5 前 8 位（形钉面主键；例值 2026-10-13 CA-5 勘误更新：
+#   15767aa6=产线 50 键定型形 PROD-R51W5-spec1.env〔=arms/COMBO-C0-spec1.env 同 md5〕、
+#   8c8c166d=48 键回退一级 PROD-R1INK48L2PF6O12C1、99e7ec92=47 键回退二级
+#   PROD-R1STDLL128L2PF6O12C1；历史例 2de48070=43 键 PROD-R1STDLL128-spec1.env）；
+#   serve_md5=SPEC_EXTRA_ARGS 归一指纹（空白切词+排序后 md5 前 8 位；
+#   * =任意）——形+参双钉，缺一即 ANCHOR-N/A（Fam-C 防误报：T4PW 四参缺
+#   --enable-decoder-swa-bounded-replay 的表观 -49~54% 伪影不得入 SLOWBOOT）；
+#   filler/size=量具口径；anchor=判档用锚（=band_lo 保守沿）；band_lo/band_hi=健康读数带；
+#   status=OK|UNKNOWN；form=形名；provenance=读数来源（file 锚）。
+#
+# 【未载入的已报锚值（显式不臆造）】调查员 §4.1 另列 filler(repeated) 口径 M12F 族锚
+#   8k/32k/64k/128k=4354/4848/4860/4728（M12F/P2/A24DDCOFF/GAUGEAB 锚族）——属 M12F 形
+#   自有 env 面，其 env_md5 未在档钉死，故不载入（防错键挂锚）；待该形入场时先钉 md5 再补行。
+#   0731/VL 形族（UNBLOCK/RATIFY/M0731W*/VLW* 等）：全档无 sd_bench PR 同口径 prefill 读数
+#   （其 c1 解码读数不构成 V4.1 prefill 证据——调查员 §1 明示），一律 UNKNOWN，已列代表性两行。
+#
+env_md5	serve_md5	filler	size	anchor	band_lo	band_hi	status	form	provenance
+2de48070	d3a0159a	real	32768	3700	3700	4250	OK	V4.1产线43键(PROD-R1STDLL128-spec1.env)	健康带=KV-LIFE真文本solo:V41B 32k=3862/35.9k=4125、V41C 32k=3975、V41C 277.9k=3761、W1-B2 L0005 hot/cold=4290/4314(logs/KV-LIFE-20261009/bench/{KV-V41B,KV-V41C}/rows.jsonl;logs/W1-20261010/bench/W1-B2/report.json);带下沿3700=保守取整(低于实测最低健康solo 3761);慢靴对照=W1-B1探针801-821/KV-V41 723-1035(判别间距>4x)
+2de48070	d3a0159a	real	131072	3861	3861	3978	OK	V4.1产线43键(PROD-R1STDLL128-spec1.env)	健康带=总卡§二真文本128k干净锚3861-3916(V41B单流)+V41C 144k=3978(logs/KV-LIFE-20261009/bench/KV-V41C/rows.jsonl);锚=3861带下沿;F-10热身末级(128k)完成门用此行
+bdfd9590	*	real	*	UNKNOWN	-	-	UNKNOWN	0731/VL形族(STD0731-CG-R1.env)	无同口径prefill锚:RATIFY-CG窗仅c1解码读数(不构成V4.1 prefill证据,调查员§1);先补锚再判
+17a9a199	*	real	*	UNKNOWN	-	-	UNKNOWN	0731/VL形族(STDVL-K6CG-R1.env)	同上(RATIFY-CG/VL腿);c1解码面不入锚;先补锚再判
+15767aa6	33d7161f	real	32768	5100	5100	5420	OK	V4.1产线50键定型形(PROD-R51W5-spec1.env)	锚值=QA31-20261013靴1健康靴同口径实测(sd_bench pr real 32768×3: 5139.5/5418.3/5329.6, med=5329.6;logs/QA31-20261013/bench/QA31-P1/real_cal);带下沿5100=保守取整(低于实测最低健康发5139.5,43键行同法);形钉行回填=QA31卫生步1(CODE31 W-1闭合;serve=SPEC6归一33d7161f)
+8c8c166d	33d7161f	real	32768	UNKNOWN	-	-	UNKNOWN	V4.1产线48键回退一级形(PROD-R1INK48L2PF6O12C1-spec1.env)	形钉行回填=QA31-20261013卫生步1;QA31窗4靴全为50键形,无48键健康靴同口径读数可引——锚值待该形健康靴哨兵3发中位补(不臆造律)
+99e7ec92	33d7161f	real	32768	UNKNOWN	-	-	UNKNOWN	V4.1产线47键回退二级形(PROD-R1STDLL128L2PF6O12C1-spec1.env)	形钉行回填=QA31-20261013卫生步1;同48键行——锚值待该形健康靴补(不臆造律)
+*	*	*	*	UNKNOWN	-	-	UNKNOWN	兜底(任何未列形)	形不在表=无锚可判:哨兵打ANCHOR-UNKNOWN告警不判快慢(Fam-C防误报);健康靴补锚后回填本表

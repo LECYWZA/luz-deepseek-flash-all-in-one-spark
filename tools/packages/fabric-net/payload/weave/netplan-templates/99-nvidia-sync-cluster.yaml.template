@@ -1,0 +1,11 @@
+# 99-nvidia-sync-cluster.yaml.template — f1 对口 netplan 期望态模板（案头登记件；非部署件）
+#
+# 【为什么是模板非拷贝】同 97-roce-mtu.yaml.template：root-0600 部署面，案头零 sudo；
+#   部署窗以四机原件 diff 对本模板核期望态。
+# 【归属律】本文件=f1 对口（enp1s0f1np1/enP2p1s0f1np1 两口）；**03/04 双 /30 路由归本
+#   文件**（01/02 该文件渲染器=NM、03/04=networkd——归属零改律同 97 文件注）。
+# 【期望态要点】f1 对口 canonical /30（03 双 /30）路由；MTU 沿 97 文件口径（f1 口同
+#   9000 族——以四机实件为准，本模板不新增断言）。
+# 【实施窗注意（FABRIC-SELFHEAL §5.2 尾）】03/04 重启会联动再翻转对端 f1（16:14 实证）
+#   ⇒ netplan apply 若涉 f1 口，须在翻转静默期+引擎死态做。
+# 【法源】同 97 文件；canonical 集= topology.json routes 权威（W0 实读定全集）。

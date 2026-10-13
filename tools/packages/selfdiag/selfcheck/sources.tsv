@@ -1,0 +1,14 @@
+# sources.tsv — selfdiag 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
+payload/census/census_capture_w3.sh	/home/liux***ya/luz030-opt-campaign/tools/census_capture_w3.sh	6e073acd
+payload/census/census_stream.py	/home/liux***ya/luz030-opt-campaign/tools/census_stream.py	eeb498b7
+payload/gates/r3-gate-env-lint.sh	/home/liux***ya/migrate-assets/bin/r3-gate-env-lint.sh	5337c6cf
+payload/gates/r3-gate-endpoint-lint.sh	/home/liux***ya/migrate-assets/bin/r3-gate-endpoint-lint.sh	f6a2a5f9
+payload/gates/r3-gate-assert-lint.sh	/home/liux***ya/migrate-assets/bin/r3-gate-assert-lint.sh	774b2abf
+payload/gates/r3-gate-banner-contract.sh	/home/liux***ya/migrate-assets/bin/r3-gate-banner-contract.sh	b39787b0
+payload/gates/verify-governance.sh	/home/liux***ya/migrate-assets/dsv41/kit/guard/verify-governance.sh	bb6e48ec
+payload/sentinel/boot_sentinel.sh	/home/liux***ya/luz030-opt-campaign/tools/boot_sentinel.sh	a9250e4a
+payload/sentinel/boot_sentinel_anchors.tsv	/home/liux***ya/luz030-opt-campaign/tools/boot_sentinel_anchors.tsv	028f7b67
+payload/probes/water_sampler.sh	/home/liux***ya/luz030-opt-campaign/logs/QA31-20261013/desk/water_sampler.sh	8d777c0b
+payload/probes/memsnap.sh	/home/liux***ya/luz030-opt-campaign/tools/memsnap.sh	44787432
+payload/judge/judge_arm.py	/home/liux***ya/luz030-opt-campaign/logs/QA31-20261013/desk/judge_arm.py	1bf45676
+payload/judge/replay_doc.py	/home/liux***ya/luz030-opt-campaign/logs/QA31-20261013/desk/replay_doc.py	7934eaa3

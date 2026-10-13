@@ -1,0 +1,6 @@
+# boot-chain.md5 — boot 脚本链指纹表（FORM-REGISTRY-031 §二 承接；2026-10-13 亲核）
+# 律：链上任何件变更→同日重钉本表+TOOL-ANCHORS；boot 恒经 boot-with-slotlock（P0 治理）。
+c051bb41f7f45e32ae77a40723d77157  /home/liux***ya/migrate-assets/bin/r3-boot-arm.sh
+5ad878303821a3afafc6bf65ac31bb58  /home/liux***ya/migrate-assets/bin/r3-stop.sh
+29ccab6ca693d427ec0a6c13b0edb65b  /home/liux***ya/migrate-assets/bin/r3-boot.sh（01 独有旧谱系孪生件，非锚位件同律改）
+fcaed824fe651e11af66edba8739dfc3  /home/liux***ya/luz030-opt-campaign/tools/boot-with-slotlock.sh（包内副本=payload/boot/boot-with-slotlock.sh 同 md5）

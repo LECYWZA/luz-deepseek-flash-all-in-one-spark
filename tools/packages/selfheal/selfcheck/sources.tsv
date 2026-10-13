@@ -1,0 +1,8 @@
+# sources.tsv — selfheal 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
+payload/oom-gate/oom_gate.sh	/home/liux***ya/migrate-assets/dsv41/kit/oom-gate/oom_gate.sh	7d82a372
+payload/oom-gate/selftest_snapshot.sh	/home/liux***ya/migrate-assets/dsv41/kit/oom-gate/selftest_snapshot.sh	5e5c0730
+payload/oom-gate/README.md	/home/liux***ya/migrate-assets/dsv41/kit/oom-gate/README.md	9b65b07a
+payload/units/oom-gate-monitor.service	/home/liux***ya/migrate-assets/dsv41/kit/oom-gate/oom-gate-monitor.service	1c8598ec
+payload/r3-watchdog.sh	/home/liux***ya/migrate-assets/bin/r3-watchdog.sh	9bd31e52
+payload/adapter-sync.sh	/home/liux***ya/luz030-opt-campaign/tools/adapter-sync.sh	3db9f8ee
+payload/qamemguard.sh	/home/liux***ya/luz030-opt-campaign/tools/qamemguard.sh	b027f1a3

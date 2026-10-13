@@ -1,0 +1,7 @@
+PKG=selfdiag
+PKG_VERSION=0.3.1-t4.1
+FINGERPRINT=5727bf05
+GIT_ANCHOR=55d9b02（P2 整备提交）
+TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
+PAYLOAD_N=21
+RED_LINES=一靴一 census 定律/fail-visible 不 abort（U1）/量具 md5 留痕律/qmg 不入生产 boot 链

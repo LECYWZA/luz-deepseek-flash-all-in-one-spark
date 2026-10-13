@@ -1,0 +1,19 @@
+[Unit]
+Description=Concurrency proxy v2 (dsv41 流式感知并发网关, 01 :8001 -> UPSTREAM 8899)
+Documentation=file:///opt/aicad-prod/scripts/concurrency_proxy_v2.py
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=liux***ya
+# 配置面（UPSTREAM/PORT/MAX_CONCURRENCY/GW_API_KEY）一律走 EnvironmentFile——
+# 密钥值绝不入 unit/bundle/镜像（SMOK_KEY 前科律；GATEWAY-MIGRATION §〇 键面行）。
+# gateway.env 属宿主 0600 部署面，模板见本包 env/gateway.env.template。
+EnvironmentFile=/opt/aicad-prod/secrets/gateway.env
+ExecStart=/usr/bin/python3 /opt/aicad-prod/scripts/concurrency_proxy_v2.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

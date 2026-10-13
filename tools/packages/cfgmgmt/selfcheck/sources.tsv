@@ -1,0 +1,9 @@
+# sources.tsv — cfgmgmt 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
+payload/env/PROD-R51W5-spec1.env	/home/liux***ya/migrate-assets/dsv41/env/PROD-R51W5-spec1.env	15767aa6
+payload/env/PROD-R1INK48L2PF6O12C1-spec1.env	/home/liux***ya/migrate-assets/dsv41/env/PROD-R1INK48L2PF6O12C1-spec1.env	8c8c166d
+payload/env/PROD-R1STDLL128L2PF6O12C1-spec1.env	/home/liux***ya/migrate-assets/dsv41/env/PROD-R1STDLL128L2PF6O12C1-spec1.env	99e7ec92
+payload/env/PROD-R1STDLL128L2PF6-spec1.env	/home/liux***ya/migrate-assets/dsv41/env/PROD-R1STDLL128L2PF6-spec1.env	34977bf0
+payload/boot/boot-with-slotlock.sh	/home/liux***ya/luz030-opt-campaign/tools/boot-with-slotlock.sh	fcaed824
+payload/golden/r3-boot-arm.autotune-golden.diff	/home/liux***ya/luz030-opt-campaign/tools/patches/r3-boot-arm.autotune-golden.diff	bb5c38ed
+# 注：flashinfer-golden 目录级对表不适用 md5sum 单值法（2 件 root-0600 不可读+树内自有
+#     MANIFEST.json/table.md5 双自述）——golden 面核=F9（树内自述+不可读登记）+烘焙窗树级重钉。

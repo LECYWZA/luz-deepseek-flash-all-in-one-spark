@@ -1,0 +1,3 @@
+# 不可读件登记（root-0600 引擎写面，零 sudo 纪律不触碰；内容核对走树内 table.md5 根侧核）
+UNREADABLE-root0600 /home/liux***ya/migrate-assets/flashinfer-golden/work/0.6.18/sm121/7e31ba14c240a509/rank_tp0_pp0_dp0.json
+UNREADABLE-root0600 /home/liux***ya/migrate-assets/flashinfer-golden/work/0.6.18/sm121/472a7346d01ee0ea/rank_tp0_pp0_dp0.json

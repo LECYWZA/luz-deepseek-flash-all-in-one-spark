@@ -1,0 +1,2 @@
+# sources.tsv — gateway 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
+payload/concurrency_proxy_v2.py	/opt/aicad-prod/scripts/concurrency_proxy_v2.py	e1a01162
