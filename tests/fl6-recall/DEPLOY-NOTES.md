@@ -1,4 +1,4 @@
-# FL6 修复部署件（dev/fl6-recall/）
+# FL6 修复部署件（tests/fl6-recall/；战役仓原位 dev/fl6-recall/）
 
 ## 文件清单
 
