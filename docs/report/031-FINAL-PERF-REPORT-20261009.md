@@ -7,7 +7,7 @@
 > 法源：ACHIEVEMENT-031-FINAL.md（RATIFY-CG 转正窗收口档，两形定板+四线终表）
 > +LL128-ADOPT 读数臂+RING4096-R2 判负门档+F6' 认证门+KV-LIFE-20261009 终报
 > （logs/KV-LIFE-20261009/READINGS.md）+E3A-DOSE-RECALL-RESULT-20261011
-> +COMBO-STACK-RESULT-20261012+用户裁定档（commit fd5c7e5）。口径：sparkDash
+> +COMBO-STACK-RESULT-20261012+用户裁定档（commit fd5c7e5）。口径：sparkDash（上游=MiaAI-Lab/sparkDash，github.com/MiaAI-Lab/sparkDash；本仓工具=tools/bench/sd_bench.py 九项定义对表复刻）——口径正典档=docs/registry/BENCHMARK-SOURCE.md。原口径行：sparkDash
 > ②尺 c1 5 发中位（②/③同靴比=1.000，仪器层一致已证）；0731 目标 60/104、VL
 > 目标 50/90（用户钦定 vLLM 0.4.5 时代锚）。**数字源=窗档锚点引注制（本报告
 > 不复制原始数，逐数带出处）**。

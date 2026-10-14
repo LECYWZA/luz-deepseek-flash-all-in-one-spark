@@ -10,6 +10,13 @@
 
 > 全量档=`docs/report/031-FINAL-PERF-REPORT-20261009.md`（v2 定稿）；定型形
 > 服务口径读数承接 QA31 定型窗（`docs/quality/0.3.1-RELEASE-QUALITY.md` T2）。
+>
+> **基准与口径来源**：全部读数出自自研 **`sd_bench`**（`tools/bench/`，headless 复刻），
+> 测量口径逐文件对齐社区基准 **sparkDash**（[MiaAI-Lab/sparkDash](https://github.com/MiaAI-Lab/sparkDash)）
+> 并经九项定义对表审计全 PASS；PR 表=sparkDash repeated-filler 口径（跨栈可比；filler
+> 虚增属性与 `real` 真文本臂见档），DE c1=单提示精确原文口径。**口径正典档=
+> [docs/registry/BENCHMARK-SOURCE.md](docs/registry/BENCHMARK-SOURCE.md)**（定义源件
+> md5 表/工具谱系/对表结论/使用纪律）。
 
 ### V4.1-Flash（主模型，0.3.1 定型形=50 键+SPEC6+W5 件；FL6 转正后现役=51 键，DE 82.17 见 §三）
 
