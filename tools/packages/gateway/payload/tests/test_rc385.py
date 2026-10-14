@@ -43,18 +43,35 @@ def report(case: str, ok: bool, note: str = "") -> None:
     print(f"[test_rc385] {'PASS' if ok else 'RED '} {case}{'  ' + note if note else ''}")
 
 
+RC384_MD5 = "f0a47b172faa1175b142ded103b20f14"     # rc3.8.4 权威锚（内容寻址，不随 HEAD 漂移）
+
+
 def rc384_reference(tmpdir: str) -> str | None:
-    """对照基准：git HEAD 的 rc3.8.4 载荷（战役仓历史=永久基准位）。不可得→None。"""
+    """对照基准：rc3.8.4 载荷（**按内容 md5 寻址**——git 历史内检索 md5 恰等于
+    f0a47b17… 的历史 blob；HEAD 推进后仍稳定可寻，不随 HEAD 漂移成自比）。
+    优先级：$RC384_REF 显式路径 > git 历史检索。不可得→None（d 字节比对段 SKIP）。"""
+    env_ref = os.environ.get("RC384_REF", "")
+    if env_ref and os.path.isfile(env_ref):
+        ref = os.path.join(tmpdir, "rc384.py")
+        shutil.copy(env_ref, ref)
+        return ref
     rel = os.path.relpath(PROXY_RC385, REPO_ROOT)
     try:
-        out = subprocess.run(["git", "-C", REPO_ROOT, "show", f"HEAD:{rel}"],
-                             capture_output=True, timeout=15, check=True)
-        ref = os.path.join(tmpdir, "concurrency_proxy_v2.rc384.py")
-        with open(ref, "wb") as f:
-            f.write(out.stdout)
-        return ref
+        import hashlib
+        commits = subprocess.run(
+            ["git", "-C", REPO_ROOT, "log", "--format=%H", "-n", "50", "--", rel],
+            capture_output=True, timeout=15, check=True).stdout.decode().split()
+        for c in commits:
+            blob = subprocess.run(["git", "-C", REPO_ROOT, "show", f"{c}:{rel}"],
+                                  capture_output=True, timeout=15, check=True).stdout
+            if hashlib.md5(blob).hexdigest() == RC384_MD5:
+                ref = os.path.join(tmpdir, "concurrency_proxy_v2.rc384.py")
+                with open(ref, "wb") as f:
+                    f.write(blob)
+                return ref
     except Exception:
-        return None
+        pass
+    return None
 
 
 # ---------------------------------------------------------------- stub 上游

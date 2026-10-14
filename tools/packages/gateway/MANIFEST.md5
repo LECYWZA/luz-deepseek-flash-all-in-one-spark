@@ -7,7 +7,7 @@
 94b69b282680f4241028a4f51c5b1bf3  ./payload/env/gateway-vl.env.template
 e5c57505e19db0297677ba6508701f9e  ./payload/env/gateway.env.template
 f4d7d2364c8f2131dbb9f361d5482491  ./payload/gw-verify.sh
-abd2d368a85b521b36609879b4c6badf  ./payload/tests/test_rc385.py
+66da1399c196a3321c47e9dbbdafae38  ./payload/tests/test_rc385.py
 1acb0c4586f1f68ac94224912c18592b  ./payload/units/10-gateway-hardening.conf
 3ace117e1e10f43973b61c7b22f1091f  ./payload/units/concurrency-proxy-v2.service
 fcdb3ba8131e03d4ee31ff0401140a3d  ./payload/units/concurrency-proxy-vl.service
