@@ -1,9 +1,9 @@
 PKG=gateway
-PKG_VERSION=0.3.2-gwfix2
-FINGERPRINT=a9c17506
-FINGERPRINT_NOTE=脱敏仓实算（战役仓同批=f8322934）；0.3.1 补批 rc3.8.4+守卫收官同步
-GIT_ANCHOR=2acc7f3（GW-INFRAS 审查基线；rc3.8.3 修复窗案头改件+rc3.8.4〔G2-RESTORE-20261014 S5 验证窗 V2b 413 透传修复，G2 窗 commit 承载〕——封包窗重钉）
-TOOL_ANCHORS_SYNC=2026-10-14（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
-PAYLOAD_N=11
-RED_LINES=GW_API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面
-MAC_DEPLOY=2026-10-14（GW-MAC-MIGRATION：网关本尊=Mac M6 OrbStack 双车道 8001/8002 rc3.8.4；01 systemd 双实例 RETIRED disable --now、unit/env 留盘=回退线；升级序与五探针口径见 README Mac 部署节）
+PKG_VERSION=0.3.2-gwfix3
+FINGERPRINT=858f95d2
+FINGERPRINT_NOTE=脱敏仓实算（战役仓同批=7a0f3576）；AUTH-DEPLOY-20261014 鉴权窗同步
+GIT_ANCHOR=676f977 战役仓法源（AUTH-TOOLCALL-SURVEY G1）；AUTH-DEPLOY-20261014 执行窗改件由两仓对应 commit 承载（rc3.8.5+tests+gw-verify P1b/P6+README 键面表）
+TOOL_ANCHORS_SYNC=2026-10-14
+PAYLOAD_N=12
+RED_LINES=GW_API_KEY/API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面/8899 直打禁律不变
+MAC_DEPLOY=2026-10-14 AUTH-DEPLOY：网关本尊=Mac M6 OrbStack rc3.8.5 键控车道 :8001（GW_REQUIRE_AUTH=1+GW_ALLOWED_MODELS 模型门）+responses-gateway v2.2.1 鉴权公共入口 :8003（02 容器化迁，API_KEY 同值平移客户端只换 URL）；8002 VL 车道撤除（compose .bak 回退线）；01 systemd 双实例 RETIRED 留盘；升级序与键面表见 README Mac 部署节

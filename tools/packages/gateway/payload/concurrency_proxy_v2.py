@@ -3,6 +3,27 @@
 """
 concurrency_proxy_v2.py — vLLM 流式感知并发网关（v2.0-rc3，2026-09-06）
 
+rc3.8.5 相对 rc3.8.4 的增强（AUTH-DEPLOY-20261014 执行窗；设计输入=G1 调查档
+  §F 插入点/§G 建议，主会话裁定双层收紧）：
+  1. 全局鉴权门 GW_REQUIRE_AUTH（缺省 0=休眠原行为，env 可关）：=1 时除
+     /health（探针豁免面——guardctl/daily-smoke 前置依赖语义不变）与 /gw/*
+     （维持原门）外一切路径一切方法须 Bearer GW_API_KEY（复用 gw_authorized
+     恒时比较语义）。动因：r3 栈引擎 8899 无 --api-key（G1 §B5/§B6），rc2
+     「业务路径不代理鉴权（上游 VLLM_API_KEY 负责）」设计假设失效——推理面
+     在本门收键。门位置=dispatch 统一分流层（GET/HEAD 分支与 POST
+     acquire_or_none 之前、body 读取之前）：流式（L403 handle_stream）与非
+     流式（relay_plain）共用同一前置门，GET 名录面（/v1/models）与
+     /metrics（prometheus 侧配 bearer_token）同门覆盖；401 计 auth_rejected。
+     Authorization 向引擎透传语义不变（fwd_headers 不动）。
+  2. 模型名校验 GW_ALLOWED_MODELS（缺省 "deepseek-v4.1-flash"；显式空串=关）：
+     POST body 顶层 "model" 字符串值不在白名单 → 404 OpenAI 形错误体
+     （model_not_found；对齐 02 网关 _model_not_found 形）。实现=b'"model"'
+     字节预检（rc3.4 prefilter 模式——无该键请求零 parse 零成本；非法 JSON
+     原样转发走原逻辑）；多模型逗号分隔；别名归一不做（8003 层职责——单一
+     事实源）。计 models_rejected。插入点=POST 分支 maybe_inject 之后（G1
+     §F-2）。GW_REQUIRE_AUTH=0 且 GW_ALLOWED_MODELS 置空 ⇒ 与 rc3.8.4 行为
+     逐字节等价（休眠门，tests/test_rc385.py 用例 d 执法）。
+
 rc3.8.4 相对 rc3.8.3 的修正（G2-RESTORE-20261014 S5 验证窗，2026-10-14）：
   - V2b 413 判读线修复：dispatch 兜底 except 吞 aiohttp HTTPException
     （HTTPRequestEntityTooLarge=64MiB client_max_size 帽）→错译 500；修=语义类异常
@@ -152,6 +173,7 @@ dispatch 单点；authorization 头透传恢复；GET/HEAD 原样转发。
   HEARTBEAT_INTERVAL=5   RETRY_CONNECT=1   NONSTREAM_TOTAL_TIMEOUT=900
   WRITE_TIMEOUT=60   TOTAL_STREAM_TIMEOUT=7200   DEDUP_ENABLE=1   GW_API_KEY=
   INJECT_ENABLE_THINKING=0   SANITIZE_IMAGE_PLACEHOLDER=1
+  GW_REQUIRE_AUTH=0   GW_ALLOWED_MODELS=deepseek-v4.1-flash
 """
 import asyncio
 import hashlib
@@ -181,7 +203,15 @@ GW_API_KEY = os.environ.get("GW_API_KEY", "")
 INJECT_ENABLE_THINKING = os.environ.get("INJECT_ENABLE_THINKING", "0") == "1"
 # rc3.7 图像占位符净化：默认 on——本版目的即修复会话中断；=0 回退现行为
 SANITIZE_IMAGE_PLACEHOLDER = os.environ.get("SANITIZE_IMAGE_PLACEHOLDER", "1") == "1"
-VERSION = "concurrency-proxy-v2-rc3.8.4"
+# rc3.8.5 全局鉴权门：默认 0=休眠原行为（rc3.8.4 等价）；=1 时除 /health 与
+# /gw/* 外一切路径一切方法过 gw_authorized（Bearer GW_API_KEY 恒时比较）。
+GW_REQUIRE_AUTH = os.environ.get("GW_REQUIRE_AUTH", "0") == "1"
+# rc3.8.5 模型名白名单：逗号分隔；缺省=引擎真名单值；显式空串=校验关闭。
+# 别名归一不做（8003 responses-gateway 层职责——MODEL_ALIAS 单一事实源）。
+GW_ALLOWED_MODELS = frozenset(
+    m.strip() for m in os.environ.get("GW_ALLOWED_MODELS", "deepseek-v4.1-flash").split(",")
+    if m.strip())
+VERSION = "concurrency-proxy-v2-rc3.8.5"
 
 HEARTBEAT = b": keepalive\n\n"          # SSE 注释帧：OpenAI SDK/EventSource 忽略
 DONE_MARK = b"data: [DONE]\n\n"         # 错误帧后的终止符（SDK 正常收尾）
@@ -206,6 +236,7 @@ METRICS = {
     "image_placeholders_sanitized": 0, "image_sanitize_requests": 0,
     "internal_retries": 0, "active_streams": 0, "queue_now": 0,
     "queue_wait_peak": 0.0,
+    "auth_rejected": 0, "models_rejected": 0,   # rc3.8.5：全局门/模型门计数（G1 §F-3）
     "ttft_buckets": {
         "lt1": 0, "1to5": 0, "5to30": 0, "30to60": 0,
         "60to120": 0, "120to300": 0, "gt300": 0},
@@ -308,6 +339,37 @@ def maybe_inject(body: bytes, path: str) -> bytes:
         return json.dumps(obj).encode()
     except Exception:
         return body                          # 非法 body：跳注入，走原转发逻辑
+
+
+def validate_model(body: bytes) -> str | None:
+    """rc3.8.5 模型名白名单预检：返回应拒的模型名（在白名单外），None=放行。
+    b'"model"' 字节预检（rc3.4 prefilter 模式）——无该键请求零 parse 零成本；
+    预检命中后才 json.loads；非法 JSON / 非法顶层结构 / model 非字符串
+    （null/数字等）一律放行走原转发逻辑（上游给出真实 4xx，网关不越俎）。
+    别名归一不做：8003 层 MODEL_ALIAS 单一事实源（G1 §G5），本门只认真名。"""
+    if not GW_ALLOWED_MODELS:
+        return None                          # 显式空串=校验关闭
+    if b'"model"' not in body:
+        return None                          # 快路径：绝大多数含 model 键才继续
+    try:
+        obj = json.loads(body)
+    except Exception:
+        return None                          # 非法 body：原样转发（与 is_stream 同约定）
+    if not isinstance(obj, dict):
+        return None
+    m = obj.get("model")
+    if isinstance(m, str) and m not in GW_ALLOWED_MODELS:
+        return m
+    return None
+
+
+def resp_404_model(model: str) -> web.Response:
+    """OpenAI 形 model_not_found 404（对齐 02 responses-gateway _model_not_found）。
+    模型名回显进 message（客户端自报名，json_response 转义兜底）。"""
+    return web.json_response(
+        {"error": {"message": f"The model `{model}` does not exist.",
+                   "type": "invalid_request_error", "code": "model_not_found"}},
+        status=404)
 
 
 # rc3.7 图像占位符净化 -----------------------------------------------
@@ -777,6 +839,18 @@ async def dispatch(request: web.Request):
             return web.json_response(METRICS)
         return web.json_response({"error": "not found"}, status=404)
 
+    # rc3.8.5 全局鉴权门（G1 §F-1 插入点：统一分流层——GET/HEAD 分支与 POST
+    # acquire_or_none 之前，body 读取之前）：流式（handle_stream）/非流式
+    # （relay_plain）/GET 名录面共用同一前置门。/health 豁免（guardctl 探针面）；
+    # /metrics 在门内（prometheus 侧配 bearer_token）；/gw/* 上面已走原门。
+    # GW_REQUIRE_AUTH=0 ⇒ 门休眠，行为与 rc3.8.4 逐字节等价。
+    if GW_REQUIRE_AUTH and request.path != "/health":
+        if not gw_authorized(request):
+            METRICS["auth_rejected"] += 1
+            return web.json_response(
+                {"error": {"message": "unauthorized", "type": "gw_auth"}},
+                status=401)
+
     # GET/HEAD 免并发槽（轻量读，不占推理槽；30s 自身超时）
     if request.method in ("GET", "HEAD"):
         try:
@@ -797,6 +871,12 @@ async def dispatch(request: web.Request):
         if request.method == "POST":
             body = sanitize_image_placeholders(body, request.path)  # rc3.7：先于注入与去重键
             body = maybe_inject(body, request.path)   # rc3.6：注入先于流式判定与去重键
+            bad_model = validate_model(body)          # rc3.8.5：模型门（G1 §F-2，maybe_inject 后）
+            if bad_model is not None:
+                METRICS["models_rejected"] += 1
+                log.warning("model rejected %s: %r (allowed=%d)",
+                            request.path, bad_model, len(GW_ALLOWED_MODELS))
+                return resp_404_model(bad_model)
         if request.method == "POST" and is_stream(body):
             return await handle_stream(request, body, session)
         return await relay_plain(request, body, session)
@@ -830,12 +910,15 @@ async def _close_session(app: web.Application) -> None:
 
 
 def main() -> None:
+    auth_face = ("off" if not GW_API_KEY else
+                 ("gw+v1-all" if GW_REQUIRE_AUTH else "gw-only"))
     log.info("%s %s->%s conc=%d ttft=%.0fs idle=%.0fs hb=%.0fs q=%.0fs "
-             "write_to=%.0fs total_to=%.0fs dedup=%s auth=%s",
+             "write_to=%.0fs total_to=%.0fs dedup=%s auth=%s models=%s",
              VERSION, f"0.0.0.0:{PORT}", UPSTREAM, MAX_CONCURRENCY,
              FIRST_TOKEN_TIMEOUT, CHUNK_IDLE_TIMEOUT, HEARTBEAT_INTERVAL,
              QUEUE_TIMEOUT, WRITE_TIMEOUT, TOTAL_STREAM_TIMEOUT,
-             DEDUP_ENABLE, "on" if GW_API_KEY else "off")
+             DEDUP_ENABLE, auth_face,
+             "|".join(sorted(GW_ALLOWED_MODELS)) if GW_ALLOWED_MODELS else "any")
     web.run_app(make_app(), host="0.0.0.0", port=PORT, print=None,
                 shutdown_timeout=60)
 

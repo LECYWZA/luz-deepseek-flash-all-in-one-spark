@@ -2,15 +2,20 @@
 # gw-verify — 并发网关验证器（五探针+离线配置 lint；TOOLS31 §二 P4-3）
 #
 # 【五探针（--live；执行窗面）】
-#   P1 401 面：无 key 打 /gw/* 必拒（GW_API_KEY Bearer 鉴权工作）。A5 修正：业务路径
-#     不代理鉴权（proxy :105-106 契约——鉴权归上游 VLLM_API_KEY），故无 key 业务 POST
-#     的 401 断言为误断言已撤（其反而会真触发一次上游推理且必然 200）；401 断言收敛 /gw/*。
+#   P1 401 面：无 key 打 /gw/* 必拒（GW_API_KEY Bearer 鉴权工作）。**rc3.8.5 起
+#     （AUTH-DEPLOY-20261014）全局门 GW_REQUIRE_AUTH=1 在役：无 key 业务 POST 也
+#     必 401（门在统一分流层、body/上游之前——本地应答零上游推理载，原「会真触发
+#     一次上游推理」的误断言撤回依据已消）——P1 增业务面断言（rc≤3.8.4 无钥=200
+#     旧态，P1 业务面=Mac 在役面预期）。
 #   P2 429 面：>MAX_CONCURRENCY 并发 POST 必限流（信号量工作）。A4 修正：GET/HEAD 在
 #     dispatch 免并发槽（proxy :759-766，信号量之前返回）——health 打点永不 429，
 #     信号量验证必须 POST 面（窗口专用打点序见 --live 输出）。
 #   P3 直连对照：绕网关直抵上游 health（8899 直达=基线对照，轻探零推理载荷）
-#   P4 健康穿透：/health 经网关必 200（透传工作）
+#   P4 健康穿透：/health 经网关必 200（透传工作；rc3.8.5 /health=鉴权豁免面）
 #   P5 上游失效面：上游停时网关 502/错误帧行为——演练窗专用（本件零执行）
+#   P6 模型门面（GW_KEY 在时）：带 key + 假模型名 POST → 404 model_not_found
+#     （rc3.8.5 GW_ALLOWED_MODELS 白名单；本地应答零上游推理载）。带 key + 真模型
+#     =一发定谳（执行窗面，本件零执行）。
 # 【离线面（--offline；案头）】配置 lint：UPSTREAM 形合法/MAX_CONCURRENCY 域 [1,64]/
 #   PORT 域 [1,65535]/GW_API_KEY 非空（键面非空律——空=裸奔面=红）+B4 域检查
 #   （QUEUE_TIMEOUT [1,300]/DEDUP_ENABLE {0,1}/INJECT_ENABLE_THINKING {0,1}，键在才查）
@@ -19,18 +24,24 @@
 # 【出口】0=绿/1=红/2=无法判（--live 网关不可达=2，ANCHOR-UNKNOWN 语义）。
 # 【红线】--live=执行窗面（产线在役时 P2/P5 先呈裁）；探针载荷=最小面（/gw/* 401 拒答
 #   与 health 探测零上游推理载——P1 收敛后成立；业务路径 POST 探测=误断言已撤，零执行）。
-# 【Mac 变体（GW-MAC-MIGRATION 2026-10-14 起=在役本尊）】网关本尊迁 Mac mini M6 OrbStack
-#   容器（concurrency-proxy-v2-mac :8001 / concurrency-proxy-vl-mac :8002，rc3.8.4）；01
-#   systemd 双实例 RETIRED。用法面：--live 自 01 打 GW_URL=http://192.168.5.71:8001
-#   （VL 面 :8002）；P3「直连对照」改义=UP_URL 指 -R 隧道面 http://192.168.0.1:24001
-#   （既有在役只读探针类，Mac 侧无本地 8899 可直；**8899 直打禁律不变**）；P1/P4 语义
-#   原样。本件默认值仍留 01 本地形态（127.0.0.1）＝历史基线，Mac 部署节见包 README。
+# 【Mac 变体（AUTH-DEPLOY-20261014 起=在役本尊 rc3.8.5）】网关本尊=Mac mini M6
+#   OrbStack 容器 concurrency-proxy-v2-mac :8001（GW_REQUIRE_AUTH=1：/v1/* 与
+#   /metrics 一切方法收 Bearer GW_API_KEY；/health 豁免=guardctl 探针面；
+#   GW_ALLOWED_MODELS=deepseek-v4.1-flash 模型门）；**8002 VL 车道已撤除**（G1 §E
+#   零消费者；compose .bak-auth1014 留回退）；**8003=responses-gateway-mac 鉴权
+#   公共入口**（02 v2.2.1 容器化迁 Mac，API_KEY 客户端钥同值平移）。用法面：
+#   --live 自 01 打 GW_URL=http://192.168.5.71:8001；GW_KEY=<GW_API_KEY 值> 在时
+#   增 P6 模型门带钥探针（值经 env 传递，绝不入档）；P3「直连对照」改义=UP_URL
+#   指 -R 隧道面 http://192.168.0.1:24001（既有在役只读探针类，Mac 侧无本地 8899
+#   可直；**8899 直打禁律不变**）；P1/P4 语义原样。本件默认值仍留 01 本地形态
+#   （127.0.0.1）＝历史基线，Mac 部署节见包 README。
 set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 [ -f "$HERE/../_lib/verdict.sh" ] && . "$HERE/../_lib/verdict.sh"
 
 GW_URL="${GW_URL:-http://127.0.0.1:8001}"
 UP_URL="${UP_URL:-http://127.0.0.1:8899}"
+GW_KEY="${GW_KEY:-}"          # rc3.8.5 带钥面（P6 模型门探针用；值零入档）
 
 lint_env() {  # lint_env <env 文件> → 0/1（四键面全绿才 0）
   local f="$1" v
@@ -93,9 +104,7 @@ case "$cmd" in
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$GW_URL/health" 2>/dev/null)
     if [ "$code" = 200 ]; then echo "[gw-verify] P4 健康穿透绿（/health 经网关 200）"
     else vr_face "P4-health-passthrough" "code=${code:-unreachable}"; fi
-    # P1 401 面（A5 修正：收敛到管理面 /gw/*——本地应答零上游载。业务路径不代理鉴权
-    # （proxy :105-106 契约，鉴权归上游 VLLM_API_KEY）：无 key 业务 POST 反而会真触发
-    # 一次上游推理且必然 200，原「必 401」断言=误断言已撤（S6 P1-auth 红在案）。
+    # P1 401 面：管理面 /gw/*（本地应答零上游载）
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$GW_URL/gw/health" 2>/dev/null)
     case "$code" in
       401) echo "[gw-verify] P1 401 面绿（/gw/health 无 key 拒 401=GW_API_KEY Bearer 鉴权工作）" ;;
@@ -103,15 +112,43 @@ case "$cmd" in
       200) vr_face "P1-auth" "/gw/health 无 key 得 200=GW_API_KEY 未设（管理面裸奔——键面非空律红）" ;;
       *)   vr_face "P1-auth" "/gw/health 无 key code=$code（预期 401）" ;;
     esac
+    # P1b 业务面 401（rc3.8.5 GW_REQUIRE_AUTH=1 在役面；门在 body/上游之前——本地
+    # 应答零上游推理载。rc≤3.8.4 无钥=200 旧态=此断言的预期差，Mac 在役面恒 401）
+    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+      -X POST "$GW_URL/v1/chat/completions" -H 'Content-Type: application/json' \
+      -d '{"model":"deepseek-v4.1-flash","messages":[{"role":"user","content":"ping"}],"max_tokens":1}' 2>/dev/null)
+    if [ "$code" = 401 ]; then
+      echo "[gw-verify] P1b 业务面 401 绿（无 key POST /v1/chat/completions 拒 401=GW_REQUIRE_AUTH 全局门工作）"
+    elif [ "$code" = 200 ]; then
+      vr_face "P1b-auth" "无 key 业务 POST 得 200=GW_REQUIRE_AUTH 未开（业务面裸奔——rc3.8.5 部署红）"
+    else
+      vr_face "P1b-auth" "无 key 业务 POST code=${code:-unreachable}（预期 401）"
+    fi
+    # P6 模型门面（GW_KEY 在时；本地应答零上游推理载；真模型一发=执行窗面零执行）
+    if [ -n "$GW_KEY" ]; then
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+        -X POST "$GW_URL/v1/chat/completions" -H 'Content-Type: application/json' \
+        -H "Authorization: Bearer $GW_KEY" \
+        -d '{"model":"no-such-model-zzz","messages":[{"role":"user","content":"ping"}],"max_tokens":1}' 2>/dev/null)
+      if [ "$code" = 404 ]; then
+        echo "[gw-verify] P6 模型门绿（带 key+假模型 404 model_not_found=GW_ALLOWED_MODELS 白名单工作）"
+      else
+        vr_face "P6-model" "带 key+假模型 code=${code:-unreachable}（预期 404）"
+      fi
+    else
+      echo "[gw-verify] P6 模型门=GW_KEY 未设，跳过（带钥面探针需 GW_KEY env）"
+    fi
     # P3 直连对照（上游 health 基线）
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$UP_URL/health" 2>/dev/null)
     if [ "$code" = 200 ]; then echo "[gw-verify] P3 直连对照绿（$UP_URL/health 200=基线在）"
     else vr_unknown "P3-upstream" "上游 health code=${code:-unreachable}（对照基线不可判）"; fi
     # P2 429 面=窗口专用打点序（A4 修正：GET/HEAD 在 dispatch 免并发槽（proxy :759-766，
-    # 信号量之前返回）——health 打点永不 429，信号量验证必须 POST 面）
+    # 信号量之前返回）——health 打点永不 429，信号量验证必须 POST 面。
+    # AUTH-DEPLOY-20261014：8002 VL 车道已撤除，梯=8001 单车道（Mac 在役 MAX_CONCURRENCY=16）
     echo "[gw-verify] P2 429 面=窗口专用（序：停写流→并发 POST /v1/chat/completions 打点"
-    echo "[gw-verify]   〔stream 假 body max_tokens=1；8001 梯 8→16→17 / 8002 梯 4→8→9〕"
-    echo "[gw-verify]   →期待 N+1 发 429+Retry-After→/gw/metrics queue_wait/active_streams 收尾=0→复绿）"
+    echo "[gw-verify]   〔stream 假 body max_tokens=1+Bearer GW_API_KEY（rc3.8.5 门后须带钥）；"
+    echo "[gw-verify]   8001 梯 8→16→17〕→期待 N+1 发 429+Retry-After→/gw/metrics"
+    echo "[gw-verify]   queue_wait/active_streams 收尾=0→复绿）"
     # P5 上游失效面=演练窗专用（零执行）
     echo "[gw-verify] P5 上游失效面=演练窗专用（停 8899 观察 502/错误帧族；本面零执行）"
     vr_emit ;;
