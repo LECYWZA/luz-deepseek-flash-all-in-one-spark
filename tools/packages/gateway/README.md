@@ -64,3 +64,60 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 
 ——TOOLS31 T4 P4 / 2026-10-13 案头整备；2026-10-14 GW-INFRAS-AUDIT 修复窗
 （A1-A7/A9 案头+B1/B4/B5/B6/B7 顺带）同日更新。
+## Mac M6 部署节（在役本尊；GW-MAC-MIGRATION 2026-10-14）
+
+**2026-10-14 起，网关本尊=Mac mini M6（192.168.5.71 管理 /192.168.0.1 专线）OrbStack 容器**；
+01 systemd 双实例已 RETIRED（`disable --now`，unit/drop-in/env 全留盘=回退线）。详档=
+战役仓 luz030-opt-campaign docs/ops/GW-MAC-MIGRATION-PLAN/RESULT-20261014.md（02 注册存档 luz-0.3.1-locked 同步在案）。
+
+1. **形态**：容器（非 systemd/launchd）——`~/gateway-migration-staging/apps/mac-stack/
+   docker-compose.yml` 双 service：`concurrency-proxy`（:8001 文本本尊，容器名
+   concurrency-proxy-v2-mac）+ `concurrency-proxy-vl`（:8002 VL 车道，concurrency-proxy-vl-mac）；
+   同镜像 `mac-stack-concurrency-proxy`（proxy-docker/Dockerfile：python:3.12-slim+aiohttp+
+   `COPY` 载荷——**脚本烧镜像，升级必 compose build**）；`restart: always`。
+2. **配置**：env_file=proxy-docker/`proxy.env`（8001，十四键=UPSTREAM/PORT/MAX_CONCURRENCY/
+   QUEUE_TIMEOUT/INJECT_ENABLE_THINKING/DEDUP_ENABLE/CHUNK_IDLE_TIMEOUT/FIRST_TOKEN_TIMEOUT/
+   HEARTBEAT_INTERVAL/WRITE_TIMEOUT/TOTAL_STREAM_TIMEOUT/NONSTREAM_TOTAL_TIMEOUT/RETRY_CONNECT
+   +GW_API_KEY）与 `gateway-vl.env`（8002，UPSTREAM/PORT=8002/MAX_CONCURRENCY=8/
+   WRITE_TIMEOUT/TOTAL_STREAM_TIMEOUT/DEDUP_ENABLE=0+GW_API_KEY 独立钥）；均宿主 **0600**
+   （SMOK_KEY 律：值只在此，不进镜像/git）。
+3. **UPSTREAM 隧道形**：`http://192.168.0.1:24001`＝01 侧 mac-forwarders.service 的
+   `ssh -R 192.168.0.1:24001:192.168.5.186:8899`（Mac sshd GatewayPorts clientspecified）。
+   **隧道断=网关 502**（ServerAlive 20s×3+Restart=always 自愈，断窗≈1min——风险面 R2）。
+4. **升级序**：scp 新载荷覆盖 proxy-docker/concurrency_proxy_v2.py → `md5 -q` 对锚
+   （rc3.8.4=`f0a47b172faa1175…`）→ 改 env（如需）→ `docker compose build
+   concurrency-proxy && docker compose up -d --force-recreate concurrency-proxy`
+   （vl 同形）→ 五探针（gw-verify 头注 Mac 变体口径）。
+5. **鉴权**：GW_API_KEY=47 字符钥（/gw/* 管理面 Bearer；A10 后值，与 01 退役面同值平移）；
+   VL 车道独立 35 字符钥。业务路径不代理鉴权（鉴权归上游引擎钥，透传）。
+6. **观察面消费**：Mac prometheus `vllm-paths` 靶=192.168.5.71:8001/metrics（/metrics 中继）；
+   01 guardctl 网关探针改打 http://192.168.5.71:8001/health；01 daily-smoke
+   SMOKE_PROXY_URL=http://192.168.5.71:8001；02 responses-gateway
+   VLLM_URL=http://192.168.5.71:8001。
+
+## 排除了什么
+
+- **GW_API_KEY 值绝不入包/入 unit/入镜像/入日志**（SMOK_KEY 前科律；selfcheck T4/F5
+  执法红例在）。
+- **在役进程零触碰**：本包零 systemctl/restart 动作（bin/gateway run 恒拒——产线在役
+  件不 exec 转发）。rc3.8.3 包内领先形**不自动推装**在役位（重启窗承载，见构成表）。
+- **Mac mini M6 监控栈不收编**（sparkDash/nginx/grafana/prometheus=迁移窗承接；**网关本尊
+  除外**——2026-10-14 起网关以容器形在 Mac 在役，见上「Mac M6 部署节」）。
+- **P2 429/P5 上游失效探针不自动执行**（产线在役时先呈裁——验证器内注记）。
+
+## 红线注记
+
+1. --live 探针=执行窗面；探针载荷最小面（P1=/gw/health 本地应答 401 拒答零上游推理载
+   ——A5 收敛后成立；业务路径不代理鉴权〔proxy :105-106，鉴权归上游 VLLM_API_KEY〕，
+   无 key 业务 POST 探针已撤=其会真触发推理且必然 200）。
+2. unit/drop-in 落机后首验=四探针（P1/P3/P4+journal 尾段）；P2/P5=演练窗（P2 须并发
+   POST 面——GET/HEAD 在 dispatch 免并发槽，health 打点永不 429，A4）。
+3. proxy 件 md5 漂移（在役升级）→同日再吸收+TOOL-ANCHORS 行更新（selfcheck F3 执法）；
+   反向（包领先在役，rc3.8.3 现态）=F3 预期绿注记态，在役吸收（重启窗）时同日重钉。
+4. RETRY_CONNECT=1 语义注记（B5）：上游建连失败**或响应 5xx** 时整 body 重发一次——
+   POST 面若引擎已耗 prefill 后 5xx，重试=重复推理计费面（图像 prefill 重则代价放大）；
+   429 无自动重试（Retry-After 语义归客户端）。VL 车道可选 RETRY_CONNECT=0
+   （行为变化=验证窗 V2 承载裁定，模板暂保持与在役同面不设键）。
+
+——TOOLS31 T4 P4 / 2026-10-13 案头整备；2026-10-14 GW-INFRAS-AUDIT 修复窗
+（A1-A7/A9 案头+B1/B4/B5/B6/B7 顺带）同日更新。

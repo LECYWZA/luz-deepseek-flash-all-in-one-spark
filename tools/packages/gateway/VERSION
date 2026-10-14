@@ -6,3 +6,4 @@ GIT_ANCHOR=2acc7f3（GW-INFRAS 审查基线；rc3.8.3 修复窗案头改件+rc3.
 TOOL_ANCHORS_SYNC=2026-10-14（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
 PAYLOAD_N=11
 RED_LINES=GW_API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面
+MAC_DEPLOY=2026-10-14（GW-MAC-MIGRATION：网关本尊=Mac M6 OrbStack 双车道 8001/8002 rc3.8.4；01 systemd 双实例 RETIRED disable --now、unit/env 留盘=回退线；升级序与五探针口径见 README Mac 部署节）

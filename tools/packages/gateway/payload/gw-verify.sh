@@ -19,6 +19,12 @@
 # 【出口】0=绿/1=红/2=无法判（--live 网关不可达=2，ANCHOR-UNKNOWN 语义）。
 # 【红线】--live=执行窗面（产线在役时 P2/P5 先呈裁）；探针载荷=最小面（/gw/* 401 拒答
 #   与 health 探测零上游推理载——P1 收敛后成立；业务路径 POST 探测=误断言已撤，零执行）。
+# 【Mac 变体（GW-MAC-MIGRATION 2026-10-14 起=在役本尊）】网关本尊迁 Mac mini M6 OrbStack
+#   容器（concurrency-proxy-v2-mac :8001 / concurrency-proxy-vl-mac :8002，rc3.8.4）；01
+#   systemd 双实例 RETIRED。用法面：--live 自 01 打 GW_URL=http://192.168.5.71:8001
+#   （VL 面 :8002）；P3「直连对照」改义=UP_URL 指 -R 隧道面 http://192.168.0.1:24001
+#   （既有在役只读探针类，Mac 侧无本地 8899 可直；**8899 直打禁律不变**）；P1/P4 语义
+#   原样。本件默认值仍留 01 本地形态（127.0.0.1）＝历史基线，Mac 部署节见包 README。
 set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 [ -f "$HERE/../_lib/verdict.sh" ] && . "$HERE/../_lib/verdict.sh"
