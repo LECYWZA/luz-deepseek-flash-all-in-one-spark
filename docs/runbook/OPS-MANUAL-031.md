@@ -3,8 +3,11 @@
 > **法源**：FINAL31-PLAN-20261012 §T3-4 + CODE31-REVIEW-PLAN-20261012 §4.2
 > （两档=战役仓归档，不在本交付仓）。
 > 落位=docs/runbook/（本仓；战役仓原位 docs/runbooks/）。
-> **适用形**：0.3.1 定型形（50 键 15767aa6+SPEC6+W5 件 32cf9abf+R1 八件面
-> 4b40a123+overlay o12c1-prod；三元组详见 `docs/registry/FORM-REGISTRY-031.md`）。
+> **适用形（2026-10-14 升档=FL6 转正形）**：0.3.1 定型形现役=**51 键 ENV51
+> `PROD-R51W5FL6-spec1.env` md5 2ac74586**（摘第 51 键 DSV41_FL6_RECALL_FIX=1
+> 即休眠回 50 键形）+SPEC6+W5 件 32cf9abf+R1 八件面 4b40a123+adapter
+> sitecustomize=55b1e412+fl6_recall=b87cbb5e（FL6 转正件）+overlay o12c1-prod；
+> 三元组详见 `docs/registry/FORM-REGISTRY-031.md`。
 > 红线：**02 机两守护（pid 3535/3536）绝对不动**；8898=测试靴面/8899=产线服务面
 > 分面律（测试窗 boot 走 8898 槽，产线恢复恒 8899）；一切停机窗 OUTAGE 制+
 > 先存后删+容器删除前必存 docker logs。
@@ -15,6 +18,8 @@
 
 1. **点火前缀**：`ARM_TAG=<tag> ARM_ENV_FILE=<env 件> bash
    tools/boot-with-slotlock.sh bash ~/migrate-assets/bin/r3-boot-arm.sh`
+   ——**ENV51 现役文件名=`PROD-R51W5FL6-spec1.env`**（51 键 2ac74586；50 键
+   一级回退件名=`PROD-R51W5-spec1.env` 15767aa6）
    —— 靴槽锁（flock fd9 排他；`.slot-lock` 残文本仅取证）四机容器净核
    （docker ps 无 r3boot）后点火；**boot 命令 rc 透传**（wrapper 零行为扰动）。
 2. **ARM_TAG/SPEC 注入面**：env 件经 `ARM_ENV_FILE` 逐行进 docker -e（四秩一致
@@ -33,8 +38,10 @@
    入役绿线 ≥5000——COMBO 三靴 6031.9/6083.9/6124.5）。
 7. **四查**（boot 收口核）：①health GET 200；②printenv 四机真键核（键名+值
    与 ARM_ENV_FILE 逐字）；③横幅直读（adapter 29+ 横幅门行+W5/R1/O12 armed
-   态+撤净态）；④面指纹四机全等（adapter 面=定型形 md5 表对表）。伴：水位
-   sandwich（boot 前/中/后）+qmg 在役+02 机两守护 pid 双核。
+   态+撤净态+**FL6FIX 横幅判读：四容器×2 行 patched+FL6FIX=1 4/4**——任一
+   容器缺 patched 行或 FL6FIX≠1=FL6 面红）；④面指纹四机全等（adapter 面=
+   定型形 md5 表对表）。伴：水位 sandwich（boot 前/中/后）+qmg 在役+02 机
+   两守护 pid 双核。
 
 ## 第二章 复原规程（双复原义务）
 
@@ -53,16 +60,20 @@
 5. **产线 boot**：沉降 600s→产线形 boot（CTN_PREFIX=r3prod/8899）→四查+smoke
    3/3→OUTAGE-END 宣告。容器删除前必存 docker logs。
 
-## 第三章 回退两级（50→48→47 键链）
+## 第三章 回退链（51→50→48→47→45 键五级+FL6 面两级）
 
-**回退件 md5 表**（R 级=回退动作序，逐级呈裁后执行）：
+**回退件 md5 表**（R 级=回退动作序，逐级呈裁后执行；2026-10-14 升档=自 51 键起算）：
 
 | 级 | 形 | env 件/md5 | adapter 面 | 动作（R.n） |
 |---|---|---|---|---|
-| L0 定型 | 50 键 | arms/COMBO-C0-spec1.env=15767aa6 | 4b40a123+**32cf9abf**（W5 件）+overlay | —（在役目标） |
-| L1 一级 | 48 键 | PROD-R1INK48L2PF6O12C1=8c8c166d | 4b40a123+0497e566（或 32cf9abf 键关=等价）+overlay | R.1 两键 unset（FP8/TG）→boot→四查+W5 横幅撤净直证；件级=md5 复原 0497e566 四机三步（adapter-sync） |
-| L2 二级 | 47 键 | PROD-R1STDLL128L2PF6O12C1=99e7ec92 | 4b40a123+0497e566+overlay（O12 两键保留） | R.2 48 键基础上 unset DSV41_FP4KV_R1_INKERNEL →boot→R1 横幅撤净+t_r1_equiv 面=构造性回退（G5 四查绿先例 rw2/P3 两度） |
+| L0 定型 | **51 键** | PROD-R51W5FL6-spec1.env=**2ac74586** | **55b1e412+b87cbb5e（FL6 转正）**+4b40a123+**32cf9abf**（W5 件）+overlay | —（在役目标） |
+| L0.5 一级 | 50 键 | PROD-R51W5-spec1.env=15767aa6 | 55b1e412（51 键缺省=sitecustomize 休眠逐字原版）+overlay | **R.0 摘第 51 键 DSV41_FL6_RECALL_FIX=1 即休眠**→boot→四查+FL6FIX 横幅撤净直证 |
+| L1 二级 | 48 键 | PROD-R1INK48L2PF6O12C1=8c8c166d | 4b40a123+0497e566（或 32cf9abf 键关=等价）+overlay | R.1 两键 unset（FP8/TG）→boot→四查+W5 横幅撤净直证；件级=md5 复原 0497e566 四机三步（adapter-sync） |
+| L2 三级 | 47 键 | PROD-R1STDLL128L2PF6O12C1=99e7ec92 | 4b40a123+0497e566+overlay（O12 两键保留） | R.2 48 键基础上 unset DSV41_FP4KV_R1_INKERNEL →boot→R1 横幅撤净+t_r1_equiv 面=构造性回退（G5 四查绿先例 rw2/P3 两度） |
 | L3 深回退 | 45 键 | PROD-R1STDLL128L2PF6=34977bf0 | 零 overlay+回退 scheduler（O12 撤） | R.3 零 overlay+以其 bump boot 一次+四查复绿（TOOL-ANCHORS:48-49 先例行） |
+
+- **FL6 面两级回退**（独立于键级链）：一级=L0.5 摘键休眠（上表）；二级=**摘接线回
+  2c4baad3**（目录级锚=sitecustomize 原形期；动作序详见 `deploy/adapter/README.md`）。
 
 - **键级回退优先于件级回退**（键 unset 即回退、无件回滚需求——W5 卡 §四律）；
   件级回退=md5 复原四机标准三步（01 落件→sync --apply→--check 全等）。
@@ -114,7 +125,9 @@
   ——SPLIT 键禁设；6498aa39 在库复活位=定型微调/0.3.2 单臂差分呈裁）。
 - **02 机两守护（pid 3535/3536）绝对不动**（COMBO/R1 窗窗前窗终双核先例）。
 - **8898/8899 分面律**：8898=测试靴槽（窗口臂 boot）；8899=产线服务面（复原
-  后恒此口；四查 health GET 200 靶口）。
+  后恒此口；四查 health GET 200 靶口）。**8899 产线规程注记（2026-10-14 补）**：
+  8899 禁流量红线下，产线健康判据=**GET 200+四查**（本机只读探针；经网关面
+  =`8001 /health` 口径）；**禁压测类/批量类请求**打点产线。
 
 ## 第七章 量具锚点引用
 
@@ -131,4 +144,7 @@
 - boot 哨兵（boot_sentinel.sh+anchors.tsv）：定型三形锚待 QA31 健康靴回填
   （W-1；遇未知形=ANCHOR-UNKNOWN 横幅不判快慢=设计安全态）。
 
-——CODE31 T3 文档窗 / 2026-10-12（七章骨架+先例锚；数字源=窗档锚点引注制）。
+——CODE31 T3 文档窗 / 2026-10-12（七章骨架+先例锚；数字源=窗档锚点引注制）；
+2026-10-14 E2 固化窗升档（头注适用形=ENV51+第一章 ENV51 文件名与 FL6FIX 横幅
+判读+第三章 51→45 五级回退链+第六章 8899 产线规程注记；正文与战役仓
+docs/runbooks/ 版同源同步——双档差异仅仓定位注记行）。

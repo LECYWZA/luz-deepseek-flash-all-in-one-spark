@@ -31,6 +31,18 @@
 sha256 `0f075735…cf3ae`）。四机 `docker pull` 后以 RepoDigest 对表指纹。
 VL 线已切 SGLang 单基座（vLLM 两形移历史/备份注记，见 README §二尾注）。
 
+**镜像三通道身份表（2026-10-14 固化窗引入，交叉=`~/luz-0.3.1-dist/README-DIST.md`）**：
+
+| 通道 | 值 | 复核法 |
+|---|---|---|
+| registry manifest digest（r3） | `sha256:f8095fa8…415c1`（四机一致） | `docker inspect --format '{{.RepoDigests}}' <r3 镜像>` |
+| 冷构建内容身份 cid | `ffed489217c872ea`（RootFS 层链算式） | README-DIST 载复算命令 |
+| 基座钉 | `0f075735`（main-79cafec0 01 原始形；r3prod-head 实跑 Id） | `docker inspect r3prod-head` |
+| r3 离线 tar | sha256 `6afa4429…`（`~/luz-0.3.1-dist/images/`+CHECKSUMS.manifest） | `sha256sum -c` |
+
+注意：01 本地镜像 ID=f8095fa8d6ed 而 02 显示 a23298ed=digest 同、显示口径异
+（containerd 索引 digest vs overlay2 config digest——G2 定谳，非内容漂移）。
+
 ## 4. 权重目录布局
 
 | 机 | 路径 | 内容 |
@@ -76,9 +88,11 @@ engram 分片（**宿主生成物，48G，不随仓分发**）：`~/dsv41-engram
 | **51 键 FL6 形（现役定版）** | `PROD-R51W5-FL6FIX-spec1.env` / 2ac74586（服务器在役位名=`PROD-R51W5FL6-spec1.env`，同 md5 异名） | FL6 召回修复**转正在役形**（FL6-PROMO 窗 2026-10-13 闭 GREEN：cp30 召回锚位 99.95%+DE 82.17 实役直证，8899=200 在役健康）——**当前产线在役** |
 | **50 键形（一级回退）** | `PROD-R51W5-spec1.env` / 15767aa6 | 0.3.1 定型交付形；FL6 转正后**降为一级回退**（摘第 51 键即得，sitecustomize 休眠=逐字原版行为） |
 
-serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→50→48→47 键
-四级（48/47/45 键件在 `tools/packages/cfgmgmt/payload/env/`；OPS-MANUAL 第三章
-逐级动作序）；FL6 面另有两级回退（一级摘键休眠/二级摘接线回 2c4baad3，动作序=
+serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 **51→50→48→47→45
+键五级**（45 键=零 overlay 深回退一级，`PROD-R1STDLL128L2PF6-spec1.env`=34977bf0
+——见 `docs/registry/FORM-REGISTRY-031.md` §一 L3；48/47/45 键件在
+`tools/packages/cfgmgmt/payload/env/`；OPS-MANUAL 第三章逐级动作序）；FL6 面
+另有两级回退（一级摘键休眠/二级摘接线回 2c4baad3，动作序=
 `deploy/adapter/README.md`）。adapter sitecustomize 本仓件=55b1e412 现役定版
 （未设 51 键=休眠逐字原版，两形通用）。
 
@@ -86,8 +100,13 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→5
 
 1. 点火：`ARM_TAG=<tag> ARM_ENV_FILE=<env 件> bash tools/boot-with-slotlock.sh bash ~/migrate-assets/bin/r3-boot-arm.sh`（靴槽锁+四机容器净核）。注：wrapper 缺省锁位=`~/luz030-opt-campaign/.slot-lock`（`CAMPAIGN=<目录>` 环境变量可覆写；全新机器无该目录时先 `mkdir -p` 或设 CAMPAIGN 指向任一可写目录，否则锁文件打开失败即拒起）。
 2. 沉降 600s 律（前栈拆靴→点火 ≥600s）。
-3. **四查**：①health GET 200；②printenv 四机真键核（与 env 件逐字）；③横幅直读（banner29+W5/R1/O12 armed 态）；④面指纹四机全等（adapter 面 md5 表对表）。
+3. **四查**：①health GET 200；②printenv 四机真键核（与 env 件逐字）；③横幅直读（banner29+W5/R1/O12 armed 态+**FL6FIX 横幅判读：四容器×2 行 patched+FL6FIX=1 4/4**）；④面指纹四机全等（adapter 面 md5 表对表）。
 4. warm 请求步 64k×2 第一动作→warm 门（64k×3 中位 ≥4500 绿/≥5000 入役绿线）。
+5. **target_verify 45s 健康带（免费预测哨兵，V1 登记律）**：boot 期 `Engine startup
+   timings` 的 target_verify 值健康带=**44-46s**（49s 绿/102s 红带 2/2 分离先例；
+   >75s=红带靴预测——红带根治件=0.3.2 池首件候选）。**warm 门 ≥5000 入役绿线
+   读数锚=5929.2 先例**（G2-RESTORE 2026-10-14 产线复绿靴实测；早期 COMBO 三靴
+   6031.9-6124.5 同带）。
 
 ## 8. 验收门（定型形合格判据）
 
@@ -97,7 +116,7 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→5
 | 断言门禁 | fail-safe PASS rows（四秩）+MISMATCH=0+16 口 idx3 |
 | 性能带 | warm 门≥5000；PR 四档对定型带 ±3%；agg600k ≥3005.2 |
 | 质量 | smoke 3/3；GSM8K 带；needle 3/3 |
-| 水位 | WATER-RED=0（qmg 在役+02 机两守护不动红线） |
+| 水位 | WATER-RED=0（qmg 在役+02 机两守护不动红线）。**水位线三线值（boot 头注+models.d 定钉）**：V41=WATER_MARK_FLOOR **20480**（MB；四机在役 23.5-23.9G）/0731=**9216**（O13 定钉）/VL=**12288**（O13B 缺省形；48M 预测形 c24 变体=32768）。**测试段豁免注记**：qmg=窗驱动启停测试看护件，不入产线 boot 链（qmg 头注律）；02 机两守护（unit 3535/3536）绝对不动 |
 
 任一门红→按 OPS-MANUAL 第二章双复原义务（先撤件再产线 boot）+第三章回退链处置。
 
@@ -130,6 +149,12 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 51→5
 
 ### 9.3 网关 VL 车道（第二实例，车道制分流）
 
+- **在役版本锚（2026-10-14 固化窗补）**：网关 proxy 现役=**rc3.8.4**
+  （`/opt/aicad-prod/scripts/concurrency_proxy_v2.py` md5 **f0a47b17**，staging 同步
+  同值）；**镜像内谱系=rc3.8.3（md5 31746cb1）**——差=V2b 413 透传修复+A6 留痕，
+  G2-RESTORE S5 窗吸收（r3 镜像内五包指纹行载 rc3.8.3 形；kit LABEL 6df809ae
+  已钉镜像内形态）。升级/回退走 gateway 包 staging 同步面（包指纹 f8322934；
+  ASSET-REGISTRY CFG-07 双值并列注记）。
 - 件=`tools/packages/gateway/`：`payload/units/concurrency-proxy-vl.service`（同 v2 模板
   仅 Description/EnvironmentFile 两处差=零代码改动）+`payload/env/gateway-vl.env.template`
   （8002→UPSTREAM 8898〔认证期〕/8899〔转正后〕；MAX_CONCURRENCY=8+DEDUP_ENABLE=0=图像
