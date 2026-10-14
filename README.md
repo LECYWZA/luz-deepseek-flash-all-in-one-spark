@@ -60,11 +60,13 @@ FL6 召回修复（**51 键转正在役定版**，见 §三；FL6 面回退两�
 | `192.168.5.187:5000/lmsysorg/sglang:main-79cafec0` | **现役基座**（V4.1 文本+VL 原生视觉+0731 形+V4.0exp overlay 复原臂；运行期注入 adapter/overlay/env） | 48.6GB | `sha256:0f075735a6bf913a7cc1cd7ece4f526ae8af70fc5b88fdc02d9efe92a61cf3ae` |
 | `dsv41-sglang-optimized:0.2.9-ep1q2-fin2` | 优化烘焙谱系（0.2.9 现值；ep1u-fin/ep1q2f 前代） | 47.3GB | `sha256:f51d0f2ac9b47adfe4e1052682624ecd7b9ef7dbe20ebf98c4c01b1380f43b8f` |
 
-> **历史/备份（vLLM 两形，VL 线已切 SGLang 单基座——单基座交付律，不随网盘分发）**：
+> **历史注记（vLLM 两形，VL 线已切 SGLang 单基座——单基座交付律，不随网盘分发）**：
 > `vllm/vllm-openai:LuZ0.4.5-DeepSeek-v4-Flash-DGXspark-TP4-Ring-VL-S1-20260910b`
 > （sha256 `0098a90d…42c2478`，35.9GB）与 `…-VL-DGXspark-TP4-Ring`（sha256
-> `357e2f8e…526f2c12`，35.9GB）——V4.0exp VL 旧承载，保留作回退备份位（`docker save`
-> 分卷离线存档建议随清理窗处置，见 CHANGELOG 注记）。
+> `357e2f8e…526f2c12`，35.9GB）——V4.0exp VL 旧承载，仅存史注。原「保留作
+> 回退备份位」安排**已于 2026-10-14 清理**（用户令 GOV-CLEANUP2：dist 侧
+> `vl-vllm-S1.tar` 等备份件删除，见 CHANGELOG 注记与战役仓
+> `docs/ops/GOV-CLEANUP2-RESULT-20261014.md`）。
 
 ```bash
 # 拉取现役基座（四机各一，或 head 拉+docker save 分发）

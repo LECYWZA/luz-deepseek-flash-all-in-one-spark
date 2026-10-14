@@ -16,6 +16,13 @@
    cid=`ffed489217c872ea`，sha256 `f8095fa8…415c1`；gateway rc3.8.3 修复面+
    cfgmgmt c4fb0c3e 整面；r2=回退位保留）。dsv41-sglang-optimized 谱系未推
    registry——离线分发恒走网盘包。
+4. **过时件清理（GOV-CLEANUP2，2026-10-14）**：dist 包 DEPRECATED 件出库——
+   `images/dsv41-sglang-optimized-0.3.1.tar`（首烤版 14G）+`images/vl-vllm-S1.tar`
+   （vLLM VL 旧承载 12G）+repo/ 三件 DEPRECATED tgz 及伴 .sha256 共 9 件
+   ≈25.7GiB；CHECKSUMS.manifest 重组为现行三行（r3+r2 回退+repo 现行）。
+   README §二「历史/备份 vLLM 两形」段同步改清理注记（docker save 分卷
+   建议句删除）。四机镜像清理（03/04 anemll+luz031-backup 互锁组、01/02
+   dev-dsv41 双机血统件）对账见战役仓 `docs/ops/GOV-CLEANUP2-RESULT-20261014.md`。
 
 ## 0.3.1（2026-10-13 定型，tag v0.3.1）
 
