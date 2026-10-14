@@ -110,6 +110,14 @@ load/校验/身份核对细则=包内 `README-DIST.md`。GitHub Releases=发布�
 
 ## 四、仓库结构
 
+> **基础设施仓**：[luxingcom/aicad-nccl-optimization](https://github.com/luxingcom/aicad-nccl-optimization)
+> —— **mesh 硬件转发层全套**（[mesh-fabric/](https://github.com/luxingcom/aicad-nccl-optimization/tree/main/mesh-fabric)：
+> CX-7 无交换机 RoCE 环网——拓扑生成器 plan.py/硬件 tc hairpin 规则/驱动预置
+> （hairpin 8192+trust pcp）/RDMA-TX 源标记探针/systemd 引导单元对/netplan 正典/
+> Q3bA 正典拓扑/守卫自愈套件/九章研究报告与三参考对照定谳）+ **NCCL 2.30.7
+> ring-only 优化资料包**（allreduce −81% 补丁栈/部署指南/排障手册/doctor 工具链）。
+> 本仓通信栈=该仓硬件转发层+NCCL 层 + 本仓 `deploy/nccl/`（ring-only 库+ncclpin 在役件）。
+
 ```
 docs/        定版成果：report(终版性能报告+TOOLS31 烘焙结果)/runbook(OPS-MANUAL)/registry(FORM-REGISTRY)/
              quality(RELEASE-QUALITY 含 T2-VL 注记行)/research(FL6+红带+VL-NATIVE 三档：RESULT/
@@ -124,3 +132,9 @@ tests/       fl6-recall(双臂 6 测)/unit(b12x/row_store)/whitebox(14 件矩阵
 ```
 
 CHANGELOG（0.3.0→0.3.1 十条）· SCAN-REPORT（密钥扫描）· NOTICE/LICENSE（许可）
+
+---
+
+## 五、致谢（ACKNOWLEDGEMENTS）
+
+**110 条借鉴源全收录**（上游 SGLang 及 PR 谱系 26/社区同行 60/官方资产 5/外部配置对照 10/工具田野情报 9）——每条带来源+借鉴内容+使用状态（采纳在役/判负留库/参照对比/政策依据）+档案锚；**判负件与反向不吸收同样如实收录**（用户点名「无论好坏、无论是否用到」）：**[docs/ACKNOWLEDGEMENTS.md](docs/ACKNOWLEDGEMENTS.md)**。
