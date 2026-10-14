@@ -2,4 +2,4 @@
 # GW-INFRAS-AUDIT-20261014 修复窗注记：包内 proxy=rc3.8.3 修复领先形（A6 relay_get 留痕+
 # B1 全量哈希）；01 在役仍 rc3.8.2=e1a01162（本锚=在役权威锚不变）。重启/部署窗吸收后
 # 在役 md5 变 ⇒ 本锚同日重钉（同日更新律；selfcheck F3/pkg_sources_check 执法）。
-payload/concurrency_proxy_v2.py	/opt/aicad-prod/scripts/concurrency_proxy_v2.py	e1a01162
+payload/concurrency_proxy_v2.py	/opt/aicad-prod/scripts/concurrency_proxy_v2.py	f0a47b17

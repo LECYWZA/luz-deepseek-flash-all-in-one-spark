@@ -3,7 +3,7 @@
 #     +VERSION 指纹重钉 +TOOL-ANCHORS 同日更新（三联动缺一=同日更新律红）
 ea1620b3574f518334526f303d1a243d  ./README.md
 76de32a91fd0c0d50ca4e45ba674f23c  ./bin/cfgmgmt
-092e239f5c9a8cb4acb833be980f02a0  ./payload/adapter-manifest-regen.sh
+5bea614f62245926aef391fe09d63e4c  ./payload/adapter-manifest-regen.sh
 5964780d5d6713665d92b3c51e29cd9e  ./payload/boot/boot-chain.md5
 fcaed824fe651e11af66edba8739dfc3  ./payload/boot/boot-with-slotlock.sh
 5115cd7b1f5923c7318276c08753ed98  ./payload/env-keydiff.sh

@@ -63,3 +63,16 @@
 > 处置序：①确认烘焙镜像 0.3.1（cid 658a5fe…）四机在位+registry 副本可再拉
 > ②如需离线分发保底先 `docker save` 分卷重制 ③rm 整目录前 `du`/`ls` 快照
 > 留档。处置执行=主会话清理窗，本注记只入档不动作。
+
+## 0.3.1 发布后组件同步批（2026-10-14，GitHub 完整性核实）
+
+1. **网关包 rc3.8.3→rc3.8.4**（G2-RESTORE S5 验证窗 V2b 413 透传修复；战役仓同批
+   f8322934/本仓实算 a9c17506）——包内=在役同形（rc3.8.4 f0a47b17 V1-V5 全绿）；
+   镜像 0.3.1-r3 烘焙时点=rc3.8.3，差面下一烘焙窗吸收（README-DIST 已注）。
+2. **守卫/自愈面收官态入仓**：oom_gate.sh ada688d4（T8 D1 三键加固）+r3-watchdog
+   156a1a7c（01/02 在役形，systemd ExecStart 亲证；包副本回填双哨律注记=逻辑零改动）
+   +guards.conf 产线现值（网关锚随 rc3.8.4 吸收重钉）+kit BASELINE 同步。
+3. **fabric-net 收官态**：fabric-guard.sh+weave/topology.json+VERSION t4.2。
+4. **五包 VERSION 指纹全量重钉**（脱敏仓实算；修 SANITIZATION 掩码批后 VERSION
+   陈值潜伏漂移+selfdiag F4 锚重钉 f2f10cb6+cfgmgmt regen 源路径 ${HOME} 化——
+   五包 selfcheck RED=0 复跑全绿）。

@@ -18,7 +18,7 @@ eccee99a46fda8ce9f4f0d4a95aef4c6  guard/clock-sm-guard.sh
 d29ffa1446a3680bb0e963a28e2a8773  guard/gen_probe.sh
 05070df8f9d1a53beb304458f689bbef  guard/guard-onstart.sh
 558b4eb4818256d77731891899c54638  guard/guardctl.sh
-b2b2583d96ddd72adfcfebef703fcfb9  guard/guards.conf
+a05c4a6654a5909e6259e7efdaceba9c  guard/guards.conf
 3fec0c89f24ef2aba8d69c34d00958a0  guard/jit-header-refresh.sh
 8490a4169e3468c0cef36ca3bc5e106d  guard/jit_refresh_exec.py
 3ad6c3ef03fb29b231309aa8a52e7ec7  guard/journal_watch.sh

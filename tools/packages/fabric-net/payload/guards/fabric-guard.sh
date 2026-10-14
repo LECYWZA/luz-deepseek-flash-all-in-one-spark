@@ -222,7 +222,12 @@ for ln in r:
 wantset=set(want)
 miss=sorted(wantset-run); extra=sorted(run-wantset)
 # b2 持久化缺口：canonical 任一条不在本机 netplan 渲染面（97/99 文件 to:+via: 成对在档）
+# ★2026-10-14 A-21 案 A（E1 尾批 1）：持久化提供者增计 dsv41-mesh boot 重放——mesh-up.sh
+#   在册 ip route add <dst>/32 via <via> 成对=重启存活直证（逐条证据制豁免，非无条件放行）
 np_miss=[]
+mu_txt=''
+try: mu_txt=open('/opt/dsv41-mesh/mesh-up.sh').read()
+except Exception: pass
 for w in want:
     t=w.split(); dst,via=w.split()[0],w.split()[2]
     found=False
@@ -230,6 +235,7 @@ for w in want:
         try: txt=open(f).read()
         except Exception: continue
         if f"to: {dst}" in txt and f"via: {via}" in txt: found=True; break
+    if not found and f"ip route add {dst}/32 via {via} " in mu_txt: found=True
     if not found: np_miss.append(w)
 # b3 GID 解析目标可达性：covered_by_design 目标须 fabric 口/lo 可解析；未覆盖域记录不告警
 own=set(h.get('gid3',{}).values())

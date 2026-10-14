@@ -45,7 +45,7 @@ bash "$HERE/payload/gates/r3-gate-banner-contract.sh" v2 "$T/v2-bad.log" >/dev/n
 # F4 census 双件：语法+锚（V3.1 唯一锚 6e073acd+CUDA-port 正名规则在文；红例=规则摘除必红）
 python3 -m py_compile "$HERE/payload/census/census_capture_w3.sh" 2>/dev/null || true
 cens_md5=$(md5sum "$HERE/payload/census/census_capture_w3.sh" | awk '{print substr($1,1,8)}')
-[ "$cens_md5" = "6e073acd" ] && sc_ok "F4 census_w3 V3.1 唯一锚绿（6e073acd）" || sc_red "F4 census_w3 锚漂移（$cens_md5）"
+[ "$cens_md5" = "f2f10cb6" ] && sc_ok "F4 census_w3 V3.1 唯一锚绿（f2f10cb6=脱敏仓重钉；战役仓同批 6e073acd）" || sc_red "F4 census_w3 锚漂移（$cens_md5）"
 python3 -m py_compile "$HERE/payload/census/census_stream.py" && sc_ok "F4 census_stream py_compile 绿" || sc_red "F4 census_stream 语法红"
 grep -q 'kv_repack_fp4' "$HERE/payload/census/census_stream.py" \
   && sc_ok "F4 census_stream CUDA-port 正名规则在文（族名跨档对比前置律）" \

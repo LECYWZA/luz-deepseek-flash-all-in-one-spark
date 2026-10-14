@@ -6,7 +6,7 @@
 9b0c6eb6bc545bff4caf5983f26dc56e  ./payload/diag/fabric-doctor.sh
 b4424aec4034c23fc92ef611f5e134cd  ./payload/diag/s4_bench.sh
 d1c5b63ca0106a7d0e6018b4f863ad92  ./payload/guards/fabric-gid-heal.sh
-fa5e536bb8f9468f16746935a5c07b8d  ./payload/guards/fabric-guard.sh
+189964b44a8311b0d4f96f2e830feca9  ./payload/guards/fabric-guard.sh
 f41564cea8c4d6bd3d1a2f1446980f45  ./payload/guards/fabric-restore-gate.sh
 c307e1ab83697b3e4dd8757073958f7a  ./payload/guards/fabric-sentinel.sh
 01ff2763719e4e8f61dc5897012f9ea2  ./payload/runbook/COMMUNITY-FIELDNOTES.md
@@ -14,6 +14,6 @@ cc84ba8652f43db9dbbf785be2619b60  ./payload/runbook/FABRIC-GID-REPAIR-RUNBOOK.md
 d003736de4521266f6862040276701aa  ./payload/weave/lutune.sh
 4e21f96e8a02043b11022ea054a981b6  ./payload/weave/netplan-templates/97-roce-mtu.yaml.template
 f592c0aa88ef96ad781257497577339c  ./payload/weave/netplan-templates/99-nvidia-sync-cluster.yaml.template
-161118bf0c5240715bda3a15c3c0bc09  ./payload/weave/topology.json
+2b5a09848cd18fd501988a4a89f21e1f  ./payload/weave/topology.json
 5104f0b43d61c1407fa7f04450c809f3  ./selfcheck/run.sh
-7d7d4987702d97414825c5cde2fc37a4  ./selfcheck/sources.tsv
+a3c6c5aa0f7ca367fb942e91282229a0  ./selfcheck/sources.tsv

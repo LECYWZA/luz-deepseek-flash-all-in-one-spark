@@ -1,17 +1,31 @@
 #!/usr/bin/env bash
-# r3-watchdog.sh — 运行期联动看门狗（INCIDENT-2026-09-30-13:26 F-2）
-# 背景：head UMA 楔死（进程活着但不响应）时 workers 无联动停机 → 连锁 OOM。
+# 【包副本注记】双哨律在文回填（2026-10-14 补批）：产线在役件（156a1a7c，H-TTL 演化形）头注
+# 在演化中遗失双哨部署说明——本包副本自旧设计态回填律面注记（下方两行），逻辑零改动，
+# 与产线在役件的差异=仅本注记块（部署时以产线真源为准）。
 # 双哨部署：01=head 哨（全栈守卫+水位门）；02=worker 哨（head 亡故检测+workers 联动，
 #           防 head 楔死时哨兵同亡）。两哨拆除动作幂等（docker rm -f），双触发无害。
-# 触发条件（任一）：
-#   head 哨：①容器 running 且 龄>BOOT_GRACE 后 health 连续 FAIL_N 次失败
-#            ②容器 running 且 MemAvailable < WATER_M（UMA 超卖先兆，立即拆）
-#   worker 哨：①head health 连续 FAIL_N 次失败 且（head ssh 不通 或 head 容器非 running）
-#              ②本机 MemAvailable < WATER_M（worker 在跑时）
-# 用法： r3-watchdog.sh head | worker   （systemd 常驻，30s 一轮）
+# r3-watchdog.hardened.workcopy.sh — H-TTL 加固工作副本（2026-10-04）
+# ⚠ WORKCOPY（零部署）：基线=/home/liux***ya/migrate-assets/bin/r3-watchdog.sh（在役，只读未动）；
+#   四机分发=INC-20261004-DRIFT 收口后由主会话另派（guardctl+md5 单）。
+# 裁定：docs/governance/OOMGATE-HARDENING-PROPOSAL-20261004.md H-TTL（六件之一）。
+# 根因：docs/verdicts/OOM-INCIDENT-DEEPDIVE-20261004.md §1.4——hold 契约「≤25min」被饥荒吹成
+#   2h28m（05:06:26 touch→07:34:36 rm），health 盲窗被无限延长。
+#
+# 改动面（唯一=head 哨 hold 消费处；其余逐行同源，零改动）：
+#   H-TTL：hold 文件 mtime>25min ⇒ 忽略（hold_active=0）+CRIT 日志。
+#     - stat 读龄失败 ⇒ fail-loud：CRIT+按超龄忽略。基线形 `stat … || date +%s` 会把读龄失败
+#       静默折算成"年龄=0"=hold 永真（静默错值，教义 #12）——这正是盲窗可被无限延长的守卫侧机制。
+#     - 契约不动：hold 语义（≤25min 量具窗）与 touch/rm 生命周期归 census 工具——本件对超龄
+#       hold 只「忽略」不「rm」（基线形 rm=代管他件契约文件；忽略即达成 TTL 语义，且重复 CRIT
+#       持续可见）。水位红线/health 计数/teardown/worker 分支判据零改。
+#   事实登记（报告已载）：01 本机在役副本（mtime 2026-09-30 16:48）已含 rm 形 TTL 块，与
+#   DEEPDIVE §1.4「watchdog 侧无 hold 文件 TTL 检查」表述相左（四机实际在役版本以部署时
+#   md5 读数为准——部署单含此核验步）；本 workcopy 相对两种在役可能形均成立。
+#
+# 用法：与基线一致（r3-watchdog.sh head | worker）；电池以 source 方式调 hold_check()。
 set -u
 
-ROLE="${1:?usage: r3-watchdog.sh head|worker}"
+ROLE="${1:-}"
 INTERVAL=15
 FAIL_N=4            # 4×15s=60s health 失败即拆（事故实测跌穿快于 30s 粒度）
 BOOT_GRACE=$((15 * 60))     # 靴窗宽限：容器启动后 15 分钟内不要求 health
@@ -28,8 +42,10 @@ API_PORT=8898
 SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=8)
 WORKERS=(dgxspark02 dgxspark04 dgxspark03)
 INCIDENT_DIR="$HOME/l10-incident"
+HOLD_F="/tmp/r3-watchdog-hold"       # 量具 hold：census/kineto 采样窗内暂停 health 计数
+HOLD_MAX_S=$((25 * 60))              # hold 契约窗（≤25min；H-TTL 据此忽略超龄）
 
-log()  { printf '[%s] [r3wd-%s] %s\n' "$(date -Is)" "$ROLE" "$*"; }
+log()  { printf '[%s] [r3wd-%s] %s\n' "$(date -Is)" "${ROLE:-head}" "$*"; }
 
 teardown() {  # teardown <原因>
   local why="$1" ts; ts=$(date +%Y%m%d-%H%M%S)
@@ -54,92 +70,115 @@ ctn_age_s() {
   [[ -n "$st" ]] && echo $(( $(date +%s) - $(date -d "$st" +%s) )) || echo 0
 }
 
-log "启动（interval=${INTERVAL}s fail_n=${FAIL_N} grace=${BOOT_GRACE}s water=${WATER_M}M）"
+# ══ H-TTL（2026-10-04 六件加固之一）════════════════════════════════════════════
+# hold_check：检 hold 文件龄——≤25min ⇒ HOLD_ACTIVE=1（量具窗，health 计数暂停）；
+#             >25min ⇒ 忽略+CRIT（每轮都报=盲窗状态持续可见）；mtime 不可读 ⇒ fail-loud
+#             同超龄处理（禁静默折算年龄=0）。不 rm 文件（生命周期归 census 工具）。
+# 输出变量：HOLD_ACTIVE（0/1）、HOLD_STALE（0/1——超龄或不可读）。
+hold_check() {
+  HOLD_ACTIVE=0
+  HOLD_STALE=0
+  [[ -f "$HOLD_F" ]] || return 0
+  local mt="" now="" age=""
+  now=${EPOCHSECONDS:-}
+  if [[ -z "$now" ]]; then now=$(date +%s); fi
+  mt=$(stat -c %Y "$HOLD_F" 2>/dev/null)
+  if [[ -z "$mt" || ! "$mt" =~ ^[0-9]+$ ]]; then
+    HOLD_STALE=1
+    log "CRIT hold 文件存在但 mtime 不可读（stat 失败）——按超龄忽略，恢复 health 计数（H-TTL fail-loud；基线形此处会静默折算年龄=0）"
+    return 0
+  fi
+  age=$(( now - mt ))
+  if (( age > HOLD_MAX_S )); then
+    HOLD_STALE=1
+    log "CRIT hold 文件超龄 ${age}s > ${HOLD_MAX_S}s——忽略（health 计数恢复；文件保留，生命周期归 census 工具）（H-TTL）"
+    return 0
+  fi
+  HOLD_ACTIVE=1
+}
 
-fail=0
-wfail=0
-HOLD_F="/tmp/r3-watchdog-hold"       # 量具 hold：census/kineto 采样窗内暂停 health 计数
-HOLD_MAX_S=$((25 * 60))              # hold 自动过期（防脚本暴毙后永久静默）
-while true; do
-  if [[ "$ROLE" == "head" ]]; then
-    if [[ "$(ctn_state r3boot-head)" == "running" ]]; then
-      m=$(memavail)
-      if (( m < WATER_M )); then
-        (( wfail += 1 ))
-        log "红线 MemAvailable=${m}M < ${WATER_M}M（${wfail}/${WATER_N} 连；主守卫=oom_gate@2s）"
-        if (( wfail >= WATER_N )); then
-          teardown "head 水位红线 ${WATER_N}×${INTERVAL}s 确认 MemAvailable=${m}M（oom_gate 兜底位）"
+main() {
+  log "启动（interval=${INTERVAL}s fail_n=${FAIL_N} grace=${BOOT_GRACE}s water=${WATER_M}M hold_ttl=${HOLD_MAX_S}s）"
+  fail=0
+  wfail=0
+  while true; do
+    if [[ "$ROLE" == "head" ]]; then
+      if [[ "$(ctn_state r3boot-head)" == "running" ]]; then
+        m=$(memavail)
+        if (( m < WATER_M )); then
+          (( wfail += 1 ))
+          log "红线 MemAvailable=${m}M < ${WATER_M}M（${wfail}/${WATER_N} 连；主守卫=oom_gate@2s）"
+          if (( wfail >= WATER_N )); then
+            teardown "head 水位红线 ${WATER_N}×${INTERVAL}s 确认 MemAvailable=${m}M（oom_gate 兜底位）"
+          fi
+        else
+          wfail=0
+        fi
+        if (( m < WATER_WARN_M )); then
+          log "WARN head 水位 ${m}M < ${WATER_WARN_M}M（盯跌速；红线 ${WATER_M}M）"
+        fi
+        hold_check                       # ★H-TTL：唯一改动点（原内联块抽出为函数）
+        if (( $(ctn_age_s r3boot-head) > BOOT_GRACE )); then
+          if curl -fsS --max-time 5 "http://127.0.0.1:${API_PORT}/health" >/dev/null 2>&1; then
+            fail=0
+          elif (( HOLD_ACTIVE )); then
+            (( fail += 1 ))
+            log "health 失败 ${fail}/${FAIL_N} 但 hold 活跃（量具采样窗）——不计入楔死判据"
+            fail=0
+          else
+            (( fail += 1 ))
+            log "health 失败 ${fail}/${FAIL_N}（MemAvail=${m}M）"
+            if (( fail >= FAIL_N )); then
+              teardown "head health 连续 ${FAIL_N}×${INTERVAL}s 失败（UMA 楔死形态）"
+              fail=0
+            fi
+          fi
         fi
       else
-        wfail=0
+        fail=0; wfail=0   # 无栈/靴窗：静默
       fi
-      if (( m < WATER_WARN_M )); then
-        log "WARN head 水位 ${m}M < ${WATER_WARN_M}M（盯跌速；红线 ${WATER_M}M）"
-      fi
-      hold_active=0
-      if [[ -f "$HOLD_F" ]]; then
-        hage=$(( $(date +%s) - $(stat -c %Y "$HOLD_F" 2>/dev/null || date +%s) ))
-        if (( hage > HOLD_MAX_S )); then
-          log "hold 文件过期（${hage}s > ${HOLD_MAX_S}s）——撤销并恢复 health 计数"
-          rm -f "$HOLD_F"
+
+    elif [[ "$ROLE" == "worker" ]]; then
+      if [[ "$(ctn_state r3boot-worker)" == "running" ]]; then
+        m=$(memavail)
+        if (( m < WATER_M )); then
+          (( wfail += 1 ))
+          log "红线 MemAvailable=${m}M < ${WATER_M}M（${wfail}/${WATER_N} 连；主守卫=oom_gate@2s）"
+          if (( wfail >= WATER_N )); then
+            teardown "worker(02) 水位红线 ${WATER_N}×${INTERVAL}s 确认 MemAvailable=${m}M（oom_gate 兜底位）"
+          fi
         else
-          hold_active=1
+          wfail=0
         fi
-      fi
-      if (( $(ctn_age_s r3boot-head) > BOOT_GRACE )); then
-        if curl -fsS --max-time 5 "http://127.0.0.1:${API_PORT}/health" >/dev/null 2>&1; then
-          fail=0
-        elif (( hold_active )); then
-          (( fail += 1 ))
-          log "health 失败 ${fail}/${FAIL_N} 但 hold 活跃（量具采样窗）——不计入楔死判据"
+        if (( m < WATER_WARN_M )); then
+          log "WARN worker 水位 ${m}M < ${WATER_WARN_M}M（盯跌速；红线 ${WATER_M}M）"
+        fi
+        if curl -fsS --max-time 5 "http://${HEAD_IP}:${API_PORT}/health" >/dev/null 2>&1; then
           fail=0
         else
           (( fail += 1 ))
-          log "health 失败 ${fail}/${FAIL_N}（MemAvail=${m}M）"
+          log "head health 探测失败 ${fail}/${FAIL_N}（MemAvail=${m}M）"
           if (( fail >= FAIL_N )); then
-            teardown "head health 连续 ${FAIL_N}×${INTERVAL}s 失败（UMA 楔死形态）"
+            # 确认 head 真亡：ssh 不通 或 head 容器非 running；若 head 仍活则留给 head 哨
+            if ! ssh "${SSH_OPTS[@]}" dgxspark01 "true" 2>/dev/null \
+               || [[ "$(ssh "${SSH_OPTS[@]}" dgxspark01 "docker inspect -f '{{.State.Status}}' r3boot-head 2>/dev/null" | tr -d '\r')" != "running" ]]; then
+              teardown "head 亡故确认（health×${FAIL_N} 失败且 ssh/容器死）——workers 联动拆除"
+            else
+              log "head health 失败但 head 容器+ssh 存活——交给 head 哨处理，本哨复位"
+            fi
             fail=0
           fi
         fi
+      else
+        fail=0; wfail=0
       fi
-    else
-      fail=0; wfail=0   # 无栈/靴窗：静默
     fi
+    sleep $INTERVAL
+  done
+}
 
-  elif [[ "$ROLE" == "worker" ]]; then
-    if [[ "$(ctn_state r3boot-worker)" == "running" ]]; then
-      m=$(memavail)
-      if (( m < WATER_M )); then
-        (( wfail += 1 ))
-        log "红线 MemAvailable=${m}M < ${WATER_M}M（${wfail}/${WATER_N} 连；主守卫=oom_gate@2s）"
-        if (( wfail >= WATER_N )); then
-          teardown "worker(02) 水位红线 ${WATER_N}×${INTERVAL}s 确认 MemAvailable=${m}M（oom_gate 兜底位）"
-        fi
-      else
-        wfail=0
-      fi
-      if (( m < WATER_WARN_M )); then
-        log "WARN worker 水位 ${m}M < ${WATER_WARN_M}M（盯跌速；红线 ${WATER_M}M）"
-      fi
-      if curl -fsS --max-time 5 "http://${HEAD_IP}:${API_PORT}/health" >/dev/null 2>&1; then
-        fail=0
-      else
-        (( fail += 1 ))
-        log "head health 探测失败 ${fail}/${FAIL_N}（MemAvail=${m}M）"
-        if (( fail >= FAIL_N )); then
-          # 确认 head 真亡：ssh 不通 或 head 容器非 running；若 head 仍活则留给 head 哨
-          if ! ssh "${SSH_OPTS[@]}" dgxspark01 "true" 2>/dev/null \
-             || [[ "$(ssh "${SSH_OPTS[@]}" dgxspark01 "docker inspect -f '{{.State.Status}}' r3boot-head 2>/dev/null" | tr -d '\r')" != "running" ]]; then
-            teardown "head 亡故确认（health×${FAIL_N} 失败且 ssh/容器死）——workers 联动拆除"
-          else
-            log "head health 失败但 head 容器+ssh 存活——交给 head 哨处理，本哨复位"
-          fi
-          fail=0
-        fi
-      fi
-    else
-      fail=0; wfail=0
-    fi
-  fi
-  sleep $INTERVAL
-done
+# 直接执行才跑主循环（source 形=电池只取 hold_check）
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  ROLE="${1:?usage: r3-watchdog.hardened.workcopy.sh head|worker}"
+  main "$@"
+fi

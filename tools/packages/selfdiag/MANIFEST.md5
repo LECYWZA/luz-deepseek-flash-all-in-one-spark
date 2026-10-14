@@ -17,5 +17,5 @@ bb6e48ec0848c32892c369fb398ac3b0  ./payload/gates/verify-governance.sh
 a9250e4a35bcb0d29cc8e9f054906e40  ./payload/sentinel/boot_sentinel.sh
 028f7b67c2e22b2bb6c667d3a01d57ee  ./payload/sentinel/boot_sentinel_anchors.tsv
 7aa8cca48497258ed03e60d6b2c5c058  ./payload/sentinel/target_verify_reg.sh
-f6466699b4567c432f022566a9995e7b  ./selfcheck/run.sh
+d410558a5924eaa9296e8720b761e3b6  ./selfcheck/run.sh
 47bb7a1ffc261f46422c7a8b005f9d2e  ./selfcheck/sources.tsv

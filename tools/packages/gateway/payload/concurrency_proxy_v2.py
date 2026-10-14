@@ -3,6 +3,11 @@
 """
 concurrency_proxy_v2.py — vLLM 流式感知并发网关（v2.0-rc3，2026-09-06）
 
+rc3.8.4 相对 rc3.8.3 的修正（G2-RESTORE-20261014 S5 验证窗，2026-10-14）：
+  - V2b 413 判读线修复：dispatch 兜底 except 吞 aiohttp HTTPException
+    （HTTPRequestEntityTooLarge=64MiB client_max_size 帽）→错译 500；修=语义类异常
+    透传（except web.HTTPException: raise）→帽上 body 得规范 413（V2 卡「>64MB 一发
+    验 413 优雅」判读线闭合；journal traceback :791 实证）。
 rc3.8.3 相对 rc3.8.2 的修正（GW-INFRAS-QUALITY-AUDIT-20261014 修复窗 A6/B1，2026-10-14）：
   A6 relay_get 静默 502 零留痕（except Exception: return 502——/metrics 502 风暴期
       〔引擎停机窗〕成因零可考，audit §2.3）→ 补 log.warning（method/raw_path/异常
@@ -176,7 +181,7 @@ GW_API_KEY = os.environ.get("GW_API_KEY", "")
 INJECT_ENABLE_THINKING = os.environ.get("INJECT_ENABLE_THINKING", "0") == "1"
 # rc3.7 图像占位符净化：默认 on——本版目的即修复会话中断；=0 回退现行为
 SANITIZE_IMAGE_PLACEHOLDER = os.environ.get("SANITIZE_IMAGE_PLACEHOLDER", "1") == "1"
-VERSION = "concurrency-proxy-v2-rc3.8.3"
+VERSION = "concurrency-proxy-v2-rc3.8.4"
 
 HEARTBEAT = b": keepalive\n\n"          # SSE 注释帧：OpenAI SDK/EventSource 忽略
 DONE_MARK = b"data: [DONE]\n\n"         # 错误帧后的终止符（SDK 正常收尾）
@@ -798,6 +803,8 @@ async def dispatch(request: web.Request):
     except (ConnectionResetError, asyncio.CancelledError):
         METRICS["client_disconnects"] += 1
         raise
+    except web.HTTPException:
+        raise                                    # rc3.8.4：aiohttp 语义类异常透传（413 帽族）——原兜底吞译 500（G2 S5 V2b 实证）
     except Exception as e:
         log.exception("dispatch failed: %r", e)
         return web.json_response(

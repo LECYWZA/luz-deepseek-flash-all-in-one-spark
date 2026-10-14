@@ -20,7 +20,7 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 
 | 件 | 来源/在役位 |
 |---|---|
-| concurrency_proxy_v2.py（v2.0-**rc3.8.3**=GW-INFRAS-AUDIT-20261014 A6/B1 修复领先形：relay_get 502 补留痕+body_key 全量哈希治本；信号量限流/GW_API_KEY Bearer[hmac.compare_digest]/错误帧骨架/chunk-idle 可观测/图像占位净化） | 源=01 /opt/aicad-prod/scripts/（**在役仍 rc3.8.2 e1a01162**——重启/部署窗吸收承载，吸收时 sources.tsv 锚同日重钉） |
+| concurrency_proxy_v2.py（v2.0-**rc3.8.4**=G2-RESTORE-20261014 S5 验证窗 V2b 413 透传修复〔沿袭 rc3.8.3=A6 relay_get 502 补留痕+body_key 全量哈希治本〕；信号量限流/GW_API_KEY Bearer[hmac.compare_digest]/错误帧骨架/chunk-idle 可观测/图像占位净化） | 源=01 /opt/aicad-prod/scripts/（**在役已吸收 rc3.8.4 f0a47b17**——V1-V5 生产验证全绿〔并发阶梯 429+Retry-After/大 body 四档 200/61.4MiB RSS 峰/断路 <10s〕；guards.conf 网关锚已随吸收同日重钉 89dfecba） |
 | units/concurrency-proxy-v2.service（**P0 死件闭合**；EnvironmentFile 承载键面+A7 部署序注记） | 本包新件（部署面分发：01 原位+迁移窗网关机） |
 | units/concurrency-proxy-vl.service + env/gateway-vl.env.template（VL 车道 8002；UPSTREAM=**8899 转正态**〔A9，认证期 8898 已拆线〕+INJECT=0 显式〔A2〕） | VL-NATIVE-WINCARD-20261013 §4.3 承载 |
 | units/10-gateway-hardening.conf（drop-in：journal/MemoryMax 2G/非特权/ProtectSystem；B6 双实例通用件——v2/vl 各自 .d 目录同件落位） | 本包新件（落位 /etc/systemd/system/concurrency-proxy-{v2,vl}.service.d/） |
@@ -44,7 +44,7 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 - **GW_API_KEY 值绝不入包/入 unit/入镜像/入日志**（SMOK_KEY 前科律；selfcheck T4/F5
   执法红例在）。
 - **在役进程零触碰**：本包零 systemctl/restart 动作（bin/gateway run 恒拒——产线在役
-  件不 exec 转发）。rc3.8.3 包内领先形**不自动推装**在役位（重启窗承载，见构成表）。
+  件不 exec 转发）。rc3.8.4 包内=在役同形（G2 收官窗已吸收；镜像 0.3.1-r3 烘焙时点=rc3.8.3，下一烘焙窗吸收差面）。
 - **Mac mini M6 迁移栈不收编**（sparkDash/nginx/grafana/prometheus 五容器面=迁移窗承接）。
 - **P2 429/P5 上游失效探针不自动执行**（产线在役时先呈裁——验证器内注记）。
 
@@ -56,7 +56,7 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 2. unit/drop-in 落机后首验=四探针（P1/P3/P4+journal 尾段）；P2/P5=演练窗（P2 须并发
    POST 面——GET/HEAD 在 dispatch 免并发槽，health 打点永不 429，A4）。
 3. proxy 件 md5 漂移（在役升级）→同日再吸收+TOOL-ANCHORS 行更新（selfcheck F3 执法）；
-   反向（包领先在役，rc3.8.3 现态）=F3 预期绿注记态，在役吸收（重启窗）时同日重钉。
+   反向（包领先在役）=F3 预期绿注记态——本件现=在役同形态（rc3.8.4 双侧一致）。
 4. RETRY_CONNECT=1 语义注记（B5）：上游建连失败**或响应 5xx** 时整 body 重发一次——
    POST 面若引擎已耗 prefill 后 5xx，重试=重复推理计费面（图像 prefill 重则代价放大）；
    429 无自动重试（Retry-After 语义归客户端）。VL 车道可选 RETRY_CONNECT=0

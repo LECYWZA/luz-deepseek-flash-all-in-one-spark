@@ -17,7 +17,7 @@
 # 【出口】0=生成或 --check 全等/1=--check 漂移/2=用法错/3=源目录缺位。
 # 用法：adapter-manifest-regen.sh [--dir <adapter dir>] [--out <file>] [--check] [--selfcheck]
 set -u
-DIR=/home/liux***ya/migrate-assets/dsv41/adapter
+DIR=${ADAPTER_DIR:-$HOME/migrate-assets/dsv41/adapter}
 OUT=""; CHECK=0
 while [ $# -gt 0 ]; do
   case "$1" in

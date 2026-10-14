@@ -1,7 +1,8 @@
 PKG=gateway
-PKG_VERSION=0.3.2-gwfix1
-FINGERPRINT=47c230c3
-GIT_ANCHOR=2df67ef（战役仓 GW-INFRAS-AUDIT-20261014 修复窗整备提交〔审查基线 2acc7f3〕；本仓同步承载——FINGERPRINT 为脱敏仓实算值，脱敏差仅两 unit 的 User 位〔liux***ya 掩码形〕，战役仓同批指纹 31746cb1；封包窗重钉）
-TOOL_ANCHORS_SYNC=2026-10-14（docs/TOOL-ANCHORS.md 五包锚段同日更新律——战役仓 2df67ef 已同日重钉 gateway 行）
+PKG_VERSION=0.3.2-gwfix2
+FINGERPRINT=a9c17506
+FINGERPRINT_NOTE=脱敏仓实算（战役仓同批=f8322934）；0.3.1 补批 rc3.8.4+守卫收官同步
+GIT_ANCHOR=2acc7f3（GW-INFRAS 审查基线；rc3.8.3 修复窗案头改件+rc3.8.4〔G2-RESTORE-20261014 S5 验证窗 V2b 413 透传修复，G2 窗 commit 承载〕——封包窗重钉）
+TOOL_ANCHORS_SYNC=2026-10-14（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
 PAYLOAD_N=11
 RED_LINES=GW_API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面
