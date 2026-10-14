@@ -73,10 +73,19 @@ docker inspect --format '{{index .RepoDigests 0}}' \
   192.168.5.187:5000/lmsysorg/sglang:main-79cafec0   # 指纹核对=上表 sha256
 ```
 
-**离线/外发备选**：GitHub Releases 提供分卷 tar（`docker save <镜像> | split -b 2G`
-分卷；接收端 `cat 卷* | docker load` 后按上表 sha256 复核）——Release 资产
-挂载位待推送后建（见推送待办）。dsv41-sglang-optimized 谱系当前仅在集群本机
-（`docker images` 本地位，未推 registry）——分发走 docker save 分卷。
+**网盘分发（2026-10-14 发布，离线/外发主通道）**：夸克网盘
+「luz-0.3.1-release-bundle-20261014.7z」——
+链接：<https://pan.quark.cn/s/42e685a8a10e>（提取码 `24zL`）。
+
+| 包内容 | 体量 | sha256 |
+|---|---|---|
+| `images/dsv41-sglang-optimized-0.3.1-r3.tar`（**0.3.1 交付镜像**，load→`192.168.5.187:5000/dsv41-sglang-optimized:0.3.1-r3`） | 14.4G | `6afa44298b9a788b584abf2181495192b7252f0e4f0f2f462fbbe3ccd8941906` |
+| `repo/luz-deepseek-flash-all-in-one-v0.3.1.tar.gz`（交付仓快照含 .git@cbc9a6b；其后收官增量 8be69ca 以本仓为准） | ~90M | `6a7b6b99d4f444da36f9d10368fcf0c98ccb6f6a25e3f32a4287b0aec9bf0646` |
+
+接收端：`sha256sum -c CHECKSUMS.manifest` 全验 → `docker load` → layer cid 核对
+`ffed489217c872ea`（冷构建双跑 PASS 值；差=分发面损坏）。逐件 .sha256 伴档随包，
+load/校验/身份核对细则=包内 `README-DIST.md`。GitHub Releases=发布说明与渠道
+汇总页（大文件不走 Release 资产，统一走网盘包）。
 
 ---
 

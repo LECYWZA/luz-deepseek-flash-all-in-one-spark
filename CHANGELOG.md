@@ -3,6 +3,20 @@
 > 提炼自战役仓 git log（`luz-0.3.0-r1`（2026-10-05，32c6acd）之后 632 commits）
 > 与总卡/定稿报告。逐项档锚见 `docs/` 各分档。
 
+## 0.3.1 发布分发（2026-10-14）
+
+1. **网盘发布**：夸克网盘 `luz-0.3.1-release-bundle-20261014.7z`
+   （<https://pan.quark.cn/s/42e685a8a10e>，提取码 `24zL`）=0.3.1-r3 交付镜像
+   tar 14.4G（sha256 `6afa4429…`）+交付仓快照 tar.gz ~90M（sha256
+   `6a7b6b99…`，.git@cbc9a6b）+CHECKSUMS.manifest+README-DIST.md。
+2. **GitHub Release v0.3.1** 建：发布说明+渠道汇总（网盘/registry/本仓三层）；
+   大文件不走 Release 资产。仓库 HEAD=8be69ca（含 G2-RESTORE 收官增量，快照
+   之后增量以本仓为权威）。
+3. **交付镜像现值=0.3.1-r3**（TOOLS31-BAKE-R3-20261014：G1'' 冷构建双跑 PASS
+   cid=`ffed489217c872ea`，sha256 `f8095fa8…415c1`；gateway rc3.8.3 修复面+
+   cfgmgmt c4fb0c3e 整面；r2=回退位保留）。dsv41-sglang-optimized 谱系未推
+   registry——离线分发恒走网盘包。
+
 ## 0.3.1（2026-10-13 定型，tag v0.3.1）
 
 1. **0.3.1 开线**：0.3.0-R1 检查点封存（36 键 b7e318e0/91adc83d 七件/池 9.6M
