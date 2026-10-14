@@ -3,6 +3,18 @@
 """
 concurrency_proxy_v2.py — vLLM 流式感知并发网关（v2.0-rc3，2026-09-06）
 
+rc3.8.3 相对 rc3.8.2 的修正（GW-INFRAS-QUALITY-AUDIT-20261014 修复窗 A6/B1，2026-10-14）：
+  A6 relay_get 静默 502 零留痕（except Exception: return 502——/metrics 502 风暴期
+      〔引擎停机窗〕成因零可考，audit §2.3）→ 补 log.warning（method/raw_path/异常
+      repr，与 relay_plain 同形）；成因留痕=下次停机窗 journal 可判读。
+  B1 body_key 前 1MB 帽撤除（audit §1.3 治本定谳）：body 在 dispatch :775 已全量
+      驻留，帽的「防全量驻留」注释目标=伪收益（只省一次哈希扫描 ~2ms/MB），代价=
+      同图等长异问的 VL 大 body 前缀碰撞→第二发误 429（Retry-After 60s）。全量
+      sha256 后 DEDUP=1 可安全复开 VL 车道（呈裁 C2/C3 位）。确定性/键稳定性不受
+      影响；开销同量级（audit §4.1③：~2ms/MB）。
+  本版=包内修复领先形：01 在役仍 rc3.8.2（e1a01162）——重启/部署窗吸收承载
+  （GW-AUDIT A1 在役值/A10 密钥迁出同窗）；吸收时 sources.tsv 锚同日重钉。
+
 rc3.8.2 相对 rc3.8.1 的修正（第二轮交叉审查 L1，2026-09-24）：
   L1 泵送通用异常（中途读失败：RST/ClientPayloadError 等）只 log + upstream_errors，
      不入错误帧 ⇒ producer finally 补干净 DONE，客户端「部分内容 + 正常收尾」
@@ -164,7 +176,7 @@ GW_API_KEY = os.environ.get("GW_API_KEY", "")
 INJECT_ENABLE_THINKING = os.environ.get("INJECT_ENABLE_THINKING", "0") == "1"
 # rc3.7 图像占位符净化：默认 on——本版目的即修复会话中断；=0 回退现行为
 SANITIZE_IMAGE_PLACEHOLDER = os.environ.get("SANITIZE_IMAGE_PLACEHOLDER", "1") == "1"
-VERSION = "concurrency-proxy-v2-rc3.8.2"
+VERSION = "concurrency-proxy-v2-rc3.8.3"
 
 HEARTBEAT = b": keepalive\n\n"          # SSE 注释帧：OpenAI SDK/EventSource 忽略
 DONE_MARK = b"data: [DONE]\n\n"         # 错误帧后的终止符（SDK 正常收尾）
@@ -351,14 +363,14 @@ def sanitize_image_placeholders(body: bytes, path: str) -> bytes:
     return out
 
 
-MAX_HASH_BYTES = 1 << 20                    # 只 hash 前 1MB（分块流式，防超大 body 全量驻留）
-
-
 def body_key(body: bytes) -> str:
-    """去重键：size + 前 1MB 分块 sha256（长 body 不整段驻留内存）。"""
+    """去重键：size + 全量 sha256（rc3.8.3-B1 治本：撤前 1MB 帽——body 在 dispatch
+    已全量驻留，帽=伪收益（省一次 ~2ms/MB 哈希扫描）而付前缀碰撞正确性面：同图
+    等长异问 body 差异在尾段 ⇒ 同键 ⇒ 第二发误 429。全量哈希后 DEDUP=1 可安全
+    复开 VL 车道；确定性/键稳定性不受影响（GW-AUDIT §1.3/§4.1③）。"""
     h = hashlib.sha256()
     h.update(str(len(body)).encode() + b":")
-    h.update(body[:MAX_HASH_BYTES])
+    h.update(body)
     return h.hexdigest()
 
 
@@ -727,7 +739,11 @@ async def relay_get(request: web.Request, session: ClientSession) -> web.Respons
                                timeout=ClientTimeout(total=30)) as up:
             return web.Response(status=up.status, content_type=up.content_type,
                                 body=await up.read())
-    except Exception:
+    except Exception as e:
+        # rc3.8.3-A6：原静默 502 零留痕（/metrics 502 风暴期成因零可考）——补成因
+        # 留痕，与 relay_plain 同形（log.warning；细节不入响应体）。
+        log.warning("relay_get failed %s %s: %r",
+                    request.method, request.raw_path, e)
         return web.json_response(
             {"error": {"message": "upstream failed",
                        "type": "gateway_upstream"}}, status=502)

@@ -2,16 +2,23 @@
 # gw-verify — 并发网关验证器（五探针+离线配置 lint；TOOLS31 §二 P4-3）
 #
 # 【五探针（--live；执行窗面）】
-#   P1 401 面：无 key 请求必拒（GW_API_KEY Bearer 鉴权工作）
-#   P2 429 面：>MAX_CONCURRENCY 并发必限流（信号量工作）——窗口专用打点序（见 --live 输出）
+#   P1 401 面：无 key 打 /gw/* 必拒（GW_API_KEY Bearer 鉴权工作）。A5 修正：业务路径
+#     不代理鉴权（proxy :105-106 契约——鉴权归上游 VLLM_API_KEY），故无 key 业务 POST
+#     的 401 断言为误断言已撤（其反而会真触发一次上游推理且必然 200）；401 断言收敛 /gw/*。
+#   P2 429 面：>MAX_CONCURRENCY 并发 POST 必限流（信号量工作）。A4 修正：GET/HEAD 在
+#     dispatch 免并发槽（proxy :759-766，信号量之前返回）——health 打点永不 429，
+#     信号量验证必须 POST 面（窗口专用打点序见 --live 输出）。
 #   P3 直连对照：绕网关直抵上游 health（8899 直达=基线对照，轻探零推理载荷）
 #   P4 健康穿透：/health 经网关必 200（透传工作）
 #   P5 上游失效面：上游停时网关 502/错误帧行为——演练窗专用（本件零执行）
 # 【离线面（--offline；案头）】配置 lint：UPSTREAM 形合法/MAX_CONCURRENCY 域 [1,64]/
-#   PORT 域 [1,65535]/GW_API_KEY 非空（键面非空律——空=裸奔面=红）+unit/drop-in 模板 lint
-#   （要件在+密钥值零携带=SMOK_KEY 律执法）。
+#   PORT 域 [1,65535]/GW_API_KEY 非空（键面非空律——空=裸奔面=红）+B4 域检查
+#   （QUEUE_TIMEOUT [1,300]/DEDUP_ENABLE {0,1}/INJECT_ENABLE_THINKING {0,1}，键在才查）
+#   +unit/drop-in 模板 lint（v2+vl 双 unit——要件在+密钥值零携带=SMOK_KEY 律执法；
+#   vl env 文件可作第二实参同面 lint）。
 # 【出口】0=绿/1=红/2=无法判（--live 网关不可达=2，ANCHOR-UNKNOWN 语义）。
-# 【红线】--live=执行窗面（产线在役时 P2/P5 先呈裁）；探针载荷=最小面（health/401 拒答零上游载）。
+# 【红线】--live=执行窗面（产线在役时 P2/P5 先呈裁）；探针载荷=最小面（/gw/* 401 拒答
+#   与 health 探测零上游推理载——P1 收敛后成立；业务路径 POST 探测=误断言已撤，零执行）。
 set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 [ -f "$HERE/../_lib/verdict.sh" ] && . "$HERE/../_lib/verdict.sh"
@@ -30,6 +37,13 @@ lint_env() {  # lint_env <env 文件> → 0/1（四键面全绿才 0）
   [ "$v" -ge 1 ] 2>/dev/null && [ "$v" -le 65535 ] 2>/dev/null || return 1
   v=$(grep -E '^GW_API_KEY=' "$f" | head -1 | cut -d= -f2)
   [ -n "$v" ] && [ "$v" != '<值位空——部署窗填入，绝不入包>' ] || return 1
+  # B4 域检查（键在才查——缺键=脚本默认继承非红面；A2/A3 补键后的 typo/越域执法面）
+  v=$(grep -E '^QUEUE_TIMEOUT=' "$f" | head -1 | cut -d= -f2)
+  if [ -n "$v" ]; then { [ "$v" -ge 1 ] && [ "$v" -le 300 ]; } 2>/dev/null || return 1; fi
+  v=$(grep -E '^DEDUP_ENABLE=' "$f" | head -1 | cut -d= -f2)
+  if [ -n "$v" ]; then [ "$v" = 0 ] || [ "$v" = 1 ] || return 1; fi
+  v=$(grep -E '^INJECT_ENABLE_THINKING=' "$f" | head -1 | cut -d= -f2)
+  if [ -n "$v" ]; then [ "$v" = 0 ] || [ "$v" = 1 ] || return 1; fi
   return 0
 }
 
@@ -54,11 +68,15 @@ lint_dropin() {  # lint_dropin <conf> → 0/1
 cmd="${1:-}"; shift || true
 case "$cmd" in
   --offline)
-    ENVF="${1:-}"
-    [ -z "$ENVF" ] && { echo "用法：$0 --offline <已填值 env 文件>（模板件=预期红，见 --selfcheck T2）" >&2; exit 2; }
+    ENVF="${1:-}"; VLENVF="${2:-}"
+    [ -z "$ENVF" ] && { echo "用法：$0 --offline <已填值 env 文件> [已填值 vl env 文件]（模板件=预期红，见 --selfcheck T2/T6）" >&2; exit 2; }
     vr_begin
-    lint_env "$ENVF" || vr_face "config-lint" "$ENVF 键面非空律/域违约（UPSTREAM 形/MAX_CONCURRENCY [1,64]/PORT/GW_API_KEY 非空）"
+    lint_env "$ENVF" || vr_face "config-lint" "$ENVF 键面非空律/域违约（UPSTREAM 形/MAX_CONCURRENCY [1,64]/PORT/GW_API_KEY 非空/QUEUE_TIMEOUT [1,300]/DEDUP·INJECT {0,1}）"
+    if [ -n "$VLENVF" ]; then   # B4：VL 车道 env 双件 lint 面（缺省=只 lint 主车道）
+      lint_env "$VLENVF" || vr_face "vl-config-lint" "$VLENVF 键面非空律/域违约（同主车道四键+域检查）"
+    fi
     lint_unit "$HERE/payload/units/concurrency-proxy-v2.service" || vr_face "unit-lint" "concurrency-proxy-v2.service 要件缺或密钥值入 unit"
+    lint_unit "$HERE/payload/units/concurrency-proxy-vl.service" || vr_face "vl-unit-lint" "concurrency-proxy-vl.service 要件缺或密钥值入 unit"
     lint_dropin "$HERE/payload/units/10-gateway-hardening.conf" || vr_face "dropin-lint" "10-gateway-hardening.conf 面缺"
     vr_suggest "红面逐项按 payload/env 模板与 units 注记修；GW_API_KEY 值只入宿主 0600 件" "gateway#offline" manual
     vr_emit ;;
@@ -69,20 +87,25 @@ case "$cmd" in
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$GW_URL/health" 2>/dev/null)
     if [ "$code" = 200 ]; then echo "[gw-verify] P4 健康穿透绿（/health 经网关 200）"
     else vr_face "P4-health-passthrough" "code=${code:-unreachable}"; fi
-    # P1 401 面（无 key；拒答零上游载）
-    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 -X POST "$GW_URL/v1/chat/completions" \
-      -H 'Content-Type: application/json' -d '{"messages":[{"role":"user","content":"ping"}],"max_tokens":1,"stream":false}' 2>/dev/null)
+    # P1 401 面（A5 修正：收敛到管理面 /gw/*——本地应答零上游载。业务路径不代理鉴权
+    # （proxy :105-106 契约，鉴权归上游 VLLM_API_KEY）：无 key 业务 POST 反而会真触发
+    # 一次上游推理且必然 200，原「必 401」断言=误断言已撤（S6 P1-auth 红在案）。
+    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$GW_URL/gw/health" 2>/dev/null)
     case "$code" in
-      401|403) echo "[gw-verify] P1 401 面绿（无 key 拒 code=$code）" ;;
-      000)     vr_unknown "P1-unreachable" "网关不可达（$GW_URL）" ;;
-      *)       vr_face "P1-auth" "无 key 未拒 code=$code" ;;
+      401) echo "[gw-verify] P1 401 面绿（/gw/health 无 key 拒 401=GW_API_KEY Bearer 鉴权工作）" ;;
+      000) vr_unknown "P1-unreachable" "网关不可达（$GW_URL）" ;;
+      200) vr_face "P1-auth" "/gw/health 无 key 得 200=GW_API_KEY 未设（管理面裸奔——键面非空律红）" ;;
+      *)   vr_face "P1-auth" "/gw/health 无 key code=$code（预期 401）" ;;
     esac
     # P3 直连对照（上游 health 基线）
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$UP_URL/health" 2>/dev/null)
     if [ "$code" = 200 ]; then echo "[gw-verify] P3 直连对照绿（$UP_URL/health 200=基线在）"
     else vr_unknown "P3-upstream" "上游 health code=${code:-unreachable}（对照基线不可判）"; fi
-    # P2 429 面=窗口专用打点序（产线在役先呈裁；本件不自动打）
-    echo "[gw-verify] P2 429 面=窗口专用（序：停写流→17 并发 health 打点→期待 ≥1 发 429/限流帧→复绿确认）"
+    # P2 429 面=窗口专用打点序（A4 修正：GET/HEAD 在 dispatch 免并发槽（proxy :759-766，
+    # 信号量之前返回）——health 打点永不 429，信号量验证必须 POST 面）
+    echo "[gw-verify] P2 429 面=窗口专用（序：停写流→并发 POST /v1/chat/completions 打点"
+    echo "[gw-verify]   〔stream 假 body max_tokens=1；8001 梯 8→16→17 / 8002 梯 4→8→9〕"
+    echo "[gw-verify]   →期待 N+1 发 429+Retry-After→/gw/metrics queue_wait/active_streams 收尾=0→复绿）"
     # P5 上游失效面=演练窗专用（零执行）
     echo "[gw-verify] P5 上游失效面=演练窗专用（停 8899 观察 502/错误帧族；本面零执行）"
     vr_emit ;;
@@ -109,6 +132,17 @@ case "$cmd" in
     printf '[Service]\nStandardOutput=journal\n' > "$T/bad-dropin.conf"
     if lint_dropin "$T/bad-dropin.conf"; then echo "[gw-verify][RED] T5 FAIL"; rc=1
     else echo "[gw-verify][OK] T5 dropin 面缺判红"; fi
+    # T6 VL 车道双件 lint 面（B4 补面）：vl unit 要件绿 + vl env 模板占位判红
+    if lint_unit "$HERE/payload/units/concurrency-proxy-vl.service"; then
+      echo "[gw-verify][OK] T6 vl unit lint 绿（要件在+密钥零携带）"
+    else echo "[gw-verify][RED] T6 FAIL（vl unit 要件缺）"; rc=1; fi
+    if lint_env "$HERE/payload/env/gateway-vl.env.template"; then
+      echo "[gw-verify][RED] T6 FAIL（vl 模板占位未判红）"; rc=1
+    else echo "[gw-verify][OK] T6 vl env 占位模板判红（GW_API_KEY 空值=键面非空律）"; fi
+    # T7 域检查判别力（B4）：QUEUE_TIMEOUT 越域必红
+    sed 's|^QUEUE_TIMEOUT=.*|QUEUE_TIMEOUT=9999|' "$T/good.env" > "$T/badq.env"
+    if lint_env "$T/badq.env"; then echo "[gw-verify][RED] T7 FAIL（QUEUE_TIMEOUT 越域未判红）"; rc=1
+    else echo "[gw-verify][OK] T7 QUEUE_TIMEOUT 越域判红（域 [1,300]）"; fi
     rm -rf "$T"; exit "$rc" ;;
-  *) echo "用法：$0 --offline <env 文件> | --live | --selfcheck" >&2; exit 2 ;;
+  *) echo "用法：$0 --offline <env 文件> [vl env 文件] | --live | --selfcheck" >&2; exit 2 ;;
 esac

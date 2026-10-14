@@ -10,6 +10,9 @@ User=liux***ya
 # 配置面（UPSTREAM/PORT/MAX_CONCURRENCY/GW_API_KEY）一律走 EnvironmentFile——
 # 密钥值绝不入 unit/bundle/镜像（SMOK_KEY 前科律；GATEWAY-MIGRATION §〇 键面行）。
 # gateway.env 属宿主 0600 部署面，模板见本包 env/gateway.env.template。
+# 部署序（GW-INFRAS-AUDIT-20261014 A7）：先填值落位 gateway.env（0600）→
+# gw-verify --offline 验绿→再落本 unit+daemon-reload+enable。EnvironmentFile 故意
+# 不带 `-` 容缺前缀=文件缺即启动快败（优于裸默认值静默误指 8002 旧上游的错配形）。
 EnvironmentFile=/opt/aicad-prod/secrets/gateway.env
 ExecStart=/usr/bin/python3 /opt/aicad-prod/scripts/concurrency_proxy_v2.py
 Restart=on-failure

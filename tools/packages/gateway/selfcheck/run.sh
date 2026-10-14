@@ -10,25 +10,31 @@ for f in README.md MANIFEST.md5 VERSION bin/gateway selfcheck/run.sh; do
 done
 pkg_manifest_check; pkg_version_check; pkg_sources_check
 
-# F1 gw-verify --selfcheck（五例：填值绿/占位红/坏 UPSTREAM 红/密钥入 unit 红/dropin 缺红）
+# F1 gw-verify --selfcheck（七例：填值绿/占位红/坏 UPSTREAM 红/密钥入 unit 红/dropin 缺红/
+#   vl unit 绿+vl 模板红/QUEUE_TIMEOUT 越域红——GW-AUDIT B4 补面）
 if bash "$HERE/payload/gw-verify.sh" --selfcheck >/dev/null 2>&1; then
-  sc_ok "F1 gw-verify selfcheck 绿（键面非空律+SMOK_KEY 执法五例）"
+  sc_ok "F1 gw-verify selfcheck 绿（键面非空律+域检查+SMOK_KEY 执法七例）"
 else sc_red "F1 gw-verify selfcheck 红"; fi
 
-# F2 proxy 件语法+版本面（py_compile+rc3.8.2 谱系头注+五配置键在文）
+# F2 proxy 件语法+版本面（py_compile+rc3.8 谱系版本钉+五配置键在文）
 python3 -m py_compile "$HERE/payload/concurrency_proxy_v2.py" && sc_ok "F2 proxy py_compile 绿" || sc_red "F2 proxy 语法红"
 for key in UPSTREAM PORT MAX_CONCURRENCY GW_API_KEY TOTAL_STREAM_TIMEOUT; do
   grep -q "os.environ.get(\"$key\"" "$HERE/payload/concurrency_proxy_v2.py" || sc_red "F2 proxy 配置键缺面：$key"
 done
-grep -q 'rc3.8.2' "$HERE/payload/concurrency_proxy_v2.py" && sc_ok "F2 proxy rc3.8.2 谱系头注在文" || sc_unk "F2 proxy 谱系头注非 rc3.8.2 形（升级须注记）"
+pv=$(grep -oE '^VERSION = "concurrency-proxy-v2-rc3\.[0-9.]+"' "$HERE/payload/concurrency_proxy_v2.py" | head -1)
+[ -n "$pv" ] && sc_ok "F2 proxy 谱系版本钉在文（$pv）" || sc_unk "F2 proxy 谱系版本串缺（升级须注记）"
 
-# F3 01 在役件对锚（e1a01162；漂移=在役升级未同步吸收）
+# F3 01 在役件对锚（GW-AUDIT 修复窗语义修正）：在役权威锚=sources.tsv（现 e1a01162）；
+#   在役≠锚=真漂移红（同日再吸收律）；包内件=rc3.8.3 修复领先形（A6/B1），包≠在役=
+#   预期绿注记态（重启/部署窗吸收承载；吸收时锚同日重钉）。pkg_sources_check 同面执法。
 for p in /opt/aicad-prod/scripts/concurrency_proxy_v2.py; do
   if [ -r "$p" ]; then
     m=$(md5sum "$p" | awk '{print substr($1,1,8)}')
+    anchor=$(awk -F'\t' '$1=="payload/concurrency_proxy_v2.py"{print substr($3,1,8)}' "$HERE/selfcheck/sources.tsv")
     pm=$(md5sum "$HERE/payload/concurrency_proxy_v2.py" | awk '{print substr($1,1,8)}')
-    if [ "$m" = "$pm" ]; then sc_ok "F3 01 在役 proxy 对锚绿（$m）"
-    else sc_red "F3 在役件漂移（在役=$m 包内=$pm——同日再吸收律）"; fi
+    if [ "$m" != "$anchor" ]; then sc_red "F3 在役件漂移出锚（在役=$m 锚=$anchor——同日再吸收律）"
+    elif [ "$pm" = "$m" ]; then sc_ok "F3 包内件与在役同 md5（$m）"
+    else sc_ok "F3 包内件领先在役（包=$pm 在役=$m=锚——GW-AUDIT A6/B1 修复形 rc3.8.3，部署窗吸收承载）"; fi
   else sc_unk "F3 在役位缺件（$p——非 01 机常态）"; fi
 done
 

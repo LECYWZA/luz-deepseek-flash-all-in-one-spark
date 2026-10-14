@@ -1,7 +1,7 @@
 PKG=gateway
-PKG_VERSION=0.3.1-t4.1
-FINGERPRINT=731f39e4（脱敏仓实算=VL 车道两件+README 车道行入清单后本仓集合指纹；战役仓同批=34f30c27）
-GIT_ANCHOR=3d8c8a6（P4 整备提交；TOOLS31-BAKE-R2-20261013 S0 三联动重钉——VL-NATIVE S6 车道两件入清单）
-TOOL_ANCHORS_SYNC=2026-10-13（docs/TOOL-ANCHORS.md 五包锚段同日更新律）
+PKG_VERSION=0.3.2-gwfix1
+FINGERPRINT=47c230c3
+GIT_ANCHOR=2df67ef（战役仓 GW-INFRAS-AUDIT-20261014 修复窗整备提交〔审查基线 2acc7f3〕；本仓同步承载——FINGERPRINT 为脱敏仓实算值，脱敏差仅两 unit 的 User 位〔liux***ya 掩码形〕，战役仓同批指纹 31746cb1；封包窗重钉）
+TOOL_ANCHORS_SYNC=2026-10-14（docs/TOOL-ANCHORS.md 五包锚段同日更新律——战役仓 2df67ef 已同日重钉 gateway 行）
 PAYLOAD_N=11
 RED_LINES=GW_API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面

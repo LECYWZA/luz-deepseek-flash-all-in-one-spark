@@ -18,14 +18,20 @@ gateway（P4 网关工具包）——concurrency-proxy 配置面+unit/drop-in �
   gateway proxy                   打印 01 在役 proxy 件路径+md5 锚（不 exec——产线在役件）
 
 件清单：
-  concurrency_proxy_v2.py（01 现役 e1a01162=/opt/aicad-prod/scripts/ 同 md5 亲核；
-    v2.0-rc3.8.2 流式感知并发网关：信号量限流/GW_API_KEY Bearer/错误帧骨架/图像占位净化）
+  concurrency_proxy_v2.py（v2.0-rc3.8.3=GW-INFRAS-AUDIT A6/B1 修复领先形：relay_get 502
+    补留痕+body_key 全量哈希；信号量限流/GW_API_KEY Bearer/错误帧骨架/图像占位净化。
+    01 在役仍 rc3.8.2 e1a01162——重启/部署窗吸收承载，吸收时 sources.tsv 锚重钉）
   units/concurrency-proxy-v2.service（**P0 死件闭合**：GATEWAY-MIGRATION §1.4「01 单元
-    文件缺失，进程裸奔重启即失守」——unit 入包=部署面四机/网关机分发注记承载）
-  units/10-gateway-hardening.conf（drop-in：journal 观测+MemoryMax 2G+非特权只读面）
-  env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/GW_API_KEY 值位空——密钥绝不入包）
-  gw-verify.sh（五探针验证器：P1 401/P2 429/P3 直连对照/P4 健康穿透/P5 上游失效+
-    --offline 配置 lint）
+    文件缺失，进程裸奔重启即失守」——unit 入包=部署面四机/网关机分发注记承载+A7 部署序）
+  units/concurrency-proxy-vl.service + env/gateway-vl.env.template（VL 车道 8002；
+    UPSTREAM=8899 转正态〔A9〕+INJECT=0 显式〔A2〕）
+  units/10-gateway-hardening.conf（drop-in：journal 观测+MemoryMax 2G+非特权只读面；
+    B6 双实例通用件——v2/vl 各自 .d 目录同件落位）
+  env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/QUEUE_TIMEOUT=5〔A3〕/
+    CHUNK_IDLE_TIMEOUT=600〔A1〕/INJECT_ENABLE_THINKING=1〔A2〕/GW_API_KEY 值位空——
+    密钥绝不入包）
+  gw-verify.sh（五探针验证器：P1 401〔/gw/*，A5 收敛〕/P2 429〔POST 打点序，A4〕/
+    P3 直连对照/P4 健康穿透/P5 上游失效+--offline 配置 lint〔vl 双件+域检查，B4〕）
 
 红线注记：
   · GW_API_KEY 值绝不入包/入 unit/入镜像/入日志（SMOK_KEY 前科律）——值面=宿主 0600
@@ -38,8 +44,8 @@ EOF
   manifest)    cd "$HERE" && exec md5sum -c MANIFEST.md5 ;;
   fingerprint) echo "$PKG 汇总指纹=$(pkg_fingerprint)"; cd "$HERE" && awk -F= '$1=="FINGERPRINT"{print "VERSION  锚值=" $2}' VERSION ;;
   verify)      exec bash "$HERE/payload/gw-verify.sh" "$@" ;;
-  proxy)       echo "01 在役位：/opt/aicad-prod/scripts/concurrency_proxy_v2.py"
-               echo "包内副本 md5：$(md5sum "$HERE/payload/concurrency_proxy_v2.py" | awk '{print substr($1,1,8)}')（应=e1a01162）" ;;
+  proxy)       echo "01 在役位：/opt/aicad-prod/scripts/concurrency_proxy_v2.py（在役=rc3.8.2 e1a01162）"
+               echo "包内副本 md5：$(md5sum "$HERE/payload/concurrency_proxy_v2.py" | awk '{print substr($1,1,8)}')（rc3.8.3 修复领先形——与在役异 md5=预期态，重启/部署窗吸收承载；吸收后 sources.tsv 锚同日重钉）" ;;
   run)         echo "[$PKG] 产线在役件不 exec 转发（判读语义零改+产线零扰律）；包内件见 help" >&2; exit 2 ;;
   *) echo "[$PKG] 未知子命令：$cmd" >&2; exit 2 ;;
 esac

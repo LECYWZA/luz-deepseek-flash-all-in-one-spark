@@ -20,35 +20,47 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 
 | 件 | 来源/在役位 |
 |---|---|
-| concurrency_proxy_v2.py（v2.0-rc3.8.2；信号量限流/GW_API_KEY Bearer[hmac.compare_digest]/错误帧骨架/chunk-idle 可观测/图像占位净化） | 01 /opt/aicad-prod/scripts/（e1a01162 三拷贝同 md5 亲核：在役=~/gateway-migration-staging/proxy/） |
-| units/concurrency-proxy-v2.service（**P0 死件闭合**；EnvironmentFile 承载键面） | 本包新件（部署面分发：01 原位+迁移窗网关机） |
-| units/10-gateway-hardening.conf（drop-in：journal/MemoryMax 2G/非特权/ProtectSystem） | 本包新件（落位 /etc/systemd/system/concurrency-proxy-v2.service.d/） |
-| env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/GW_API_KEY 值位空） | 本包新件（宿主 0600 落位 /opt/aicad-prod/secrets/gateway.env） |
-| units/concurrency-proxy-vl.service（**VL 车道第二实例**；同 v2 模板仅 Description/EnvironmentFile 两处差=车道制零代码改动） | VL-NATIVE S6 新件（落位 /etc/systemd/system/；01 :8002→UPSTREAM 8898〔认证期〕/8899〔转正后〕） |
-| env/gateway-vl.env.template（UPSTREAM 8898/PORT=8002/MAX_CONCURRENCY=8/DEDUP_ENABLE=0 图像大 body 前缀哈希伪碰撞规避/GW_API_KEY 值位空） | VL-NATIVE S6 新件（宿主 0600 落位 /opt/aicad-prod/secrets/gateway-vl.env） |
-| gw-verify.sh（五探针+离线 lint） | TOOLS31 §二 P4-3 新件 |
+| concurrency_proxy_v2.py（v2.0-**rc3.8.3**=GW-INFRAS-AUDIT-20261014 A6/B1 修复领先形：relay_get 502 补留痕+body_key 全量哈希治本；信号量限流/GW_API_KEY Bearer[hmac.compare_digest]/错误帧骨架/chunk-idle 可观测/图像占位净化） | 源=01 /opt/aicad-prod/scripts/（**在役仍 rc3.8.2 e1a01162**——重启/部署窗吸收承载，吸收时 sources.tsv 锚同日重钉） |
+| units/concurrency-proxy-v2.service（**P0 死件闭合**；EnvironmentFile 承载键面+A7 部署序注记） | 本包新件（部署面分发：01 原位+迁移窗网关机） |
+| units/concurrency-proxy-vl.service + env/gateway-vl.env.template（VL 车道 8002；UPSTREAM=**8899 转正态**〔A9，认证期 8898 已拆线〕+INJECT=0 显式〔A2〕） | VL-NATIVE-WINCARD-20261013 §4.3 承载 |
+| units/10-gateway-hardening.conf（drop-in：journal/MemoryMax 2G/非特权/ProtectSystem；B6 双实例通用件——v2/vl 各自 .d 目录同件落位） | 本包新件（落位 /etc/systemd/system/concurrency-proxy-{v2,vl}.service.d/） |
+| env/gateway.env.template（UPSTREAM/PORT/MAX_CONCURRENCY=16/**QUEUE_TIMEOUT=5〔A3〕/CHUNK_IDLE_TIMEOUT=600〔A1〕/INJECT_ENABLE_THINKING=1〔A2〕**/GW_API_KEY 值位空） | 本包新件（宿主 0600 落位 /opt/aicad-prod/secrets/gateway.env） |
+| gw-verify.sh（五探针+离线 lint；P1 401 收敛 /gw/*〔A5〕+P2 POST 打点序〔A4〕+vl 双件 lint 与域检查〔B4〕） | TOOLS31 §二 P4-3 新件 |
 
-## 部署面分发注记（P0 闭合的执行面）
+## 部署面分发注记（P0 闭合的执行面；GW-AUDIT A7 部署序修正）
 
-1. unit→`/etc/systemd/system/concurrency-proxy-v2.service`；drop-in→`…service.d/10-gateway-hardening.conf`。
-2. env 填值→`/opt/aicad-prod/secrets/gateway.env`（0600；GW_API_KEY 值**只**在此）。
-3. `systemctl daemon-reload && systemctl enable --now concurrency-proxy-v2`（执行窗动作）。
-4. 四机/网关机分发位随 Mac mini M6 迁移窗重排（本包只收编 01 面——任务卡 §七.3 悬裁位）。
-5. VL 车道：vl unit 同位落位+`gateway-vl.env` 填值 0600→`daemon-reload`+`enable --now concurrency-proxy-vl`（8002 车道=客户端按端口分流；启用窗=VL 形转正呈裁后，详=docs/research/VL-NATIVE-RESULT-20261013.md §八）。
+1. **先建 env 再落 unit**（序倒=启动失败）：env 填值→`/opt/aicad-prod/secrets/gateway.env`
+   （0600；GW_API_KEY 值**只**在此；VL 车道同序先建 `gateway-vl.env`）。unit 的
+   EnvironmentFile **故意不带 `-` 容缺前缀**=env 缺即启动快败——快败优于裸默认值
+   静默误指 8002 旧上游的错配形（GW-AUDIT D4）。
+2. env 落位后先验：`bin/gateway verify --offline <已填值 env> [已填值 vl env]` 全绿再继续。
+3. unit→`/etc/systemd/system/concurrency-proxy-v2.service`（vl 同形）；drop-in→
+   `…concurrency-proxy-v2.service.d/10-gateway-hardening.conf`（vl=…vl.service.d/ 同件）。
+4. `systemctl daemon-reload && systemctl enable --now concurrency-proxy-v2`（执行窗动作）。
+5. 四机/网关机分发位随 Mac mini M6 迁移窗重排（本包只收编 01 面——任务卡 §七.3 悬裁位）。
 
 ## 排除了什么
 
 - **GW_API_KEY 值绝不入包/入 unit/入镜像/入日志**（SMOK_KEY 前科律；selfcheck T4/F5
   执法红例在）。
 - **在役进程零触碰**：本包零 systemctl/restart 动作（bin/gateway run 恒拒——产线在役
-  件不 exec 转发）。
+  件不 exec 转发）。rc3.8.3 包内领先形**不自动推装**在役位（重启窗承载，见构成表）。
 - **Mac mini M6 迁移栈不收编**（sparkDash/nginx/grafana/prometheus 五容器面=迁移窗承接）。
 - **P2 429/P5 上游失效探针不自动执行**（产线在役时先呈裁——验证器内注记）。
 
 ## 红线注记
 
-1. --live 探针=执行窗面；探针载荷最小面（health/401 拒答零上游推理载）。
-2. unit/drop-in 落机后首验=四探针（P1/P3/P4+journal 尾段）；P2/P5=演练窗。
-3. proxy 件 md5 漂移（在役升级）→同日再吸收+TOOL-ANCHORS 行更新（selfcheck F3 执法）。
+1. --live 探针=执行窗面；探针载荷最小面（P1=/gw/health 本地应答 401 拒答零上游推理载
+   ——A5 收敛后成立；业务路径不代理鉴权〔proxy :105-106，鉴权归上游 VLLM_API_KEY〕，
+   无 key 业务 POST 探针已撤=其会真触发推理且必然 200）。
+2. unit/drop-in 落机后首验=四探针（P1/P3/P4+journal 尾段）；P2/P5=演练窗（P2 须并发
+   POST 面——GET/HEAD 在 dispatch 免并发槽，health 打点永不 429，A4）。
+3. proxy 件 md5 漂移（在役升级）→同日再吸收+TOOL-ANCHORS 行更新（selfcheck F3 执法）；
+   反向（包领先在役，rc3.8.3 现态）=F3 预期绿注记态，在役吸收（重启窗）时同日重钉。
+4. RETRY_CONNECT=1 语义注记（B5）：上游建连失败**或响应 5xx** 时整 body 重发一次——
+   POST 面若引擎已耗 prefill 后 5xx，重试=重复推理计费面（图像 prefill 重则代价放大）；
+   429 无自动重试（Retry-After 语义归客户端）。VL 车道可选 RETRY_CONNECT=0
+   （行为变化=验证窗 V2 承载裁定，模板暂保持与在役同面不设键）。
 
-——TOOLS31 T4 P4 / 2026-10-13 案头整备。
+——TOOLS31 T4 P4 / 2026-10-13 案头整备；2026-10-14 GW-INFRAS-AUDIT 修复窗
+（A1-A7/A9 案头+B1/B4/B5/B6/B7 顺带）同日更新。
