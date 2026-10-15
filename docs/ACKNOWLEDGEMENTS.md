@@ -1,6 +1,6 @@
 # ACKNOWLEDGEMENTS — 致谢名单
 
-> 源档：战役仓 `docs/release/ACKNOWLEDGEMENTS-DRAFT-20261013.md`（commit ac4212f，110 条五组；本档为交付面并入版，条目逐字承接）。
+> 源档：战役仓 `docs/release/ACKNOWLEDGEMENTS-DRAFT-20261013.md`（commit ac4212f，110 条五组；2026-10-15 B-4 增补同步=战役仓 commit 45baf29〔110→111 条〕；本档为交付面并入版，条目逐字承接）。
 
 > **头部注记**：本名单按用户指令（2026-10-13）收录战役全程参考到的**所有**借鉴思路——
 > 「无论好坏，无论是否用到」——包括采纳在役、判负留库、参照对比、政策依据、反向不吸收
@@ -123,6 +123,12 @@
 | B59 | **guqiong96 discussion#34752**（CPU-GPU 混合 0731） | 反架构排除依据（我方全 GPU UMA 不适用；仅证社区热度） | 判负留库（反架构） | COMMUNITY-DSV4-SURVEY §A12 |
 | B60 | **Cesarus85/DwarfStar、HabanaAI fork、Fixstars B300 day-1** | 排除依据（非 sglang/异构/单卡容量线；Fixstars 仅佐证生态） | 判负留库（排除） | COMMUNITY-DSV4-SURVEY §A13 |
 
+### B-4 waterliu1981（luxingcom/luz-deepseek-flash-all-in-one issue #1/#2/#3 报告者，2026-10-15）
+
+| # | 来源 | 借鉴内容（一句话） | 使用状态 | 出处锚 |
+|---|---|---|---|---|
+| B61 | **waterliu1981**（luxingcom/luz-deepseek-flash-all-in-one issue #1/#2/#3，2026-10-15） | #1 tool_call_parser 缺省未接线根因定位（serving.py 缺省 None+`_tool_call_parsing_active()` 门禁）+`deepseekv41` 连写正字法+非流式/流式/经网关三路径结构化成型实测；#2 enable_cache_report 缺省关定位（serving.py:189-192+serving_chat.py:796）+接线实测（cached_tokens 面板 97.9%）；#3 `/v1/models` 容量字段发现面缺陷定位（客户端四扁平字段 0/4 命中⇒落默认窗 262144⇒正常完成响应被判 CONTEXT_WINDOW_EXCEEDED+`max_tokens:1` 截断链）+反向陷阱红线（禁调大声明）+网关响应侧广播临时形实测（17/17 单测+引擎响应逐字节未改+零中断）+双计数口径（`pi-ai detected context overflow`/`error.code == CONTEXT_WINDOW_EXCEEDED` 各计一次） | 采纳在役（A8/A9 已落 W-C 窗；A10 待实施） | 0.3.2 032-ADDENDUM §十 A8/A9+§十一 A10；GitHub luxingcom/luz-deepseek-flash-all-in-one issue #1/#2/#3 |
+
 ## C. 官方资产（DeepSeek 论文/权重/NVIDIA 驱动件）
 
 | # | 来源 | 借鉴内容（一句话） | 使用状态 | 出处锚 |
@@ -166,7 +172,7 @@
 
 ## 统计与待核清单
 
-**条目统计**：总计 **110** 条——A 上游开源项目 26 / B 社区同行 60（B-1 knapcio 34、B-2 MiaAI 与 sparkring 14、B-3 其他船队 12）/ C 官方资产 5 / D 外部配置与对照 10 / E 工具与田野情报 9。
+**条目统计**：总计 **111** 条——A 上游开源项目 26 / B 社区同行 61（B-1 knapcio 34、B-2 MiaAI 与 sparkring 14、B-3 其他船队 12、B-4 waterliu1981 1）/ C 官方资产 5 / D 外部配置与对照 10 / E 工具与田野情报 9。
 
 **使用状态分布**（按主状态归一计数，一条多状态以主状态计）：
 - **采纳在役** ≈ 30 条（A2/A3/A9/A10/A16/A21/A23 部分；B1/B4/B5/B6/B7/B13/B14/B15/B16/B19/B21/B22/B24/B26/B27 部分；B35/B36 部分/B50/B51/B52；C2/C3；E1/E2/E5/E6/E7）
