@@ -59,12 +59,12 @@ FL6 召回修复（**51 键转正在役定版**，见 §三；FL6 面回退两�
 
 ## 二、镜像下载（内网 registry 直链）
 
-> registry=`192.168.5.187:5000`（四机可达）。指纹提取法：
+> registry=`192.168.0.202:5000`（四机可达）。指纹提取法：
 > `docker inspect --format '{{index .RepoDigests 0}}' <镜像>`。
 
 | 镜像 | 用途 | 体量 | sha256 指纹 |
 |---|---|---|---|
-| `192.168.5.187:5000/lmsysorg/sglang:main-79cafec0` | **现役基座**（V4.1 文本+VL 原生视觉+0731 形+V4.0exp overlay 复原臂；运行期注入 adapter/overlay/env） | 48.6GB | `sha256:0f075735a6bf913a7cc1cd7ece4f526ae8af70fc5b88fdc02d9efe92a61cf3ae` |
+| `192.168.0.202:5000/lmsysorg/sglang:main-79cafec0` | **现役基座**（V4.1 文本+VL 原生视觉+0731 形+V4.0exp overlay 复原臂；运行期注入 adapter/overlay/env） | 48.6GB | `sha256:0f075735a6bf913a7cc1cd7ece4f526ae8af70fc5b88fdc02d9efe92a61cf3ae` |
 | `dsv41-sglang-optimized:0.2.9-ep1q2-fin2` | 优化烘焙谱系（0.2.9 现值；ep1u-fin/ep1q2f 前代） | 47.3GB | `sha256:f51d0f2ac9b47adfe4e1052682624ecd7b9ef7dbe20ebf98c4c01b1380f43b8f` |
 
 > **历史注记（vLLM 两形，VL 线已切 SGLang 单基座——单基座交付律，不随网盘分发）**：
@@ -77,9 +77,9 @@ FL6 召回修复（**51 键转正在役定版**，见 §三；FL6 面回退两�
 
 ```bash
 # 拉取现役基座（四机各一，或 head 拉+docker save 分发）
-docker pull 192.168.5.187:5000/lmsysorg/sglang:main-79cafec0
+docker pull 192.168.0.202:5000/lmsysorg/sglang:main-79cafec0
 docker inspect --format '{{index .RepoDigests 0}}' \
-  192.168.5.187:5000/lmsysorg/sglang:main-79cafec0   # 指纹核对=上表 sha256
+  192.168.0.202:5000/lmsysorg/sglang:main-79cafec0   # 指纹核对=上表 sha256
 ```
 
 **网盘分发（2026-10-14 发布，离线/外发主通道）**：夸克网盘
@@ -88,7 +88,7 @@ docker inspect --format '{{index .RepoDigests 0}}' \
 
 | 包内容 | 体量 | sha256 |
 |---|---|---|
-| `images/dsv41-sglang-optimized-0.3.1-r3.tar`（**0.3.1 交付镜像**，load→`192.168.5.187:5000/dsv41-sglang-optimized:0.3.1-r3`） | 14.4G | `6afa44298b9a788b584abf2181495192b7252f0e4f0f2f462fbbe3ccd8941906` |
+| `images/dsv41-sglang-optimized-0.3.1-r3.tar`（**0.3.1 交付镜像**，load→`192.168.0.202:5000/dsv41-sglang-optimized:0.3.1-r3`） | 14.4G | `6afa44298b9a788b584abf2181495192b7252f0e4f0f2f462fbbe3ccd8941906` |
 | `repo/luz-deepseek-flash-all-in-one-v0.3.1.tar.gz`（交付仓快照含 .git@cbc9a6b；其后收官增量 8be69ca 以本仓为准） | ~90M | `6a7b6b99d4f444da36f9d10368fcf0c98ccb6f6a25e3f32a4287b0aec9bf0646` |
 
 接收端：`sha256sum -c CHECKSUMS.manifest` 全验 → `docker load` → layer cid 核对

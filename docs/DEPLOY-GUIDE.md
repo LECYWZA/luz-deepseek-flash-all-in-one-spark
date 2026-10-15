@@ -10,7 +10,7 @@
 |---|---|
 | 节点 | 4× NVIDIA DGX Spark（GB10，SM121，ARM aarch64，UMA 架构） |
 | 拓扑 | TP4；内部 RoCE 环网（每机 4 口 HCA：rocep1s0f0/f1 + roceP2p1s0f0/f1；逐秩 PEER_HCA 映射表内嵌于 `deploy/bin/r3-boot-arm.sh` NODES 表） |
-| 角色 | rank0=head dgxspark01（192.168.5.186）；rank1=dgxspark02（.187）；rank2=dgxspark04（.189）；rank3=dgxspark03（.188） |
+| 角色 | rank0=head dgxspark01（192.168.0.201）；rank1=dgxspark02（.202）；rank2=dgxspark04（.204）；rank3=dgxspark03（.203）〔net-rebuild-20261015 管理段重编址〕 |
 
 ## 2. 系统依赖（版本锚——系统级件不随仓分发，逐项对版）
 
@@ -27,7 +27,7 @@
 ## 3. 镜像获取
 
 见 [README §二](../README.md#二镜像下载内网-registry-直链)：现役基座
-`192.168.5.187:5000/lmsysorg/sglang:main-79cafec0`（48.6GB，
+`192.168.0.202:5000/lmsysorg/sglang:main-79cafec0`（48.6GB，
 sha256 `0f075735…cf3ae`）。四机 `docker pull` 后以 RepoDigest 对表指纹。
 VL 线已切 SGLang 单基座（vLLM 两形移历史/备份注记，见 README §二尾注）。
 

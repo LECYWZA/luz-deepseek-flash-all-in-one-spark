@@ -9,8 +9,10 @@
 # 硬门：起栈前四机对称 drop_caches + UMA 总账（MemAvailable ≥ 100G）；生产容器守卫。
 set -euo pipefail
 
-IMAGE="192.168.5.187:5000/lmsysorg/sglang:main-79cafec0"
-HEAD_IP="192.168.5.186"
+IMAGE="192.168.0.202:5000/lmsysorg/sglang:main-79cafec0"
+HEAD_IP="192.168.0.201"
+# net-rebuild-20261015 镜像同步：管理段重编址三处通道址→192.168.0.201-204（IMAGE/HEAD_IP/WORKERS；
+# 语义参数零动；本镜像 vs 产线现役形的参面差〔NCCL 面/A8/A9/环网补丁链退役〕留后续交付同步窗）。
 DIST_PORT="20000"
 API_PORT="${API_PORT:-8899}"   # L10 用 8898：避开 concurrency-proxy→8899 的活生产转发路径（㉑/㉕ 防污染）
 SPEC="${SPEC:-0}"
@@ -30,9 +32,9 @@ ENG_HOST_WORKER="\$HOME/dsv41-engram"  # rank1/2/3 打包分片（2026-10-10 ENV
 # 03/04 曾本地置 47/48 尾分片（逐文件直读设计态，2026-10-10 ENV-UNIFY 清理=设计未采用 R-批4）：
 # 尾分片已删，47/48 与其余分片同走 NFS 全量树；索引校验全树可见 ⇒ NFS 硬前置不变。
 WORKERS=(
-  "1|dgxspark02|192.168.5.187|/data/models/DeepSeek-V4.1-Flash|/home/liux***ya/dsv41-engram|0=rocep1s0f1,roceP2p1s0f1;2=rocep1s0f0,roceP2p1s0f0"
-  "2|dgxspark04|192.168.5.189|/data/models/dsv41-net|/home/liux***ya/dsv41-engram|1=rocep1s0f0,roceP2p1s0f0;3=rocep1s0f1,roceP2p1s0f1"
-  "3|dgxspark03|192.168.5.188|/data/models/dsv41-net|/home/liux***ya/dsv41-engram|0=rocep1s0f0,roceP2p1s0f0;2=rocep1s0f1,roceP2p1s0f1"
+  "1|dgxspark02|192.168.0.202|/data/models/DeepSeek-V4.1-Flash|/home/liux***ya/dsv41-engram|0=rocep1s0f1,roceP2p1s0f1;2=rocep1s0f0,roceP2p1s0f0"
+  "2|dgxspark04|192.168.0.204|/data/models/dsv41-net|/home/liux***ya/dsv41-engram|1=rocep1s0f0,roceP2p1s0f0;3=rocep1s0f1,roceP2p1s0f1"
+  "3|dgxspark03|192.168.0.203|/data/models/dsv41-net|/home/liux***ya/dsv41-engram|0=rocep1s0f0,roceP2p1s0f0;2=rocep1s0f1,roceP2p1s0f1"
 )
 PEER_HCA_HEAD="1=rocep1s0f1,roceP2p1s0f1;3=rocep1s0f0,roceP2p1s0f0"
 HEAD_MODEL_SRC="/data/models/DeepSeek-V4.1-Flash"

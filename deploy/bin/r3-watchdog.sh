@@ -32,7 +32,7 @@ BOOT_GRACE=$((15 * 60))     # 靴窗宽限：容器启动后 15 分钟内不要�
 WATER_M=1500                # 水位红线（MemAvailable MB；= oom_gate -f 1.5）
 WATER_WARN_M=6000           # 预警线（= oom_gate -w 6）
 WATER_N=3                   # 红线连续确认次数（= oom_gate -n 3；兜底慢环）
-HEAD_IP="192.168.5.186"
+HEAD_IP="192.168.0.201"   # net-rebuild-20261015 镜像同步（旧址 192.168.5.186）
 API_PORT=8898
 SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=8)
 WORKERS=(dgxspark02 dgxspark04 dgxspark03)
