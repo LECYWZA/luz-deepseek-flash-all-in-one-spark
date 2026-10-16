@@ -163,3 +163,14 @@ serve 参=SPEC6 六参（`deploy/SPEC6-SERVE-REF.md`）。键面回退链 **51�
   `/etc/systemd/system/`→`daemon-reload`+`enable --now concurrency-proxy-vl`→8002=200
   核（详=包 README 部署面分发注记 5）。客户端按端口选车道（8001=文本现役不动；
   8002=VL）。
+
+### 9.4 客户端模型发现面（/v1/models 容量四键——GW-PATCH-20261015/A10）
+
+- **客户端读法**：harness/llm-pi-ai 族模型发现只认 `/v1/models` 条目的**四个扁平字段**
+  （`context_length`/`context_window`/`max_input_tokens`/`limit.context`）；读不到 ⇒ 落
+  默认窗 262144（引擎真值 600000 的 2.3 倍低估）⇒ 已完成的成功响应被判
+  `CONTEXT_WINDOW_EXCEEDED` 整轮丢弃 + 每请求 `max_tokens` 被改写为 1（截断空参数
+  工具调用链）。**部署要求**：网关（rc3.8.6+）侧 `ADVERTISE_MODEL_CAPACITY=1` 即
+  在响应侧补四键=引擎真值（`MODELS_CONTEXT_LEN=0` 缺省）；8003 公共入口（v2.2.2+）
+  名录面同带四键。**红线**：声明值恒=引擎真值，禁「调大声明消本地检测」；缺省 0=
+  行为逐字节零变化（升级/回退见 `tools/packages/gateway/README.md` Mac 部署节）。

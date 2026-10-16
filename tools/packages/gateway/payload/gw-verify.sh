@@ -1,7 +1,7 @@
 #!/bin/bash
-# gw-verify — 并发网关验证器（五探针+离线配置 lint；TOOLS31 §二 P4-3）
+# gw-verify — 并发网关验证器（六探针+离线配置 lint；TOOLS31 §二 P4-3）
 #
-# 【五探针（--live；执行窗面）】
+# 【探针（--live；执行窗面）】
 #   P1 401 面：无 key 打 /gw/* 必拒（GW_API_KEY Bearer 鉴权工作）。**rc3.8.5 起
 #     （AUTH-DEPLOY-20261014）全局门 GW_REQUIRE_AUTH=1 在役：无 key 业务 POST 也
 #     必 401（门在统一分流层、body/上游之前——本地应答零上游推理载，原「会真触发
@@ -16,25 +16,33 @@
 #   P6 模型门面（GW_KEY 在时）：带 key + 假模型名 POST → 404 model_not_found
 #     （rc3.8.5 GW_ALLOWED_MODELS 白名单；本地应答零上游推理载）。带 key + 真模型
 #     =一发定谳（执行窗面，本件零执行）。
+#   P7 容量广播面（GW_KEY 在时；rc3.8.6 ②-a/A10）：带 key GET /v1/models →
+#     条目带 context_window 时四键==max_model_len 才绿（含 limit.context）；
+#     条目不带该键=广播未开/未部署（ADVERTISE_MODEL_CAPACITY=0 面）→ INFO 跳过
+#     不红（缺省关为包缺省语义）。本地对 8001 名录面轻探，零推理载荷。
 # 【离线面（--offline；案头）】配置 lint：UPSTREAM 形合法/MAX_CONCURRENCY 域 [1,64]/
 #   PORT 域 [1,65535]/GW_API_KEY 非空（键面非空律——空=裸奔面=红）+B4 域检查
 #   （QUEUE_TIMEOUT [1,300]/DEDUP_ENABLE {0,1}/INJECT_ENABLE_THINKING {0,1}，键在才查）
+#   +rc3.8.6 域检查（ADVERTISE_MODEL_CAPACITY {0,1}/MODELS_CONTEXT_LEN ≥0 整数，键在才查）
 #   +unit/drop-in 模板 lint（v2+vl 双 unit——要件在+密钥值零携带=SMOK_KEY 律执法；
 #   vl env 文件可作第二实参同面 lint）。
 # 【出口】0=绿/1=红/2=无法判（--live 网关不可达=2，ANCHOR-UNKNOWN 语义）。
 # 【红线】--live=执行窗面（产线在役时 P2/P5 先呈裁）；探针载荷=最小面（/gw/* 401 拒答
 #   与 health 探测零上游推理载——P1 收敛后成立；业务路径 POST 探测=误断言已撤，零执行）。
-# 【Mac 变体（AUTH-DEPLOY-20261014 起=在役本尊 rc3.8.5）】网关本尊=Mac mini M6
-#   OrbStack 容器 concurrency-proxy-v2-mac :8001（GW_REQUIRE_AUTH=1：/v1/* 与
-#   /metrics 一切方法收 Bearer GW_API_KEY；/health 豁免=guardctl 探针面；
-#   GW_ALLOWED_MODELS=deepseek-v4.1-flash 模型门）；**8002 VL 车道已撤除**（G1 §E
+# 【Mac 变体（AUTH-DEPLOY-20261014 起=在役本尊 rc3.8.5；GW-PATCH-20261015 升 rc3.8.6）】
+#   网关本尊=Mac mini M6 OrbStack 容器 concurrency-proxy-v2-mac :8001（GW_REQUIRE_AUTH=1：
+#   /v1/* 与 /metrics 一切方法收 Bearer GW_API_KEY；/health 豁免=guardctl 探针面；
+#   GW_ALLOWED_MODELS=deepseek-v4.1-flash 模型门；**rc3.8.6 容量广播 ADVERTISE_MODEL_
+#   CAPACITY=1+MODELS_CONTEXT_LEN=0**=四键取引擎真值）；**8002 VL 车道已撤除**（G1 §E
 #   零消费者；compose .bak-auth1014 留回退）；**8003=responses-gateway-mac 鉴权
-#   公共入口**（02 v2.2.1 容器化迁 Mac，API_KEY 客户端钥同值平移）。用法面：
-#   --live 自 01 打 GW_URL=http://192.168.5.71:8001；GW_KEY=<GW_API_KEY 值> 在时
-#   增 P6 模型门带钥探针（值经 env 传递，绝不入档）；P3「直连对照」改义=UP_URL
-#   指 -R 隧道面 http://192.168.0.1:24001（既有在役只读探针类，Mac 侧无本地 8899
-#   可直；**8899 直打禁律不变**）；P1/P4 语义原样。本件默认值仍留 01 本地形态
-#   （127.0.0.1）＝历史基线，Mac 部署节见包 README。
+#   公共入口**（02 v2.2.1 容器化迁 Mac，API_KEY 客户端钥同值平移；GW-PATCH 窗 v2.2.2
+#   起名录面并带容量四键）。用法面：--live 自 01 打 GW_URL=http://192.168.5.71:8001；
+#   GW_KEY=<GW_API_KEY 值> 在时增 P6 模型门+P7 容量广播带钥探针（值经 env 传递，
+#   绝不入档）；P3「直连对照」改义=UP_URL 指 -R 隧道面 http://192.168.0.1:24001（既有
+#   在役只读探针类，Mac 侧无本地 8899 可直；**8899 直打禁律不变**；⚠ 2026-10-15
+#   net-rebuild 后该隧道靶 192.168.5.18x 已失效=Mac 链疑断呈裁 P6 既有位，探针红
+#   非本件引入）；P1/P4 语义原样。本件默认值仍留 01 本地形态（127.0.0.1）＝历史基线，
+#   Mac 部署节见包 README。
 set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 [ -f "$HERE/../_lib/verdict.sh" ] && . "$HERE/../_lib/verdict.sh"
@@ -61,6 +69,11 @@ lint_env() {  # lint_env <env 文件> → 0/1（四键面全绿才 0）
   if [ -n "$v" ]; then [ "$v" = 0 ] || [ "$v" = 1 ] || return 1; fi
   v=$(grep -E '^INJECT_ENABLE_THINKING=' "$f" | head -1 | cut -d= -f2)
   if [ -n "$v" ]; then [ "$v" = 0 ] || [ "$v" = 1 ] || return 1; fi
+  # rc3.8.6 域检查（键在才查——容量广播两键；缺键=脚本默认关/引擎实值非红面）
+  v=$(grep -E '^ADVERTISE_MODEL_CAPACITY=' "$f" | head -1 | cut -d= -f2)
+  if [ -n "$v" ]; then [ "$v" = 0 ] || [ "$v" = 1 ] || return 1; fi
+  v=$(grep -E '^MODELS_CONTEXT_LEN=' "$f" | head -1 | cut -d= -f2)
+  if [ -n "$v" ]; then { [ "$v" -ge 0 ]; } 2>/dev/null || return 1; fi
   return 0
 }
 
@@ -138,6 +151,41 @@ case "$cmd" in
     else
       echo "[gw-verify] P6 模型门=GW_KEY 未设，跳过（带钥面探针需 GW_KEY env）"
     fi
+    # P7 容量广播面（rc3.8.6 ②-a；GW_KEY 在时）：/v1/models 条目带 context_window
+    # 时四键==max_model_len 才绿；不带=广播未开/未部署 → INFO 跳过不红（缺省关语义）。
+    if [ -n "$GW_KEY" ]; then
+      mbody=$(curl -s --max-time 10 -H "Authorization: Bearer $GW_KEY" \
+        "$GW_URL/v1/models" 2>/dev/null)
+      p7=$(printf '%s' "$mbody" | python3 -c '
+import json,sys
+try: doc=json.load(sys.stdin)
+except Exception: print("PARSE_FAIL"); sys.exit(0)
+ents=doc.get("data") if isinstance(doc,dict) else None
+if not isinstance(ents,list) or not ents: print("NO_ENTRIES"); sys.exit(0)
+withcap=[e for e in ents if isinstance(e,dict) and "max_model_len" in e]
+if not withcap: print("NO_CAP_ENTRY"); sys.exit(0)
+if not any("context_window" in e for e in withcap):
+    print("OFF"); sys.exit(0)
+bad=[]
+for e in withcap:
+    n=e.get("max_model_len"); lim=e.get("limit")
+    if not (e.get("context_length")==n and e.get("context_window")==n
+            and e.get("max_input_tokens")==n
+            and isinstance(lim,dict) and lim.get("context")==n):
+        bad.append(str(e.get("id")))
+print("BAD:"+",".join(bad) if bad else "OK")
+' 2>/dev/null)
+      case "$p7" in
+        OK)      echo "[gw-verify] P7 容量广播绿（四键==max_model_len 全条目；②-a/A10 工作）" ;;
+        OFF)     echo "[gw-verify] P7 容量广播=INFO 跳过（/v1/models 无 context_window=未开/未部署，ADVERTISE_MODEL_CAPACITY 缺省关面）" ;;
+        BAD:*)   vr_face "P7-capacity" "容量广播四键≠max_model_len（${p7#BAD:}）——声明须恒=引擎真值" ;;
+        ""|PARSE_FAIL|NO_ENTRIES|NO_CAP_ENTRY)
+                 echo "[gw-verify] P7 容量广播=INFO 跳过（名录体不可判：${p7:-empty}；上游失效/无 max_model_len 条目不红）" ;;
+        *)       echo "[gw-verify] P7 容量广播=INFO 跳过（${p7}）" ;;
+      esac
+    else
+      echo "[gw-verify] P7 容量广播=GW_KEY 未设，跳过（带钥面探针需 GW_KEY env）"
+    fi
     # P3 直连对照（上游 health 基线）
     code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$UP_URL/health" 2>/dev/null)
     if [ "$code" = 200 ]; then echo "[gw-verify] P3 直连对照绿（$UP_URL/health 200=基线在）"
@@ -186,6 +234,11 @@ case "$cmd" in
     sed 's|^QUEUE_TIMEOUT=.*|QUEUE_TIMEOUT=9999|' "$T/good.env" > "$T/badq.env"
     if lint_env "$T/badq.env"; then echo "[gw-verify][RED] T7 FAIL（QUEUE_TIMEOUT 越域未判红）"; rc=1
     else echo "[gw-verify][OK] T7 QUEUE_TIMEOUT 越域判红（域 [1,300]）"; fi
+    # T8 域检查判别力（rc3.8.6）：ADVERTISE_MODEL_CAPACITY 非 {0,1} 必红
+    # （前置行法：lint 取 head -1 ⇒ 无论模板有无该键都命中红值行）
+    { echo 'ADVERTISE_MODEL_CAPACITY=2'; cat "$T/good.env"; } > "$T/badadv.env"
+    if lint_env "$T/badadv.env"; then echo "[gw-verify][RED] T8 FAIL（ADVERTISE_MODEL_CAPACITY=2 未判红）"; rc=1
+    else echo "[gw-verify][OK] T8 ADVERTISE_MODEL_CAPACITY 越域判红（域 {0,1}）"; fi
     rm -rf "$T"; exit "$rc" ;;
   *) echo "用法：$0 --offline <env 文件> [vl env 文件] | --live | --selfcheck" >&2; exit 2 ;;
 esac

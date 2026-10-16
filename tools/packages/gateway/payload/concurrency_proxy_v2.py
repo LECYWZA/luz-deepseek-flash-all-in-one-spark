@@ -3,6 +3,25 @@
 """
 concurrency_proxy_v2.py — vLLM 流式感知并发网关（v2.0-rc3，2026-09-06）
 
+rc3.8.6 相对 rc3.8.5 的增强（GW-PATCH-20261015 窗；设计输入=032-ADDENDUM §十一
+  A10〔GitHub issue #3，contributor waterliu1981 已落地形〕）：
+  /v1/models 响应侧容量广播（②-a）——ADVERTISE_MODEL_CAPACITY=1 时，GET
+  /v1/models 与 /v1/models/{id} 的响应体在每个 model 条目补客户端模型发现四键：
+  context_length / context_window / max_input_tokens 三扁平键 + limit.context
+  嵌套键，取值=条目自带 max_model_len（MODELS_CONTEXT_LEN=0 缺省——引擎真值，
+  不写死；红线：声明恒=引擎真值，「调大声明消本地检测」=禁）。缺 max_model_len
+  的条目（如 LoRA 行）跳过不写（防 null 污染）。动因：harness 类客户端
+  （deepseek-harness/llm-pi-ai）读四扁平字段判定上下文窗，读不到 ⇒ 落默认窗
+  262144（低估引擎真值 600000 2.3 倍）⇒ 已完成的成功响应被判
+  CONTEXT_WINDOW_EXCEEDED 整轮丢弃 + clampMaxTokensToContext 负数 ⇒ 每请求被
+  改写 max_tokens:1（空参数工具调用截断链）。
+  三硬门：**纯增量**（不改上游响应本身，仅缺键时补；已有键零触碰——与 ②-b 引擎
+  原生面叠加零冲突）/ **幂等**（已带字段=逐字节原样返回）/ **fail-open**（非法
+  JSON / 非目标路径 / 无容量来源=原样透传，绝不因本变换回 500）。
+  落位=relay_get()（GET/HEAD 免并发槽路，rc3.8.5 全局鉴权门之后调用=不新增绕过
+  面）；HEAD 无体=原样透传；缺省 0=行为逐字节零变化（rc3.8.5 等价，
+  tests/test_rc386.py 用例 d 判别力电池执法）；引擎零改（直连 8899 逐字节不变）。
+
 rc3.8.5 相对 rc3.8.4 的增强（AUTH-DEPLOY-20261014 执行窗；设计输入=G1 调查档
   §F 插入点/§G 建议，主会话裁定双层收紧）：
   1. 全局鉴权门 GW_REQUIRE_AUTH（缺省 0=休眠原行为，env 可关）：=1 时除
@@ -174,6 +193,7 @@ dispatch 单点；authorization 头透传恢复；GET/HEAD 原样转发。
   WRITE_TIMEOUT=60   TOTAL_STREAM_TIMEOUT=7200   DEDUP_ENABLE=1   GW_API_KEY=
   INJECT_ENABLE_THINKING=0   SANITIZE_IMAGE_PLACEHOLDER=1
   GW_REQUIRE_AUTH=0   GW_ALLOWED_MODELS=deepseek-v4.1-flash
+  ADVERTISE_MODEL_CAPACITY=0   MODELS_CONTEXT_LEN=0（rc3.8.6 容量广播两键）
 """
 import asyncio
 import hashlib
@@ -211,7 +231,16 @@ GW_REQUIRE_AUTH = os.environ.get("GW_REQUIRE_AUTH", "0") == "1"
 GW_ALLOWED_MODELS = frozenset(
     m.strip() for m in os.environ.get("GW_ALLOWED_MODELS", "deepseek-v4.1-flash").split(",")
     if m.strip())
-VERSION = "concurrency-proxy-v2-rc3.8.5"
+# rc3.8.6 响应侧容量广播（②-a/A10）：默认 0=行为逐字节零变化（rc3.8.5 等价）；
+# =1 时 relay_get 对 /v1/models(/id) 响应补客户端模型发现四键（见头注）。
+ADVERTISE_MODEL_CAPACITY = os.environ.get("ADVERTISE_MODEL_CAPACITY", "0") == "1"
+# rc3.8.6 容量值：0=取条目 max_model_len（引擎实值——缺省。红线：声明恒=引擎真值，
+# 禁「调大声明消本地检测」反向陷阱）；>0=固定覆盖位（应急面，正常态勿设）。
+try:
+    MODELS_CONTEXT_LEN = int(os.environ.get("MODELS_CONTEXT_LEN", "0") or "0")
+except ValueError:
+    MODELS_CONTEXT_LEN = 0
+VERSION = "concurrency-proxy-v2-rc3.8.6"
 
 HEARTBEAT = b": keepalive\n\n"          # SSE 注释帧：OpenAI SDK/EventSource 忽略
 DONE_MARK = b"data: [DONE]\n\n"         # 错误帧后的终止符（SDK 正常收尾）
@@ -800,12 +829,79 @@ async def relay_plain(request: web.Request, body: bytes,
         return resp
 
 
+# rc3.8.6 响应侧容量广播（②-a/A10）-----------------------------------------
+# 客户端模型发现四键（harness/llm-pi-ai 族读法；值恒=引擎真值 max_model_len）。
+CAPACITY_FIELDS = ("context_length", "context_window", "max_input_tokens")
+
+
+def advertise_model_capacity(body: bytes, path: str) -> bytes:
+    """GET /v1/models 与 /v1/models/{id} 响应侧补容量四键（纯增量/幂等/fail-open）。
+
+    取值=条目自带 max_model_len（MODELS_CONTEXT_LEN=0 缺省——引擎真值，不写死）；
+    MODELS_CONTEXT_LEN>0=固定覆盖位（应急面）。缺 max_model_len 的条目（如 LoRA
+    行）跳过不写（防 null 污染）。仅缺键时补——已有键零触碰（纯增量；与 ②-b
+    引擎原生字段叠加时自动原样返回），全文档零改动=原样返回（幂等）。任何异常
+    （非法 JSON/非目标结构/序列化失败）=原样透传——绝不因本变换回 500（fail-open）。
+    返回：原字节 或 补键后重序列化字节（确定性——同输入恒同输出）。
+    """
+    if not ADVERTISE_MODEL_CAPACITY:
+        return body
+    if not (path == "/v1/models" or path.startswith("/v1/models/")):
+        return body
+    try:
+        doc = json.loads(body)
+    except Exception:
+        return body                       # 非法 JSON：原样透传（fail-open）
+    if not isinstance(doc, dict):
+        return body
+    # 目标条目集：列表形（/v1/models）取 data 列表；单卡形（/v1/models/{id}）
+    # 取本体（有 id+object 或 max_model_len 的 dict）；其余结构=不改。
+    if isinstance(doc.get("data"), list):
+        targets = doc["data"]
+    elif "max_model_len" in doc or ("id" in doc and "object" in doc):
+        targets = [doc]
+    else:
+        return body
+    changed = False
+    for ent in targets:
+        if not isinstance(ent, dict):
+            continue
+        v = MODELS_CONTEXT_LEN if MODELS_CONTEXT_LEN > 0 else ent.get("max_model_len")
+        # bool 是 int 子类：显式排除；非数值（null/字符串）=无容量来源→跳过
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            continue
+        for k in CAPACITY_FIELDS:
+            if k not in ent:
+                ent[k] = v
+                changed = True
+        limit = ent.get("limit")
+        if limit is None:                  # 缺键/null=无信息：补嵌套键
+            ent["limit"] = {"context": v}
+            changed = True
+        elif isinstance(limit, dict) and "context" not in limit:
+            limit["context"] = v
+            changed = True
+    if not changed:
+        return body                       # 幂等：已带字段=逐字节原样
+    try:
+        return json.dumps(doc, ensure_ascii=False,
+                          separators=(",", ":")).encode("utf-8")
+    except Exception:
+        return body                       # 序列化失败：原样透传（fail-open）
+
+
 async def relay_get(request: web.Request, session: ClientSession) -> web.Response:
     try:
         async with session.get(upstream_url(request), headers=fwd_headers(request),
                                timeout=ClientTimeout(total=30)) as up:
+            body = await up.read()
+            # rc3.8.6（②-a/A10）：/v1/models(/id) 响应侧容量广播——鉴权门后
+            # （dispatch 前置门先于本函数）；HEAD 无体=原样透传；函数内部三硬门。
+            if (ADVERTISE_MODEL_CAPACITY and request.method == "GET"
+                    and up.status == 200):
+                body = advertise_model_capacity(body, request.path)
             return web.Response(status=up.status, content_type=up.content_type,
-                                body=await up.read())
+                                body=body)
     except Exception as e:
         # rc3.8.3-A6：原静默 502 零留痕（/metrics 502 风暴期成因零可考）——补成因
         # 留痕，与 relay_plain 同形（log.warning；细节不入响应体）。
@@ -912,13 +1008,18 @@ async def _close_session(app: web.Application) -> None:
 def main() -> None:
     auth_face = ("off" if not GW_API_KEY else
                  ("gw+v1-all" if GW_REQUIRE_AUTH else "gw-only"))
+    # rc3.8.6：容量广播面（off / on(engine)=取引擎实值 / on(<覆盖值>)）
+    capacity_face = ("off" if not ADVERTISE_MODEL_CAPACITY else
+                     (f"on({MODELS_CONTEXT_LEN})" if MODELS_CONTEXT_LEN > 0
+                      else "on(engine)"))
     log.info("%s %s->%s conc=%d ttft=%.0fs idle=%.0fs hb=%.0fs q=%.0fs "
-             "write_to=%.0fs total_to=%.0fs dedup=%s auth=%s models=%s",
+             "write_to=%.0fs total_to=%.0fs dedup=%s auth=%s models=%s cap=%s",
              VERSION, f"0.0.0.0:{PORT}", UPSTREAM, MAX_CONCURRENCY,
              FIRST_TOKEN_TIMEOUT, CHUNK_IDLE_TIMEOUT, HEARTBEAT_INTERVAL,
              QUEUE_TIMEOUT, WRITE_TIMEOUT, TOTAL_STREAM_TIMEOUT,
              DEDUP_ENABLE, auth_face,
-             "|".join(sorted(GW_ALLOWED_MODELS)) if GW_ALLOWED_MODELS else "any")
+             "|".join(sorted(GW_ALLOWED_MODELS)) if GW_ALLOWED_MODELS else "any",
+             capacity_face)
     web.run_app(make_app(), host="0.0.0.0", port=PORT, print=None,
                 shutdown_timeout=60)
 
