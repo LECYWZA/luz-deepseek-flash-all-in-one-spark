@@ -21,7 +21,7 @@ GATEWAY-MIGRATION-PLAN §1.4 点名 **P0 死件：单元文件缺失，进程裸
 
 | 件 | 来源/在役位 |
 |---|---|
-| concurrency_proxy_v2.py（v2.0-**rc3.8.6**=GW-PATCH-20261015 窗形：**/v1/models 响应侧容量广播（②-a/A10）**〔单键 ADVERTISE_MODEL_CAPACITY 缺省 0=行为逐字节零变化；=1 时 relay_get 对 GET /v1/models(/id) 响应补客户端模型发现四键 context_length/context_window/max_input_tokens/limit.context，取值=条目 max_model_len〔引擎真值，不写死；MODELS_CONTEXT_LEN>0=应急覆盖位〕；三硬门=纯增量/幂等/fail-open；LoRA 行跳写；HEAD 无体透传；鉴权门后调用；引擎零改=直连 8899 逐字节不变〕+rc3.8.5 全谱：**GW_REQUIRE_AUTH 全局鉴权门**〔缺省 0=休眠；=1 时 /health 外一切路径一切方法收 Bearer GW_API_KEY，/metrics 含内——prometheus 配 bearer_token；流式/非流式/GET 名录面同门〕+**GW_ALLOWED_MODELS 模型名白名单**〔缺省 deepseek-v4.1-flash；假名 404 OpenAI 形 model_not_found；b'"model"' 字节预检；auth_rejected/models_rejected 计数〕+rc3.8.4 全谱〔V2b 413 透传/A6 relay_get 留痕/B1 全量哈希/信号量限流/错误帧骨架/chunk-idle 可观测/图像占位净化〕） | 源=Mac mac-stack proxy-docker（**在役本尊，GW-PATCH-20261015 窗吸收 rc3.8.6=5ea1d8d3**；01 /opt 副本=3e714a0b=rc3.8.5 本窗禁动，吸收=后续部署窗） |
+| concurrency_proxy_v2.py（v2.0-**rc3.8.6**=GW-PATCH-20261015 窗形：**/v1/models 响应侧容量广播（②-a/A10）**〔单键 ADVERTISE_MODEL_CAPACITY 缺省 0=行为逐字节零变化；=1 时 relay_get 对 GET /v1/models(/id) 响应补客户端模型发现四键 context_length/context_window/max_input_tokens/limit.context，取值=条目 max_model_len〔引擎真值，不写死；MODELS_CONTEXT_LEN>0=应急覆盖位〕；三硬门=纯增量/幂等/fail-open；LoRA 行跳写；HEAD 无体透传；鉴权门后调用；引擎零改=直连 8899 逐字节不变〕+rc3.8.5 全谱：**GW_REQUIRE_AUTH 全局鉴权门**〔缺省 0=休眠；=1 时 /health 外一切路径一切方法收 Bearer GW_API_KEY，/metrics 含内——prometheus 配 bearer_token；流式/非流式/GET 名录面同门〕+**GW_ALLOWED_MODELS 模型名白名单**〔缺省 deepseek-v4.1-flash；假名 404 OpenAI 形 model_not_found；b'"model"' 字节预检；auth_rejected/models_rejected 计数〕+rc3.8.4 全谱〔V2b 413 透传/A6 relay_get 留痕/B1 全量哈希/信号量限流/错误帧骨架/chunk-idle 可观测/图像占位净化〕） | 源=Mac mac-stack proxy-docker（**在役本尊，GW-PATCH-20261015 窗吸收 rc3.8.6=5ea1d8d3**；01 /opt 副本已吸收 rc3.8.6=5ea1d8d3〔NET-WH-GWCHAIN-20261016 收官窗；.bak-wh386〕） |
 | payload/tests/test_rc385.py（**桌面测试台**，零流量：a 无钥 401 五面/b 假模型 404 零上游载/c 带钥放行 stub 验转发头/d **休眠门=rc3.8.4 逐字节等价十元电池**/e 流式三态+新计数键执法；本窗实跑 13/13 全绿） | 本包新件（AUTH-DEPLOY-20261014） |
 | payload/tests/test_rc386.py（**②-a 容量广播桌面测试台**，零流量：a 多条目+不写死+LoRA 零触碰/b 裸卡/c 幂等逐字节/e fail-open 三型/f 方法面（POST 不涉+HEAD 透传）/g 覆盖位/h 真引擎取样字节/i 版本面/d **关闸电池=对 rc3.8.5 逐字节等价**；14/14 全绿） | 本包新件（GW-PATCH-20261015） |
 | units/concurrency-proxy-v2.service（**P0 死件闭合**；EnvironmentFile 承载键面+A7 部署序注记） | 本包新件（部署面分发件） |
@@ -58,10 +58,10 @@ docs/ops/GW-MAC-MIGRATION-PLAN/RESULT-20261014.md、docs/ops/AUTH-DEPLOY-RESULT-
    MODELS_CONTEXT_LEN=0〔rc3.8.6 容量广播两键〕**；rg.env（8003）=API_KEY 客户端钥同值平移（28ch，客户端只换
    URL 不换钥）/UPSTREAM_API_KEY=8001 GW 钥（47ch）/VLLM_URL=compose 网内名
    http://concurrency-proxy:8001/SERVED_MODEL=引擎真名+别名面；均宿主 **0600**。
-3. **UPSTREAM 隧道形**：`http://192.168.0.1:24001`＝01 侧 ssh -R 反向隧道→01:8899
-   （隧道断=网关 502，Restart=always 自愈，断窗≈1min；⚠ 2026-10-15 net-rebuild 后
-   隧道靶 192.168.5.18x 失效=Mac 链疑断呈裁既有位，修复=01 mac-forwarders 靶改
-   192.168.0.20x，非本包面）。
+3. **UPSTREAM 隧道形**：`http://192.168.0.1:24001`＝01 侧反向隧道（mac-forwarders.service
+   =systemd 托管；Restart=always/RestartSec=10）`ssh -N -R 192.168.0.1:24001:127.0.0.1:8899`
+   ——**2026-10-16 01:30 旁路重定向新址形**（原 5.18x 旧址靶已退役）；**隧道断=网关 502**
+   （ServerAlive 20s×3 自愈；端到端核销=NET-WH-GWCHAIN-20261016 窗档 §P6）。
 4. **升级序**：scp 新载荷→`md5 -q` 对锚（**rc3.8.6=5ea1d8d3…**〔回退锚 rc3.8.5=
    3e714a0b〕）→改 env（如需；本窗 += 容量广播两键）→
    `docker compose build concurrency-proxy && docker compose up -d --force-recreate
@@ -93,9 +93,10 @@ docs/ops/GW-MAC-MIGRATION-PLAN/RESULT-20261014.md、docs/ops/AUTH-DEPLOY-RESULT-
    body/上游之前；带钥真模型一发=定谳面不自动跑）。
 2. unit/drop-in 落机后首验=四探针（P1/P3/P4+journal 尾段）；P2/P5=演练窗。
 3. proxy 件 md5 漂移（在役升级）→同日再吸收+锚表更新（selfcheck F3 执法）；
-   AUTH-DEPLOY-20261014 后包=在役同体（3e714a0b 三处同 md5）；**GW-PATCH-20261015 起
-   包/Mac=rc3.8.6=5ea1d8d3 领先、01 /opt=3e714a0b=rc3.8.5 维持（本窗禁动）**，
-   01 漂移出锚=红即呈报。
+   AUTH-DEPLOY-20261014 后包=在役同体（3e714a0b 三处同 md5）；**GW-PATCH-20261015 Mac
+   吸收 rc3.8.6=5ea1d8d3、01 /opt=3e714a0b 禁动；NET-WH-GWCHAIN-20261016 收官窗 01 /opt
+   亦吸收 rc3.8.6（三处同 md5=5ea1d8d3；锚已于 sources.tsv 同日重钉）**——漂移出锚=
+   红即呈报。
 4. RETRY_CONNECT=1 语义注记（B5）：上游建连失败**或**响应 5xx 时整 body 重发一次——
    POST 面若引擎已耗 prefill 后 5xx，重试=重复推理计费面；429 无自动重试。
 5. **容量广播红线（rc3.8.6 ②-a）**：声明值恒=引擎真值（条目 max_model_len；裸卡无
@@ -105,4 +106,6 @@ docs/ops/GW-MAC-MIGRATION-PLAN/RESULT-20261014.md、docs/ops/AUTH-DEPLOY-RESULT-
 ——TOOLS31 T4 P4 / 2026-10-13 案头整备；2026-10-14 GW-INFRAS-AUDIT 修复窗+GW-MAC-MIGRATION
 迁 Mac+AUTH-DEPLOY-20261014 鉴权窗（rc3.8.5 全局门+模型门+桌面测试台+Mac 8003 上线/
 8002 撤除+键面表）逐窗更新；2026-10-15 GW-PATCH-20261015 窗（rc3.8.6 ②-a 容量广播+
-test_rc386 桌面测试台+P7/T8+Mac 吸收〔01 禁动〕）再更。
+test_rc386 桌面测试台+P7/T8+Mac 吸收〔01 禁动〕）；2026-10-16 NET-WH-GWCHAIN-20261016
+收官窗（01 /opt 吸收 rc3.8.6+锚重钉 3e714a0b→5ea1d8d3+P6 隧道旁路端到端核销+Mac/02/01
+四面容量四键齐）再更。

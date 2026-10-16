@@ -1,9 +1,9 @@
 PKG=gateway
 PKG_VERSION=0.3.2-gwfix4
-FINGERPRINT=dd9ecd73
-FINGERPRINT_NOTE=脱敏仓实算（战役仓同批=9d483c42）；GW-PATCH-20261015 容量广播窗同步
-GIT_ANCHOR=0cd3e20 战役仓法源（032-ADDENDUM §十一=A10）；GW-PATCH-20261015 执行窗改件由两仓对应 commit 承载（rc3.8.6 ②-a 容量广播+test_rc386+gw-verify P7/T8+env 两键+README Mac 节）
-TOOL_ANCHORS_SYNC=2026-10-15
+FINGERPRINT=99a76241
+FINGERPRINT_NOTE=脱敏仓实算（战役仓同批=43941539）；NET-WH-GWCHAIN-20261016 收官窗同步（01 /opt 吸收 rc3.8.6 锚重钉）
+GIT_ANCHOR=0cd3e20 战役仓法源（032-ADDENDUM §十一=A10）；GW-PATCH-20261015 执行窗改件由两仓对应 commit 承载（rc3.8.6 ②-a 容量广播+test_rc386+gw-verify P7/T8+env 两键+README Mac 节）；NET-WH-GWCHAIN-20261016 收官窗改件由两仓对应 commit 承载（01 /opt 吸收 rc3.8.6=5ea1d8d3 锚重钉+README 在役面同步+MANIFEST 再生成）
+TOOL_ANCHORS_SYNC=2026-10-16
 PAYLOAD_N=13
 RED_LINES=GW_API_KEY/API_KEY 值绝不入包/unit/镜像（SMOK_KEY 律）/在役进程零触碰/--live=执行窗面/容量声明恒=引擎真值（禁调大声明消本地检测；裸卡 skip 不编造）/8899 直打禁律不变
-MAC_DEPLOY=2026-10-15 GW-PATCH：Mac M6 OrbStack :8001 升 rc3.8.6=5ea1d8d3（ADVERTISE_MODEL_CAPACITY=1+MODELS_CONTEXT_LEN=0；proxy.env 十八键=十六键+容量两键）+responses-gateway :8003 升 v2.2.2（名录面并带容量四键，向 8001 取数 fail-open）；01 /opt 面禁动维持 rc3.8.5=3e714a0b；UPSTREAM 隧道 24001 靶 192.168.5.18x 失效=既有呈裁位（修=01 mac-forwarders 靶改 192.168.0.20x）；升级序/回退（.bak-gw386）与键面表见 README Mac 部署节
+MAC_DEPLOY=2026-10-16 NET-WH-GWCHAIN：01 /opt 吸收 rc3.8.6=5ea1d8d3（.bak-wh386 回退；concurrency-proxy-v2.service 重启 04:06:01Z；ADVERTISE_MODEL_CAPACITY=1+MODELS_CONTEXT_LEN=0 经 /etc/default/concurrency-proxy-v2）+P6 隧道旁路验收（mac-forwarders.service systemd 托管；24001→01:8899 活=容器内 upstream /health 200；Mac:8001 带钥 GET /v1/models=200@14ms 四键=600000）+Mac/02/01 四面四键齐（Mac:8003 v2.2.2 四键；02:8003 VLLM_URL 旧址 5.71→192.168.0.1:8001 drop-in 修复+重启 04:09:11Z；01:8001 cap=on(engine)）；历史=2026-10-15 GW-PATCH：Mac 8001/8003 升 rc3.8.6/v2.2.2；01 /opt 面禁动维持 rc3.8.5=3e714a0b；升级序/回退（.bak-gw386/.bak-wh386）与键面表见 README Mac 部署节

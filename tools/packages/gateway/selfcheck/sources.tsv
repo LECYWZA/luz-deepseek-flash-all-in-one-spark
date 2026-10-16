@@ -1,8 +1,12 @@
 # sources.tsv — gateway 包件 ↔ 在役源 对表（TSV：包相对路径<TAB>源绝对路径<TAB>打包时源 md5 前 8）
-# GW-PATCH-20261015 重钉：在役本尊=Mac 容器 concurrency-proxy-v2-mac（本窗吸收
-# rc3.8.6=5ea1d8d3，②-a 容量广播 ADVERTISE_MODEL_CAPACITY=1+MODELS_CONTEXT_LEN=0，
-# 载荷烧镜像形；GW_REQUIRE_AUTH=1+GW_ALLOWED_MODELS 维持）。01 /opt 副本=3e714a0b
-# **本窗禁动**（systemd 验收转发器 8001→127.0.0.1:8899；其吸收=后续部署窗）。
-# 本锚=01 在役权威锚=3e714a0b 维持：包内件领先在役=预期绿注记态（selfcheck F3 执法）。
-# AUTH-DEPLOY-20261014 前史：01 /opt 与包/在役同窗 3e714a0b（.bak-rc384-20261014 回退）。
-payload/concurrency_proxy_v2.py	/opt/aicad-prod/scripts/concurrency_proxy_v2.py	3e714a0b
+# NET-WH-GWCHAIN-20261016 重钉（W-H 网关链收官窗·呈裁⑧落地）：01 /opt 吸收
+# rc3.8.6=5ea1d8d3（WCBOOT47 在役期执行、引擎零触=G1 门；.bak-wh386 回退面；
+# concurrency-proxy-v2.service 重启 2026-10-16T04:06:01Z；ADVERTISE_MODEL_CAPACITY=1+
+# MODELS_CONTEXT_LEN=0 经 /etc/default/concurrency-proxy-v2 落位〔.bak-wh386〕，
+# 始动日志 cap=on(engine)）。
+# ⇒ 01 在役权威锚 3e714a0b→5ea1d8d3：包内件与在役同 md5（F3 领先注记态终结）。
+# Mac 容器本尊 rc3.8.6=5ea1d8d3（GW-PATCH-20261015 吸收；GW_REQUIRE_AUTH=1+
+# GW_ALLOWED_MODELS=deepseek-v4.1-flash 维持）与 01 /opt 同源同值。
+# 前史：GW-PATCH-20261015（Mac 吸收 rc3.8.6=5ea1d8d3；01 /opt=3e714a0b 禁动维持）；
+# AUTH-DEPLOY-20261014（01 /opt 与包同窗 3e714a0b；.bak-rc384-20261014 回退面）。
+payload/concurrency_proxy_v2.py	/opt/aicad-prod/scripts/concurrency_proxy_v2.py	5ea1d8d3
