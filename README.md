@@ -124,6 +124,11 @@ load/校验/身份核对细则=包内 `README-DIST.md`。GitHub Releases=发布�
 > Q3bA 正典拓扑/守卫自愈套件/九章研究报告与三参考对照定谳）+ **NCCL 2.30.7
 > ring-only 优化资料包**（allreduce −81% 补丁栈/部署指南/排障手册/doctor 工具链）。
 > 本仓通信栈=该仓硬件转发层+NCCL 层 + 本仓 `deploy/nccl/`（ring-only 库+ncclpin 在役件）。
+>
+> **分支**：[`switch-fabric`](https://github.com/luxingcom/luz-deepseek-flash-all-in-one/tree/switch-fabric)
+> —— 交换机方案适配（双 rail 交换机拓扑下的 RoCE flat/one-shot 运行时、C 层 fabric
+> 语义键、交换机形态 env 样本）；差异档见其 `deploy/SWITCH-FABRIC.md`。`main` 保持
+> 环网方案形态，两方案差异件互不污染。
 
 ```
 docs/        定版成果：report(终版性能报告+TOOLS31 烘焙结果)/runbook(OPS-MANUAL)/registry(FORM-REGISTRY)/
@@ -138,7 +143,7 @@ tools/       全树工具：packages(五包+_lib+_bake；gateway 含 VL 车道�
 tests/       fl6-recall(双臂 6 测)/unit(b12x/row_store)/whitebox(14 件矩阵)
 ```
 
-CHANGELOG（0.3.0→0.3.1 十条）· SCAN-REPORT（密钥扫描）· NOTICE/LICENSE（许可）
+CHANGELOG（0.3.0→0.3.2 在途）· SCAN-REPORT（密钥扫描）· NOTICE/LICENSE（许可）
 
 ---
 

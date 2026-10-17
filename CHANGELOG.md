@@ -1,7 +1,50 @@
-# CHANGELOG — LuZ 0.3.0 → 0.3.1
+# CHANGELOG — LuZ 0.3.0 → 0.3.2（在途）
 
 > 提炼自战役仓 git log（`luz-0.3.0-r1`（2026-10-05，32c6acd）之后 632 commits）
 > 与总卡/定稿报告。逐项档锚见 `docs/` 各分档。
+
+## 0.3.2 前置线（2026-10-15/16）：net-rebuild 修复 + 交换机方案适配
+
+> 本节=0.3.2 在途增量（net-rebuild 战役收口批）。交换机方案与环网方案的差异件
+> 另见 **`switch-fabric` 分支**（差异档 `deploy/SWITCH-FABRIC.md`+RoCE
+> flat/one-shot 运行时+交换机形态 env 样本）；`main` 保持环网方案形态。
+
+### 问题修复
+
+1. **issue #1 — tool call 不成型**：DSML `tool_calls` 无解析根因=serving
+   `tool_call_parser` 缺省未接线。修复=serve 参 `--tool-call-parser deepseekv41`
+   （连写正字法；`deepseek-v41` 系 reasoning parser 写法不通用）；SPEC6-SERVE-REF
+   补第 7 行。
+2. **issue #2 — usage 缓存字段恒 null**：`enable_cache_report` 缺省 False。
+   修复=serve 参 `--enable-cache-report`（`prompt_tokens_details.cached_tokens`
+   随响应返回）；SPEC6-SERVE-REF 补第 8 行。
+3. **issue #3 — /v1/models 无容量字段**：客户端默认窗 262144 低估引擎真值。
+   修复=网关 rc3.8.6 容量四键（`ADVERTISE_MODEL_CAPACITY` 单键，缺省 0=逐字节
+   零行为差；=1 时 `/v1/models(/id)` 补客户端模型发现四键=`max_model_len`；
+   三硬门=纯增量/幂等/fail-open）+测试台 `test_rc386.py` 14/14。
+4. **网关鉴权窗（rc3.8.5）**：`GW_REQUIRE_AUTH` 全局鉴权门（缺省休眠）+`GW_ALLOWED_MODELS`
+   模型名白名单（假名 404 OpenAI 形）；测试台内容寻址坑修（原基准取 `git show HEAD:`
+   在提交后退化为自比恒绿假凭据→按内容 md5 检索 blob）。
+5. **管理段重编址同步**：registry/角色址 192.168.5.186-189 → 192.168.0.201-204
+   （`r3-boot-arm.sh`/`r3-boot.sh`/`r3-watchdog.sh`/README/DEPLOY-GUIDE 五件；
+   语义参数零动）。
+6. **致谢面**：ACKNOWLEDGEMENTS 增 B-4（issue #1/#2/#3 报告者；110→111 条）。
+7. **网络重建后部署面同步**：Mac 部署节更新（01 面网关载荷吸收 rc3.8.6；隧道形=
+   systemd 托管 `ssh -N -R` 新址形；02 侧 upstream 旧址 drop-in 修复；P6 隧道旁路
+   验收）——`sources.tsv`/README/MAC_DEPLOY 行重钉。
+
+### 开发新增
+
+1. **SPEC6 参谱八参→九参**：增 `--sleep-on-idle`（SGLang 空闲调度省电；实测空闲
+   调度核占用 ≈1 核→≈0.05 核/机，−87.6~−91.6%；归一指纹 9d64a5de，旧八参
+   6b12a445 保留不覆写）。
+2. **交换机方案适配（`switch-fabric` 分支）**：双 rail 交换机拓扑下以 flat/one-shot
+   运行时复活 RoCE all-reduce（`LUZ_SWITCH_ROCE_FLAT` 选门+C 层
+   `B12X_ROCE_TOPOLOGY=switched`/`B12X_ROCE_TRAFFIC_CLASS=106`）；实测 decode DE
+   四型自 NCCL 回落态收敛 −13.7%→−3.8%，经 `DSV41_ROCE_GATHER=524288` 恢复
+   adapter 侧 gather 限幅再 +5.8~+6.2%（超额回收）；44 项 rank/shape parity 全过。
+3. **基准线工具链（已在 fb5798c 批入仓）**：`tools/bench/`（sparkDash 口径量具
+   复刻四件）+`docs/registry/BENCHMARK-SOURCE.md` 口径正典——净线基准读数谱系可溯。
 
 ## 0.3.1 发布分发（2026-10-14）
 
