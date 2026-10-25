@@ -432,7 +432,7 @@ docker run -d --name "$HEAD_CTN" "${DOCKER_HW[@]}" "${COMMON_ENV[@]}" \
   -v "$HEAD_MODEL_SRC:$MOUNT_TGT:ro" \
   -v "$ENG_HOST_HEAD:/engram:ro" \
   "$IMAGE" python3 -m sglang.launch_server "${SERVER_ARGS[@]}" \
-  --node-rank 0 --host 0.0.0.0 --port "$API_PORT"
+  --node-rank 0 --host :: --port "$API_PORT"
 sleep 8
 [[ "$(docker inspect -f '{{.State.Running}}' "$HEAD_CTN" 2>/dev/null)" == "true" ]] || { docker logs --tail 30 "$HEAD_CTN" 2>&1 || true; die "head 起败"; }
 info "head 存活"
