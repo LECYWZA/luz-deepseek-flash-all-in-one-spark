@@ -36,7 +36,7 @@ set -uo pipefail
 
 CAMPAIGN="${CAMPAIGN:-$HOME/luz030-opt-campaign}"
 LOCKFILE="$CAMPAIGN/.slot-lock"
-HOSTS="dgxspark01 dgxspark02 dgxspark03 dgxspark04"
+HOSTS="spark-1 spark-2 spark-3 spark-4"
 ARM_TAG="${ARM_TAG:-unknown}"
 
 if [ "$#" -lt 1 ]; then
